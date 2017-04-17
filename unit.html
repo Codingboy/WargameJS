@@ -10,48 +10,6 @@
 	<body>
 		<div class="container">
 			<form class="form-horizontal">
-		type: "Infantry",
-		speed: 15,//speed
-		optics: 200,//range the daylight optic is working with in meter
-		opticsIR: 0,//range the IR optic is working with in meter
-		camouflage: 0.25,//percentage of invisibillity
-		camouflageIR: 0.0,//percentage of IR invisibillity
-		sound: 10,//range the unit is hearable
-		radarAir: 0,//range of airradar
-		radarWeapon: 0,//range of weapon tracking radar
-		camouflageRadar: 0.0,//percentage of radar invisibillity
-		ecm: 0,//range of ecm to suppress radars
-		ecmChance: 0,//successrate of ecm
-		ircmChance: 0,//successrate of ircm
-		flares: 0,//number of carried flares
-		flareChance: 0,//successrate of flares
-		chaffs: 0,//number of carried chaffs
-		chaffChance: 0,//successrate of chaffs
-		smoke: 0,//number of carried smoke
-		radio: 2000,//range of radio in meter
-		radioJammer: 0,//range of radioJammer
-		radioJammerChance: 0,//successrate of radioJammer
-		fuel: 0,//size of fueltank in liter
-		lads: 0,//range of lads
-		ladsChance: 0,//successrate of lads
-		mineDetection: 0,//range of the minedetector in meter
-		transportWeight: 0,//kg that can be transported
-		resupplyFuel: 0,//liters of fuel
-		resupplyAmmo: 0,//kg of ammo
-		resupplyRepair: 0,//kg of repair
-		resupplyMedical: 0,//hp of medical
-		plateCarrier: true,//unit wears platecarrier
-		armourFront: 0,
-		armourSide: 0,
-		armourBack: 0,
-		armourTop: 0,
-		armourBottom: 0,
-		armourType1: "",//type of primary armour
-		armourType2: "",//type of secondary, outer armour
-		weight: 100,//weight of the unit including weapon
-		fuelConsumption: 0,//fuelconsumption per hour
-		price: 50000,//price of the unit including weapon
-		weapons: []//weaponnames
 				<div class="form-group" id="nameBlock">
 					<label for="name">Name</label>
 					<input type="text" name="name" id="name" required="required" onchange="recalc()"/><br/>
@@ -60,88 +18,204 @@
 					<label for="type">Type</label>
 					<select name="type" id="type" onchange="setType()">
 						<option value="Infantry">Infantry</option>
-						<option value="MachineGun">MachineGun</option>
-						<option value="SniperRifle">SniperRifle</option>
-						<option value="GrenadeLauncher">GrenadeLauncher</option>
-						<option value="GrenadeMachineGun">GrenadeMachineGun</option>
-						<option value="Artillery">Artillery</option>
-						<option value="Cannon">Cannon</option>
-						<option value="Missile">MissileLauncher</option>
-						<option value="AntiAircraftArtillery">AntiAircraftArtillery</option>
-						<option value="Mine">Mine</option>
-						<option value="Bomb">Bomb</option>
+						<option value="MachineGun">Wheeled</option>
+						<option value="SniperRifle">Tracked</option>
+						<option value="GrenadeLauncher">Heli</option>
+						<option value="GrenadeMachineGun">Plane</option>
 					</select>
 				</div>
-				<div class="form-group" id="guideTypeBlock">
-					<label for="guideType">GuidanceSystem</label>
-					<select name="guideType" id="guideType" onchange="setGuideType()">
-						<option value="Unguided">Unguided</option>
-						<option value="Radio">Radio</option>
-						<option value="Cable">Cable</option>
-						<option value="IR">IR</option>
-						<option value="Radar">Radar</option>
-						<option value="SEAD">SEAD</option>
+				<div class="form-group" id="opticsBlock">
+					<label for="optics">Optics</label>
+					<input type="number" name="optics" id="optics" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="opticsQualityBlock">
+					<label for="opticsQuality">OpticsQuality</label>
+					<input type="number" name="opticsQuality" id="opticsQuality" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="opticsIRBlock">
+					<label for="opticsIR">OpticsIR</label>
+					<input type="number" name="opticsIR" id="opticsIR" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="opticsIRQualityBlock">
+					<label for="opticsIRQuality">OpticsIRQuality</label>
+					<input type="number" name="opticsIRQuality" id="opticsIRQuality" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="camouflageBlock">
+					<label for="camouflage">Camouflage</label>
+					<input type="number" name="camouflage" id="camouflage" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="camouflageIRBlock">
+					<label for="camouflageIR">CamouflageIR</label>
+					<input type="number" name="camouflageIR" id="camouflageIR" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="soundBlock">
+					<label for="sound">Sound</label>
+					<input type="number" name="sound" id="sound" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radarAirBlock">
+					<label for="radarAir">RadarAir</label>
+					<input type="number" name="radarAir" id="radarAir" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radarAirQualityBlock">
+					<label for="radarAirQuality">RadarAirQuality</label>
+					<input type="number" name="radarAirQuality" id="radarAirQuality" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radarWeaponBlock">
+					<label for="radarWeapon">RadarWeapon</label>
+					<input type="number" name="radarWeapon" id="radarWeapon" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="camouflageRadarBlock">
+					<label for="camouflageRadar">CamouflageRadar</label>
+					<input type="number" name="camouflageRadar" id="camouflageRadar" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="ecmBlock">
+					<label for="ecm">ECM</label>
+					<input type="number" name="ecm" id="ecm" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="ecmChanceBlock">
+					<label for="ecmChance">ECMChance</label>
+					<input type="number" name="ecmChance" id="ecmChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="ircmChanceBlock">
+					<label for="ircmChance">IRCMChance</label>
+					<input type="number" name="ircmChance" id="ircmChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="flaresBlock">
+					<label for="flares">Flares</label>
+					<input type="number" name="flares" id="flares" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="flareChanceBlock">
+					<label for="flareChance">FlareChance</label>
+					<input type="number" name="flareChance" id="flareChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="chaffsBlock">
+					<label for="chaffs">Chaffs</label>
+					<input type="number" name="chaffs" id="chaffs" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="chaffChanceBlock">
+					<label for="chaffChance">ChaffChance</label>
+					<input type="number" name="chaffChance" id="chaffChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="smokeBlock">
+					<label for="smoke">Smoke</label>
+					<input type="number" name="smoke" id="smoke" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="smokeChanceBlock">
+					<label for="smokeChance">SmokeChance</label>
+					<input type="number" name="smokeChance" id="smokeChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radioBlock">
+					<label for="radio">Radio</label>
+					<input type="number" name="radio" id="radio" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radioJammerBlock">
+					<label for="radioJammer">RadioJammer</label>
+					<input type="number" name="radioJammer" id="radioJammer" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="radioJammerChanceBlock">
+					<label for="radioJammerChance">RadioJammerChance</label>
+					<input type="number" name="radioJammerChance" id="radioJammerChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="fuelBlock">
+					<label for="fuel">Fuel</label>
+					<input type="number" name="fuel" id="fuel" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="ladsBlock">
+					<label for="lads">LADS</label>
+					<input type="number" name="lads" id="lads" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="ladsChanceBlock">
+					<label for="ladsChance">LADSChance</label>
+					<input type="number" name="ladsChance" id="ladsChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="mineDetectionBlock">
+					<label for="mineDetection">MineDetection</label>
+					<input type="number" name="mineDetection" id="mineDetection" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="mineDetectionChanceBlock">
+					<label for="mineDetectionChance">MineDetectionChance</label>
+					<input type="number" name="mineDetectionChance" id="mineDetectionChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="transportWeightBlock">
+					<label for="transportWeight">TransportWeight</label>
+					<input type="number" name="transportWeight" id="transportWeight" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="resupplyFuelBlock">
+					<label for="resupplyFuel">resupplyFuel</label>
+					<input type="number" name="resupplyFuel" id="resupplyFuel" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="resupplyAmmoBlock">
+					<label for="resupplyAmmo">resupplyAmmo</label>
+					<input type="number" name="resupplyAmmo" id="resupplyAmmo" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="resupplyRepairBlock">
+					<label for="resupplyRepair">resupplyRepair</label>
+					<input type="number" name="resupplyRepair" id="resupplyRepair" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="resupplyMedicalBlock">
+					<label for="resupplyMedical">resupplyMedical</label>
+					<input type="number" name="resupplyMedical" id="resupplyMedical" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="plateCarrierBlock">
+					<label for="plateCarrier">plateCarrier</label>
+					<input type="number" name="plateCarrier" id="plateCarrier" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourFrontBlock">
+					<label for="armourFront">armourFront</label>
+					<input type="number" name="armourFront" id="armourFront" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourSideBlock">
+					<label for="armourSide">armourSide</label>
+					<input type="number" name="armourSide" id="armourSide" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourBackBlock">
+					<label for="armourBack">armourBack</label>
+					<input type="number" name="armourBack" id="armourBack" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourTopBlock">
+					<label for="armourTop">armourTop</label>
+					<input type="number" name="armourTop" id="armourTop" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourBottomBlock">
+					<label for="armourBottom">armourBottom</label>
+					<input type="number" name="armourBottom" id="armourBottom" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourType1Block">
+					<label for="armourType1">armourType1</label>
+					<input type="number" name="armourType1" id="armourType1" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="armourType2Block">
+					<label for="armourType2">armourType2</label>
+					<input type="number" name="armourType2" id="armourType2" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="stabilisatorBlock">
+					<label for="stabilisator">stabilisator</label>
+					<input type="number" name="stabilisator" id="stabilisator" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="courageBlock">
+					<label for="courage">Courage</label>
+					<input type="number" name="courage" id="courage" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="weaponsBlock">
+					<label for="weapons">weapons</label>
+					<select name="weapons" id="weapons" onchange="setWeapon()">
 					</select>
-				</div>
-				<div class="form-group" id="damageTypeBlock">
-					<label for="damageType">DamageType</label>
-					<select name="damageType" id="damageType" onchange="setDamageType()">
-						<option value="HE" id="damageTypeHE">HE</option>
-						<option value="HEAT" id="damageTypeHEAT">HEAT</option>
-						<option value="HEDP" id="damageTypeHEDP">HEDP</option>
-						<option value="API" id="damageTypeAPI">API</option>
-						<option value="APFSDS" id="damageTypeAPFSDS">APFSDS</option>
-						<option value="AP" id="damageTypeAP">AP</option>
-						<option value="FMJ" id="damageTypeFMJ">FMJ</option>
-					</select>
-				</div>
-				<div class="form-group" id="rpmBlock">
-					<label for="rpm">RPM</label>
-					<input type="number" name="rpm" id="rpm" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="magazineSizeBlock">
-					<label for="magazineSize">MagazineSize</label>
-					<input type="number" name="magazineSize" id="magazineSize" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="magazinesBlock">
-					<label for="magazines">Magazines</label>
-					<input type="number" name="magazines" id="magazines" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="reloadTimeBlock">
-					<label for="reloadTime">ReloadTime</label>
-					<input type="number" name="reloadTime" id="reloadTime" step="0.1" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="rangeBlock">
-					<label for="range">Range</label>
-					<input type="number" name="range" id="range" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="damageBlock">
-					<label for="damage">Damage</label>
-					<input type="number" name="damage" id="damage" step="0.1" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="damageRadiusBlock">
-					<label for="damageRadius">DamageRadius</label>
-					<input type="number" name="damageRadius" id="damageRadius" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="speedBlock">
-					<label for="speed">Speed</label>
-					<input type="number" name="speed" id="speed" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group" id="lockChanceBlock">
-					<label for="lockChance">LockChance</label>
-					<input type="number" name="lockChance" id="lockChance" onchange="recalc()"/><br/>
-				</div>
-				<div class="form-group">
-					<label for="price">Price</label>
-					<input type="number" name="price" id="price" readonly="readonly"/><br/>
 				</div>
 				<div class="form-group">
 					<label for="weight">Weight</label>
 					<input type="number" name="weight" id="weight" readonly="readonly"/><br/>
 				</div>
 				<div class="form-group">
-					<label for="inaccuracy">Inaccuracy</label>
-					<input type="number" name="inaccuracy" id="inaccuracy" readonly="readonly"/><br/>
+					<label for="speed">Speed</label>
+					<input type="number" name="speed" id="speed" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<label for="price">Price</label>
+					<input type="number" name="price" id="price" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group" id="fuelConsumptionBlock">
+					<label for="fuelConsumption">FuelConsumption</label>
+					<input type="number" name="fuelConsumption" id="fuelConsumption" readonly="readonly"/><br/>
 				</div>
 				<div class="form-group">
 					<input type="button" onclick="save()" value="Save"/><br/>
@@ -160,10 +234,11 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
+			let allBlocks = ["fuelConsumptionBlock","courageBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","weaponsBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock","name"];
+			let allValues = ["courage","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","weapons","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
 			function init()
 			{
 				hideAll();
-				show(["typeBlock"]);
 				hide(["success","error"]);
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -172,9 +247,9 @@
 				request.onupgradeneeded = function(event)
 				{
 					db = event.target.result;
-					if (!db.objectStoreNames.contains("weapons"))
+					if (!db.objectStoreNames.contains("units"))
 					{
-						db.createObjectStore("weapons", {keyPath: "name"});
+						db.createObjectStore("units", {keyPath: "name"});
 					}
 				};
 				request.onsuccess = function(event)
@@ -183,7 +258,7 @@
 					let name = gup("name");
 					if (name && name != "")
 					{
-						let req = db.transaction(["weapons"]).objectStore("weapons").get(name);
+						let req = db.transaction(["units"]).objectStore("units").get(name);
 						req.onerror = function(event)
 						{
 							alert("DatabaseError");
@@ -196,113 +271,118 @@
 							}
 							else
 							{
-								alert("Unknown weapon.");
+								alert("Unknown unit.");
 							}
 						};
 					}
 				};
 			}
 			init();
-			let allBlocks = ["nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
-			let allValues = ["name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
 			function hideAll()
 			{
 				hide(allBlocks);
-				hide(["damageTypeHE","damageTypeHEAT","damageTypeHEDP","damageTypeAPI","damageTypeAPFSDS","damageTypeAP","damageTypeFMJ"]);
-				show(["nameBlock","price","inaccuracy","weight"]);
-			}
-			function hide(elements)
-			{
-				for (let element of elements)
-				{
-					document.getElementById(element).style.display = "none";
-				}
-			}
-			function show(elements)
-			{
-				for (let element of elements)
-				{
-					document.getElementById(element).style.display = "block";
-				}
+				show(["nameBlock","typeBlock","price","weight","speed"]);
 			}
 			function setType()
 			{
 				let element = document.getElementById("type")
 				let type = element.options[element.selectedIndex].text;
-				if (type == "AssaultRifle")
+				if (type == "Infantry")
 				{
 					hideAll();
-					show(["damageTypeAP","damageTypeFMJ","typeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","damageBlock","rangeBlock"]);
-					document.getElementById("guideType").value = "Unguided";
-					document.getElementById("lockChance").value = "0";
-					document.getElementById("damageRadius").value = "0";
-					document.getElementById("speed").value = "0";
-					document.getElementById("damageType").value = "FMJ";
+					show(["weaponsBlock","courageBlock","plateCarrierBlock","resupplyMedicalBlock","mineDetectionChanceBlock","mineDetectionBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
+					document.getElementById("sound").value = "10";
+					document.getElementById("opticsIR").value = "0";
+					document.getElementById("opticsIRQuality").value = "0";
+					document.getElementById("camouflageIR").value = "0";
+					document.getElementById("radarAir").value = "0";
+					document.getElementById("radarAirQuality").value = "0";
+					document.getElementById("radarWeapon").value = "0";
+					document.getElementById("camouflageRadar").value = "0";
+					document.getElementById("ecm").value = "0";
+					document.getElementById("ecmChance").value = "0";
+					document.getElementById("ircmChance").value = "0";
+					document.getElementById("flares").value = "0";
+					document.getElementById("flareChance").value = "0";
+					document.getElementById("chaffs").value = "0";
+					document.getElementById("chaffChance").value = "0";
+					document.getElementById("smoke").value = "0";
+					document.getElementById("smokeChance").value = "0";
+					document.getElementById("radioJammer").value = "0";
+					document.getElementById("radioJammerChance").value = "0";
+					document.getElementById("fuel").value = "0";
+					document.getElementById("lads").value = "0";
+					document.getElementById("ladsChance").value = "0";
+					document.getElementById("transportWeight").value = "0";
+					document.getElementById("resupplyFuel").value = "0";
+					document.getElementById("resupplyAmmo").value = "0";
+					document.getElementById("resupplyRepair").value = "0";
+					document.getElementById("resupplyMedical").value = "0";
+					document.getElementById("armourFront").value = "0";
+					document.getElementById("armourSide").value = "0";
+					document.getElementById("armourBack").value = "0";
+					document.getElementById("armourTop").value = "0";
+					document.getElementById("armourBottom").value = "0";
+					document.getElementById("armourType1").value = "";
+					document.getElementById("armourType2").value = "";
+					document.getElementById("fuelConsumption").value = "0";
+					document.getElementById("stabilisator").value = "0";
 					
-					setValues("rpm", "1", "30", "600", "1");
-					setValues("magazineSize", "10", "30", "50", "1");
-					setValues("magazines", "1", "15", "30", "1");
-					setValues("reloadTime", "2", "5", "5", "0.1");
-					setValues("range", "400", "600", "800", "1");
-					setValues("damage", "0.1", "0.5", "1.0", "0.1");
+					setValues("optics", "400", "1000", "2000", "1");
+					setValues("opticsQuality", "0", "0", "0.75", "0.01");
+					setValues("camouflage", "0", "0.25", "0.75", "0.01");
+					setValues("radio", "2000", "5000", "10000", "1");
+					setValues("mineDetection", "0", "0", "100", "1");
+					setValues("mineDetectionChance", "0", "0", "1", "0.01");
+					setValues("resupplyMedical", "0", "0", "10", "1");
+					setValues("plateCarrier", "0", "1", "1", "1");
+					setValues("courage", "0", "0", "0.75", "0.01");
 				}
 				recalc()
-			}
-			function setGuideType()
-			{
-			
-			}
-			function setDamageType()
-			{
-			
 			}
 			function recalc()
 			{
 				let element = document.getElementById("type")
 				let type = element.options[element.selectedIndex].text;
-				if (type == "AssaultRifle")
+				if (type == "Infantry")
 				{
-					let rpm = document.getElementById("rpm").value;
-					let magazineSize = document.getElementById("magazineSize").value;
-					let magazines = document.getElementById("magazines").value;
-					let range = document.getElementById("range").value;
-					let damage = document.getElementById("damage").value;
-					let reloadTime = document.getElementById("reloadTime").value;
-					let inaccuracy = Math.pow(rpm/240, 2)+0.01;
-					let price = 3000.0*damage*(rpm/30.0)	 +	 magazines*(30.0*(magazineSize/30.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0;
-					let weight = 3 + magazines*(magazineSize*0.140/30)+magazineSize*magazines*damage*(range/800)*0.025;
-					document.getElementById("inaccuracy").value = inaccuracy;
+					let optics = document.getElementById("optics").value;
+					let opticsQuality = document.getElementById("opticsQuality").value;
+					let camouflage = document.getElementById("camouflage").value;
+					let radio = document.getElementById("radio").value;
+					let mineDetection = document.getElementById("mineDetection").value;
+					let mineDetectionChance = document.getElementById("mineDetectionChance").value;
+					let resupplyMedical = document.getElementById("resupplyMedical").value;
+					let plateCarrier = document.getElementById("plateCarrier").value;
+					let courage = document.getElementById("courage").value;
+					//TODO weapon
+					let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
+					let bodyweight = 90;
+					let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
+					let speed = 15*(bodyweight/weight);
+					document.getElementById("speed").value = speed;
 					document.getElementById("price").value = price;
 					document.getElementById("weight").value = weight;
 				}
 			}
-			function load(weapon)
+			function load(unit)
 			{
-				console.log("load "+JSON.stringify(weapon));
-				for (let variable of Object.keys(weapon))
+				//TODO wepons
+				console.log("load "+JSON.stringify(unit));
+				for (let variable of Object.keys(unit))
 				{
-					document.getElementById(variable).value = weapon[variable];
+					document.getElementById(variable).value = unit[variable];
 				}
 				setType();
-				for (let variable of Object.keys(weapon))
+				for (let variable of Object.keys(unit))
 				{
-					document.getElementById(variable).value = weapon[variable];
-				}
-				setGuideType();
-				for (let variable of Object.keys(weapon))
-				{
-					document.getElementById(variable).value = weapon[variable];
-				}
-				setDamageType();
-				for (let variable of Object.keys(weapon))
-				{
-					document.getElementById(variable).value = weapon[variable];
+					document.getElementById(variable).value = unit[variable];
 				}
 			}
 			function save()
 			{
 				recalc();
-				let weapon = newDBWeapon();
+				let unit = newDBUnit();
 				for (element of allValues)
 				{
 					let e = document.getElementById(element);
@@ -311,24 +391,24 @@
 					{
 						value = '"'+value+'"';
 					}
-					eval("weapon."+element+" = "+value+";");
+					eval("unit."+element+" = "+value+";");
 					console.log(element+"="+value);
 				}
-				console.log("save "+JSON.stringify(weapon));
+				console.log("save "+JSON.stringify(unit));
 				hide(["error"]);
 				hide(["success"]);
 				let rename = false;
 				let name = gup("name");
 				if (name && name != "")
 				{
-					if (name != weapon.name)
+					if (name != unit.name)
 					{
 						rename = true;
 					}
 				}
 				if (rename)
 				{
-					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").delete(name);
+					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -339,7 +419,7 @@
 					};
 					request.onsuccess = function(event)
 					{
-						let req = db.transaction(["weapons"], "readwrite").objectStore("weapons").put(weapon);
+						let req = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
 						req.onerror = function(event)
 						{
 							show(["error"]);
@@ -354,14 +434,14 @@
 							setTimeout(function()
 							{
 								hide(["success"]);
-								location.search = "?name="+weapon.name;
+								location.search = "?name="+unit.name;
 							}, 1000);
 						};
 					};
 				}
 				else
 				{
-					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").put(weapon);
+					let request = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -376,7 +456,7 @@
 						setTimeout(function()
 						{
 							hide(["success"]);
-							location.search = "?name="+weapon.name;
+							location.search = "?name="+unit.name;
 						}, 1000);
 					};
 				}
@@ -386,7 +466,7 @@
 				let name = gup("name");
 				if (name && name != "")
 				{
-					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").delete(name);
+					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -404,14 +484,6 @@
 						}, 1000);
 					};
 				}
-			}
-			function setValues(element, min, value, max, step)
-			{
-				e = document.getElementById(element);
-				e.min = min;
-				e.max = max;
-				e.value = value;
-				e.step = step;
 			}
 		</script>
 	</body>
