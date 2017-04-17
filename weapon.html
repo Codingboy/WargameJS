@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<title>BFT</title>
+	</head>
+	<body>
+		<div class="container">
+			<form class="form-horizontal">
+				<div class="form-group" id="nameBlock">
+					<label for="name">Name</label>
+					<input type="text" name="name" id="name" required="required" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="typeBlock">
+					<label for="type">Type</label>
+					<select name="type" id="type" onchange="setType()">
+						<option value="AssaultRifle">AssaultRifle</option>
+						<option value="MachineGun">MachineGun</option>
+						<option value="SniperRifle">SniperRifle</option>
+						<option value="GrenadeLauncher">GrenadeLauncher</option>
+						<option value="GrenadeMachineGun">GrenadeMachineGun</option>
+						<option value="Artillery">Artillery</option>
+						<option value="Cannon">Cannon</option>
+						<option value="Missile">MissileLauncher</option>
+						<option value="AntiAircraftArtillery">AntiAircraftArtillery</option>
+						<option value="Mine">Mine</option>
+						<option value="Bomb">Bomb</option>
+					</select>
+				</div>
+				<div class="form-group" id="guideTypeBlock">
+					<label for="guideType">GuidanceSystem</label>
+					<select name="guideType" id="guideType" onchange="setGuideType()">
+						<option value="Unguided">Unguided</option>
+						<option value="Radio">Radio</option>
+						<option value="Cable">Cable</option>
+						<option value="IR">IR</option>
+						<option value="Radar">Radar</option>
+						<option value="SEAD">SEAD</option>
+					</select>
+				</div>
+				<div class="form-group" id="damageTypeBlock">
+					<label for="damageType">DamageType</label>
+					<select name="damageType" id="damageType" onchange="setDamageType()">
+						<option value="HE" id="damageTypeHE">HE</option>
+						<option value="HEAT" id="damageTypeHEAT">HEAT</option>
+						<option value="HEDP" id="damageTypeHEDP">HEDP</option>
+						<option value="API" id="damageTypeAPI">API</option>
+						<option value="APFSDS" id="damageTypeAPFSDS">APFSDS</option>
+						<option value="AP" id="damageTypeAP">AP</option>
+						<option value="FMJ" id="damageTypeFMJ">FMJ</option>
+					</select>
+				</div>
+				<div class="form-group" id="rpmBlock">
+					<label for="rpm">RPM</label>
+					<input type="number" name="rpm" id="rpm" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="magazineSizeBlock">
+					<label for="magazineSize">MagazineSize</label>
+					<input type="number" name="magazineSize" id="magazineSize" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="magazinesBlock">
+					<label for="magazines">Magazines</label>
+					<input type="number" name="magazines" id="magazines" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="reloadTimeBlock">
+					<label for="reloadTime">ReloadTime</label>
+					<input type="number" name="reloadTime" id="reloadTime" step="0.1" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="rangeBlock">
+					<label for="range">Range</label>
+					<input type="number" name="range" id="range" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="damageBlock">
+					<label for="damage">Damage</label>
+					<input type="number" name="damage" id="damage" step="0.1" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="damageRadiusBlock">
+					<label for="damageRadius">DamageRadius</label>
+					<input type="number" name="damageRadius" id="damageRadius" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="speedBlock">
+					<label for="speed">Speed</label>
+					<input type="number" name="speed" id="speed" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="lockChanceBlock">
+					<label for="lockChance">LockChance</label>
+					<input type="number" name="lockChance" id="lockChance" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group">
+					<label for="price">Price</label>
+					<input type="number" name="price" id="price" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<label for="weight">Weight</label>
+					<input type="number" name="weight" id="weight" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<label for="inaccuracy">Inaccuracy</label>
+					<input type="number" name="inaccuracy" id="inaccuracy" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<input type="button" onclick="save()" value="Save"/><br/>
+					<input type="button" onclick="check()" value="Check"/><br/>
+					<input type="button" onclick="cl()" value="Clear"/><br/>
+					<div id="success" class="alert alert-success" role="alert">
+						<strong>Success</strong>
+					</div>
+					<div id="error" class="alert alert-danger" role="alert">
+						<strong>Failed</strong>
+					</div>
+				</div>
+			<form>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script>
+			function newDBWeapon()
+			{
+				return {
+					name: "G36",
+					type: "AssaultRifle",
+					guideType: "Unguided",
+					damageType: "FMJ",
+					rpm: 30,
+					magazineSize: 30,
+					magazines: 10,
+					reloadTime: 5,
+					range: 600,
+					damage: 1.0,
+					damageRadius: 0,
+					speed: 0,
+					lockChance: 0,
+					price: 3000,
+					inaccuracy: 0.1,
+					weight: 5.0
+				};
+			}
+			var db;
+			function init()
+			{
+				hide(["success","error"]);
+				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+				let request = window.indexedDB.open("wargame", 1);
+				request.onupgradeneeded = function(event)
+				{
+					db = event.target.result;
+					if (!db.objectStoreNames.contains("weapons"))
+					{
+						db.createObjectStore("weapons", {keyPath: "name"});
+					}
+				};
+				request.onsuccess = function(event)
+				{
+					db = event.target.result;
+					let name = gup("name");
+					listWeapons(function(ret){console.log(JSON.stringify(ret));});
+					if (name && name != "")
+					{
+						let req = db.transaction(["weapons"]).objectStore("weapons").get(name);
+						req.onerror = function(event)
+						{
+							alert("DatabaseError");
+						};
+						req.onsuccess = function(event)
+						{
+							if (req.result)
+							{
+								load(req.result);
+							}
+							else
+							{
+								alert("Unknown weapon.");
+							}
+						};
+					}
+				};
+			}
+			init();
+			let allBlocks = ["nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
+			let allValues = ["name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
+			function hideAll()
+			{
+				hide(allBlocks);
+				hide(["damageTypeHE","damageTypeHEAT","damageTypeHEDP","damageTypeAPI","damageTypeAPFSDS","damageTypeAP","damageTypeFMJ"]);
+				show(["nameBlock","price","inaccuracy","weight"]);
+			}
+			hideAll();
+			show(["typeBlock"]);
+			function hide(elements)
+			{
+				for (let element of elements)
+				{
+					document.getElementById(element).style.display = "none";
+				}
+			}
+			function show(elements)
+			{
+				for (let element of elements)
+				{
+					document.getElementById(element).style.display = "block";
+				}
+			}
+			function setType()
+			{
+				let element = document.getElementById("type")
+				let type = element.options[element.selectedIndex].text;
+				if (type == "AssaultRifle")
+				{
+					hideAll();
+					show(["damageTypeAP","damageTypeFMJ","typeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","damageBlock","rangeBlock"]);
+					document.getElementById("guideType").value = "Unguided";
+					document.getElementById("lockChance").value = "0";
+					document.getElementById("damageRadius").value = "0";
+					document.getElementById("speed").value = "0";
+					document.getElementById("damageType").value = "FMJ";
+					
+					setValues("rpm", "1", "30", "600", "1");
+					setValues("magazineSize", "10", "30", "50", "1");
+					setValues("magazines", "1", "15", "30", "1");
+					setValues("reloadTime", "2", "5", "5", "0.1");
+					setValues("range", "400", "600", "800", "1");
+					setValues("damage", "0.1", "0.5", "1.0", "0.1");
+				}
+				recalc()
+			}
+			function setGuideType()
+			{
+			
+			}
+			function setDamageType()
+			{
+			
+			}
+			function recalc()
+			{
+				let element = document.getElementById("type")
+				let type = element.options[element.selectedIndex].text;
+				if (type == "AssaultRifle")
+				{
+					let rpm = document.getElementById("rpm").value;
+					let magazineSize = document.getElementById("magazineSize").value;
+					let magazines = document.getElementById("magazines").value;
+					let range = document.getElementById("range").value;
+					let damage = document.getElementById("damage").value;
+					let reloadTime = document.getElementById("reloadTime").value;
+					let inaccuracy = Math.pow(rpm/240, 2)+0.01;
+					let price = 3000.0*damage*(rpm/30.0)	 +	 magazines*(30.0*(magazineSize/30.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0;
+					let weight = 3 + magazines*(magazineSize*0.140/30)+magazineSize*magazines*damage*(range/800)*0.025;
+					document.getElementById("inaccuracy").value = inaccuracy;
+					document.getElementById("price").value = price;
+					document.getElementById("weight").value = weight;
+				}
+			}
+			function load(weapon)
+			{
+				console.log("load "+JSON.stringify(weapon));
+				for (let variable of Object.keys(weapon))
+				{
+					document.getElementById(variable).value = weapon[variable];
+				}
+				setType();
+				for (let variable of Object.keys(weapon))
+				{
+					document.getElementById(variable).value = weapon[variable];
+				}
+				setGuideType();
+				for (let variable of Object.keys(weapon))
+				{
+					document.getElementById(variable).value = weapon[variable];
+				}
+				setDamageType();
+				for (let variable of Object.keys(weapon))
+				{
+					document.getElementById(variable).value = weapon[variable];
+				}
+			}
+			function save()
+			{
+				recalc();
+				let weapon = newDBWeapon();
+				for (element of allValues)
+				{
+					let e = document.getElementById(element);
+					let value = e.value;
+					if (e.type != "number")
+					{
+						value = '"'+value+'"';
+					}
+					eval("weapon."+element+" = "+value+";");
+					console.log(element+"="+value);
+				}
+				console.log("save "+JSON.stringify(weapon));
+				hide(["error"]);
+				hide(["success"]);
+				let rename = false;
+				let name = gup("name");
+				if (name && name != "")
+				{
+					if (name != weapon.name)
+					{
+						rename = true;
+					}
+				}
+				if (rename)
+				{
+					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").delete(name);
+					request.onerror = function(event)
+					{
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
+					{
+						let req = db.transaction(["weapons"], "readwrite").objectStore("weapons").put(weapon);
+						req.onerror = function(event)
+						{
+							show(["error"]);
+							setTimeout(function()
+							{
+								hide(["error"]);
+							}, 1000);
+						};
+						req.onsuccess = function(event)
+						{
+							show(["success"]);
+							setTimeout(function()
+							{
+								hide(["success"]);
+								location.search = "?name="+weapon.name;
+							}, 1000);
+						};
+					};
+				}
+				else
+				{
+					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").put(weapon);
+					request.onerror = function(event)
+					{
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
+					{
+						show(["success"]);
+						setTimeout(function()
+						{
+							hide(["success"]);
+							location.search = "?name="+weapon.name;
+						}, 1000);
+					};
+				}
+			}
+			function check()
+			{
+				let req = db.transaction(["weapons"]).objectStore("weapons").get("b");
+				req.onerror = function(event)
+				{
+					alert("DatabaseError");
+				};
+				req.onsuccess = function(event)
+				{
+					if (req.result)
+					{
+						alert(req.result.rpm);
+					}
+					else
+					{
+						alert("Unknown weapon.");
+					}
+				};
+			}
+			function cl()
+			{
+				let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").clear();
+				request.onerror = function(event)
+				{
+					show(["error"]);
+					setTimeout(function()
+					{
+						hide(["error"]);
+					}, 5000);
+				};
+				request.onsuccess = function(event)
+				{
+					show(["success"]);
+					setTimeout(function()
+					{
+						hide(["success"]);
+					}, 5000);
+				};
+			}
+			function gup(name, url)
+			{
+				if (!url) url = location.href;
+				name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+				var regexS = "[\\?&]"+name+"=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(url);
+				return results == null ? null : results[1];
+			}
+			function setValues(element, min, value, max, step)
+			{
+				e = document.getElementById(element);
+				e.min = min;
+				e.max = max;
+				e.value = value;
+				e.step = step;
+			}
+			function listWeapons(callback)
+			{
+				let ret = [];
+				var objectStore = db.transaction("weapons").objectStore("weapons");
+				objectStore.openCursor().onsuccess = function(event)
+				{
+					var cursor = event.target.result;
+					 
+					if (cursor)
+					{
+						console.log(JSON.stringify(cursor.value));
+						ret.push(cursor.value);
+						cursor.continue();
+					}
+					else
+					{
+						callback(ret);
+					}
+				};
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="ol.css" type="text/css">
+		<style>
+			.map {
+				height: 100%;
+				width: 100%;
+			}
+		</style>
+		<script src="ol.js" type="text/javascript"></script>
+		<script src="dms.js" type="text/javascript"></script>
+		<script src="latlon-spherical.js" type="text/javascript"></script>
+		<script src="milsymbol-master/dist/milsymbol.js"></script>
+		<title>BFT</title>
+	</head>
+	<body onclick="onClick(event);">
+		<h2>BFT</h2>
+		Lat: <span id="lat"></span><br />
+		Lon: <span id="lon"></span><br />
+		<button onclick="spawnBlufor()">Blufor</button>
+		<button onclick="spawnOpfor()">Opfor</button>
+		<div id="map" class="map"></div>
+		<script type="text/javascript">
+			var visibleEnemyOpacity = 1.0;
+			var selectedOpacity = 1.0;
+			var unselectedOpacity = 0.66;
+			function Player()
+			{
+				this.name = "Coding";
+				this.team = 1;
+				this.groups = [];
+			}
+			Player.prototype.isEnemy = function()
+			{
+				return this.team != player.team;
+			};
+			Player.prototype.isFriend = function()
+			{
+				return this.team == player.team;
+			};
+			let blufor = new Player();
+			let opfor = new Player();
+			opfor.team = 2;
+			opfor.name = "duli";
+			let player = blufor;
+			let allPlayers = [];
+			allPlayers.push(blufor);
+			allPlayers.push(opfor);
+			function spawnBlufor()
+			{
+				let group = new Group();
+				let unit = new Unit();
+				group.addUnit(unit);
+				group.player = blufor;
+				addGroup(group);
+				group.setPos([8.2, 50.05]);
+			}
+			function spawnOpfor()
+			{
+				let group = new Group();
+				let unit = new Unit();
+				group.addUnit(unit);
+				group.player = opfor;
+				addGroup(group);
+				group.setPos([8.2, 50.05]);
+			}
+			let shift = false;
+			let ctrl = false;
+			function onClick(e){
+				shift = e.shiftKey;
+				ctrl = e.ctrlKey;
+			}
+			let symbolSource = new ol.source.Vector({
+				features: []
+			});
+			function Unit()
+			{
+				this.group = null;
+				this.id = 1;
+				
+				this.speed = 15;//speed when using 100% power
+				this.optics = 200;//range the daylight optic is working with in meter
+				this.opticsIR = 0;//range the IR optic is working with in meter
+				this.ir = 25;//heat
+				this.camouflage = 0.75;//percentage of visibilillity
+				this.camouflageIR = 0.75;//percentage of emitted heat
+				this.sound = 10;//range the unit is hearable
+				this.radarAir = 0;//range of airradar
+				this.radarWeapon = 0;//range of weapon tracking radar
+				this.camouflageRadar = 0.0;//percentage of reflected radar
+				
+				this.ecm = 0;//range of ecm to suppress radars
+				this.ecmChance = 0;//successrate of ecm
+				this.ircmChance = 0;//successrate of ircm
+				this.flares = 0;//number of carried flares
+				this.flareChance = 0;//successrate of flares
+				this.chaffs = 0;//number of carried chaffs
+				this.chaffChance = 0;//successrate of chaffs
+				this.smoke = 0;//number of carried smoke
+				this.radio = 2000;//range of radio in meter
+				this.radioJammer = 0;//range of radioJammer
+				this.radioJammerChance = 0;//successrate of radioJammer
+				this.fuel = 0;//size of fueltank in liter
+				this.lads = 0;//range of lads
+				this.ladsChance = 0;//successrate of lads
+				this.mineDetection = 0;//range of the minedetector in meter
+				this.transportCapacity = 0;//men that can be transported
+				this.resupplyFuel = 0;//liters of fuel
+				this.resupplyAmmo = 0;//ammo
+				this.armourFront = 0;
+				this.armourSide = 0;
+				this.armourBack = 0;
+				this.armourTop = 0;
+				this.armourBottom = 0;
+				
+				this.radarAirJammed = false;
+				this.radarWeaponJammed = false;
+				this.radioJammed = false;
+				this.flaresLeft = 0;
+				this.chaffsLeft = 0;
+				this.smokeLeft = 0;
+				this.fuelLeft = 0;
+				this.suppression = 0.0;//percentage of suppression
+				this.type = "infantry";
+				this.prize = 0;
+			}
+			function Group()
+			{
+				this.min = new Unit();
+				this.units = [];
+				this.groups = [];
+				this.group = null;
+				this.olObject = null;
+				this.target = null;
+				this.player = null;
+				this.pos = [0,0];
+				this.moved = true;
+				this.visible = false;
+				this.spots = [];
+				this.altitude = 0;
+				this.dir = -1;
+				this.opacity = 0.0;
+			}
+			Group.prototype.addUnit = function(unit)
+			{
+				this.units.push(unit);
+				unit.group = this;
+				if (unit.speed < this.min.speed)
+				{
+					this.min.speed = unit.speed;
+				}
+				if (unit.optics > this.min.optics)
+				{
+					this.min.optics = unit.optics;
+				}
+				if (unit.opticsIR > this.min.opticsIR)
+				{
+					this.min.opticsIR = unit.opticsIR;
+				}
+				if (unit.ir*unit.camouflageIR > this.min.ir*this.min.camouflageIR)
+				{
+					this.min.ir = unit.ir;
+					this.min.camouflageIR = unit.camouflageIR;
+				}
+				if (unit.camouflage < this.min.camouflage)
+				{
+					this.min.camouflage = unit.camouflage;
+				}
+				if (unit.sound > this.min.sound)
+				{
+					this.min.sound = unit.sound;
+				}
+				if (unit.radarAir > this.min.radarAir)
+				{
+					this.min.radarAir = unit.radarAir;
+				}
+				if (unit.radarWeapon > this.min.radarWeapon)
+				{
+					this.min.radarWeapon = unit.radarWeapon;
+				}
+				if (unit.camouflageRadar < this.min.camouflageRadar)
+				{
+					this.min.camouflageRadar = unit.camouflageRadar;
+				}
+			};
+			Group.prototype.addGroup = function(group)
+			{
+				this.groups.push(group);
+				group.group = this;
+			};
+			Group.prototype.setPos = function(pos)
+			{
+				document.getElementById("lat").innerHTML = pos[0];
+				document.getElementById("lon").innerHTML = pos[1];
+				position = ol.proj.transform(pos, "EPSG:4326", "EPSG:3857");
+				this.olObject.getGeometry().setCoordinates(position);
+				this.pos3857 = position;
+				this.pos4326 = pos;
+				this.latlon = new LatLon(pos[0], pos[1]);
+			};
+			Group.prototype.getSymbol = function()
+			{
+				let version = "10"
+				let standardIdentity = "03";
+				if (this.isEnemy())
+				{
+					standardIdentity = "06";
+				}
+				let symbolSet = "10";
+				let status = "0";
+				let hqtfDummy = "0";
+				let amplifier = "11";
+				let entity = "12";
+				let entityType = "11";
+				let entitySuptype = "00";
+				let modifier1 = "00";
+				let modifier2 = "00";
+				let altitude = "";
+				if (this.altitude != 0)
+				{
+					altitude = ""+this.altitude;
+				}
+				let type = "";//TODO set to transported units name
+				let direction = undefined;
+				if (this.dir != -1)
+				{
+					direction = this.dir;
+				}
+				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:"Rifleman '90",altitudeDepth:altitude,direction:direction,speed:""+this.min.speed,combatEffectiveness:""+this.min.prize,headquartersElement:this.player.name,type:type});
+			};
+			Group.prototype.setOpacity = function(opacity)
+			{
+				this.opacity = opacity;
+				let ratio = window.devicePixelRatio || 1;
+				let symbol = this.getSymbol();
+				let olStyle = new ol.style.Style({
+					image: new ol.style.Icon({
+						anchor: [0.5, 0.5],
+						anchorXUnits: "fraction",
+						anchorYUnits: "fraction",
+						opacity: opacity,
+						imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
+						img: symbol.asCanvas(),
+						scale: 1/ratio
+					})
+				});
+				this.olObject.setStyle(olStyle);//TODO remove
+			};
+			Group.prototype.redraw = function()
+			{
+				let ratio = window.devicePixelRatio || 1;
+				let symbol = this.getSymbol();
+				let olStyle = new ol.style.Style({
+					image: new ol.style.Icon({
+						anchor: [0.5, 0.5],
+						anchorXUnits: "fraction",
+						anchorYUnits: "fraction",
+						opacity: this.opacity,
+						imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
+						img: symbol.asCanvas(),
+						scale: 1/ratio
+					})
+				});
+				this.olObject.setStyle(olStyle);
+			};
+			Group.prototype.canSee = function(group)
+			{
+				let distance = this.latlon.distanceTo(group.latlon);
+				return distance <= this.min.optics*group.min.camouflage;
+			};
+			Group.prototype.isEnemy = function()
+			{
+				return this.player.team != player.team;
+			};
+			Group.prototype.isFriend = function()
+			{
+				return this.player.team == player.team;
+			};
+			function addGroup(group)
+			{
+				let olObject = new ol.Feature({
+					geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
+				});
+				group.olObject = olObject;
+				olObject.set("group", group);
+				if (group.isFriend())
+				{
+					group.setOpacity(unselectedOpacity);
+				}
+				else
+				{
+					group.setOpacity(0.0);
+				}
+				symbolSource.addFeature(olObject);
+				group.player.groups.push(group);
+			}
+
+			let symbolLayer = new ol.layer.Vector({
+				source: symbolSource
+			});
+			let styles = {
+				'landuse': {
+					'forest': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 255, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 255, 0, 0.5)'
+						})
+					}),
+					'farmland|meadow|orchard|plant_nursery|vineyard': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 128, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 128, 0, 0.5)'
+						})
+					}),
+					'commercial|cemetery|construction|depot|allotments|farmyard|port|quarry|residential|retail|industrial|greenhouse_horticulture|garages': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 0, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(255, 0, 0, 0.5)'
+						})
+					})
+				},
+				'natural': {
+					'tree': new ol.style.Style({
+						image: new ol.style.Circle({
+							radius: 2,
+							fill: new ol.style.Fill({
+								color: 'rgba(140, 208, 95, 1.0)'
+							}),
+							stroke: null
+						})
+					}),
+					'wood|tree_row': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 255, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 255, 0, 0.5)'
+						})
+					}),
+					'water|bay': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 255, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 255, 0.5)'
+						})
+					})
+				},
+				'waterway': {
+					'stream|drain|ditch': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 128, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 128, 0.5)'
+						})
+					}),
+					'canal|river|fairway': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 255, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 255, 0.5)'
+						})
+					})
+				},
+				'highway': {
+					'track': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 255, 255, 1.0)',
+							width: 2
+						})
+					}),
+					'motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|living_street|pedestrian|bus_guideway|escape|raceway||||||': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 255, 255, 1.0)',
+							width: 3
+						})
+					})
+				}
+			};
+
+			let vectorSource = new ol.source.Vector({
+				format: new ol.format.OSMXML(),
+				loader: function(extent, resolution, projection) {
+					let epsg4326Extent =
+							ol.proj.transformExtent(extent, projection, 'EPSG:4326');
+					let client = new XMLHttpRequest();
+					client.open('POST', 'https://overpass-api.de/api/interpreter');
+					client.addEventListener('load', function() {
+						let features = new ol.format.OSMXML().readFeatures(client.responseText, {
+							featureProjection: map.getView().getProjection()
+						});
+						vectorSource.addFeatures(features);
+					});
+					let query = '(node(' +
+							epsg4326Extent[1] + ',' + epsg4326Extent[0] + ',' +
+							epsg4326Extent[3] + ',' + epsg4326Extent[2] +
+							');rel(bn)->.foo;way(bn);node(w)->.foo;rel(bw););out meta;';
+					//alert(query);
+					//client.send(query);
+				},
+				strategy: ol.loadingstrategy.bbox
+			});
+
+			let vector = new ol.layer.Vector({
+				source: vectorSource,
+				style: function(feature) {
+					for (let key in styles) {
+						let value = feature.get(key);
+						if (value !== undefined) {
+							for (let regexp in styles[key]) {
+								if (new RegExp(regexp).test(value)) {
+									return styles[key][regexp];
+								}
+							}
+						}
+					}
+					return null;
+				}
+			});
+			let map = new ol.Map({
+				target: "map",
+				layers: [
+					new ol.layer.Tile({
+						preload: Infinity,
+						source: new ol.source.OSM()
+					}),
+					vector,
+					symbolLayer
+				],
+				view: new ol.View({
+					center: ol.proj.fromLonLat([8.2, 50.05]),
+					zoom: 15
+				}),
+				interactions: ol.interaction.defaults({
+					doubleClickZoom: false,
+					shiftDragZoom: false,
+					altShiftDragRotate: false,
+					keyboard: false,
+					pinchRotate: false,
+					pinchZoom: false
+				}),
+				controls: ol.control.defaults().extend([
+					new ol.control.ScaleLine()
+				])
+			});
+			let selectedGroups = [];
+			map.on("singleclick", function(evt){
+				let latlon = ol.proj.transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
+				let lat = latlon[0];
+				let lon = latlon[1];
+				document.getElementById("lat").innerHTML = lat;
+				document.getElementById("lon").innerHTML = lon;
+				/*feature = symbolSource.getClosestFeatureToCoordinate(evt.coordinate);
+				group = feature.get("group");
+				selected = [group];
+				for (group of selected)
+				{
+					group.target = latlon;
+				}*/
+				let selected = false;
+				feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
+				{
+					return feature;
+				});
+				if (feature)
+				{
+					group = feature.get("group");
+					selected = true;
+					if (shift)
+					{
+						selectedGroups.push(group);
+					}
+					else
+					{
+						for (let g of selectedGroups)
+						{
+							g.setOpacity(unselectedOpacity);
+						}
+						selectedGroups = [group];
+					}
+					group.setOpacity(selectedOpacity);
+				}
+				if (!selected)
+				{
+					for (group of selectedGroups)
+					{
+						group.target = latlon;
+					}
+				}
+			});
+			let fps = 10;
+			let timeFactor = 10;
+			function updateUI()
+			{
+				//move groups
+				for (let p of allPlayers)
+				{
+					for (let group of p.groups)
+					{
+						if (group.target)
+						{
+							let dst = group.target;
+							let minMoveDistance = group.min.speed/(3.6*fps);
+							let srcLatLon = group.latlon;
+							let dstLatLon = new LatLon(dst[0], dst[1]);
+							let distance = srcLatLon.distanceTo(dstLatLon);
+							if (distance < minMoveDistance)
+							{
+								group.target = null;
+								group.dir = -1;
+								group.redraw();
+								group.setPos(dst);
+							}
+							else
+							{
+								let bearing = srcLatLon.finalBearingTo(dstLatLon);
+								let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+								bearing = (360-bearing+90)%360;
+								if (Math.round(group.dir) != Math.round(bearing))
+								{
+									group.dir = bearing;
+									group.redraw();
+								}
+								group.setPos([destination.lat, destination.lon]);
+							}
+							group.moved = true;
+						}
+						else
+						{
+							group.moved = false;
+						}
+					}
+				}
+				
+				//make spotted enemies visible
+				let visible = new Set();
+				let becameVisible = new Set();
+				let enemies = new Set();
+				for (let p of allPlayers)
+				{
+					if (p.isEnemy())
+					{
+						for (let group of p.groups)
+						{
+							enemies.add(group);
+						}
+					}
+				}
+				for (let p of allPlayers)
+				{
+					if (p.isFriend())
+					{
+						for (let group of p.groups)
+						{
+							if (group.moved)
+							{
+								//recheck all enemies
+								group.spots = [];
+								for (let g of enemies)
+								{
+									if (group.canSee(g))
+									{
+										if (g.visible)
+										{
+											visible.add(g);
+											group.spots.push(g);
+										}
+										else
+										{
+											becameVisible.add(g);
+											g.visible = true;
+										}
+									}
+								}
+							}
+							else
+							{
+								//recheck all enemies that moved
+								for (let g of enemies)
+								{
+									if (g.moved)
+									{
+										if (group.canSee(g))
+										{
+											if (g.visible)
+											{
+												visible.add(g);
+											}
+											else
+											{
+												becameVisible.add(g);
+												g.visible = true;
+											}
+										}
+										else
+										{
+											group.spots.delete(g);
+										}
+									}
+									else
+									{
+										if (group.spots.indexOf(g) != -1)
+										{
+											visible.add(g);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				for (let group of becameVisible)
+				{
+					if (!visible.has(group))
+					{
+						visible.add(group);
+						group.setOpacity(visibleEnemyOpacity);
+					}
+				}
+				for (let p of allPlayers)
+				{
+					if (p.isEnemy())
+					{
+						for (let group of p.groups)
+						{
+							if (group.visible)
+							{
+								if (!visible.has(group))
+								{
+									group.visible = false;
+									group.setOpacity(0.0);
+								}
+							}
+						}
+					}
+				}
+			}
+			let t = setInterval(updateUI, 1000/fps);
+		</script>
+	</body>
+</html>

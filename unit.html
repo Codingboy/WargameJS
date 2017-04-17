@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<title>BFT</title>
+	</head>
+	<body>
+		<div class="container">
+			<form class="form-horizontal">
+				<div class="form-group" id="typeBlock" onchange="setType()">
+					<label for="type">Type</label>
+					<select name="type" id="type">
+						<option value="Infantry">Infantry</option>
+						<option value="Wheeled">Wheeled</option>
+						<option value="Tracked">Tracked</option>
+						<option value="Heli">Heli</option>
+						<option value="Plane">Plane</option>
+					</select>
+				</div>
+				<div class="form-group" id="nameBlock">
+					<label for="name">Name</label>
+					<input type="text" name="name" id="name"/><br/>
+				</div>
+				<div class="form-group" id="strengthBlock">
+					<label for="strength">Strength</label>
+					<input type="number" name="strength" id="strength" min="1" max="100" value="50"/><br/>
+				</div>
+				<div class="form-group" id="opticsBlock">
+					<label for="optics">Optics</label>
+					<input type="number" name="optics" id="optics" min="100" max="2000" value="600"/><br/>
+				</div>
+				<div class="form-group" id="camouflageBlock">
+					<label for="camouflage">Camouflage</label>
+					<input type="number" name="camouflage" id="camouflage" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="opticsIRBlock">
+					<label for="opticsIR">OpticsIR</label>
+					<input type="number" name="opticsIR" id="opticsIR" min="0" max="8000" value="2000"/><br/>
+				</div>
+				<div class="form-group" id="camouflageIRBlock">
+					<label for="camouflageIR">CamouflageIR</label>
+					<input type="number" name="camouflageIR" id="camouflageIR" min="0" max="50" value="0"/><br/>
+				</div>
+				<div class="form-group" id="radarAirBlock">
+					<label for="radarAir">AirRadar</label>
+					<input type="number" name="radarAir" id="radarAir" min="0" max="500000" value="40000"/><br/>
+				</div>
+				<div class="form-group" id="camouflageRadarBlock">
+					<label for="camouflageRadar">CamouflageRadar</label>
+					<input type="number" name="camouflageRadar" id="camouflageRadar" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="radarWeaponBlock">
+					<label for="radarWeapon">WeaponRadar</label>
+					<input type="number" name="radarWeapon" id="radarWeapon" min="0" max="40000" value="20000"/><br/>
+				</div>
+				<div class="form-group" id="ecmBlock">
+					<label for="ecm">ECM</label>
+					<input type="number" name="ecm" id="ecm" min="0" max="200000" value="100000"/><br/>
+				</div>
+				<div class="form-group" id="ecmChanceBlock">
+					<label for="ecmChance">ECMChance</label>
+					<input type="number" name="ecmChance" id="ecmChance" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="ircmChanceBlock">
+					<label for="ircmChance">IRCMChance</label>
+					<input type="number" name="ircmChance" id="ircmChance" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="chaffsBlock">
+					<label for="chaffs">Chaffs</label>
+					<input type="number" name="chaffs" id="chaffs" min="0" max="120" value="120"/><br/>
+				</div>
+				<div class="form-group" id="chaffChanceBlock">
+					<label for="chaffChance">ChaffChance</label>
+					<input type="number" name="chaffChance" id="chaffChance" step="0.1" min="0.1" max="5.0" value="5.0"/><br/>
+				</div>
+				<div class="form-group" id="flaresBlock">
+					<label for="flares">Flares</label>
+					<input type="number" name="flares" id="flares" min="0" max="120" value="120"/><br/>
+				</div>
+				<div class="form-group" id="flareChanceBlock">
+					<label for="flareChance">FlareChance</label>
+					<input type="number" name="flareChance" id="flareChance" step="0.1" min="0.1" max="5.0" value="5.0"/><br/>
+				</div>
+				<div class="form-group" id="smokeBlock">
+					<label for="smoke">Smoke</label>
+					<input type="number" name="smoke" id="smoke" min="0" max="4" value="4"/><br/>
+				</div>
+				<div class="form-group" id="radioBlock">
+					<label for="radio">Radio</label>
+					<input type="number" name="radio" id="radio" min="0" max="1000000" value="5000"/><br/>
+				</div>
+				<div class="form-group" id="radioJammerBlock">
+					<label for="radioJammer">RadioJammer</label>
+					<input type="number" name="radioJammer" id="radioJammer" min="0" max="2500" value="2500"/><br/>
+				</div>
+				<div class="form-group" id="radioJammerChanceBlock">
+					<label for="radioJammerChance">RadioJammerChance</label>
+					<input type="number" name="radioJammerChance" id="radioJammerChance" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="fuelBlock">
+					<label for="fuel">RadioJammerChance</label>
+					<input type="number" name="fuel" id="fuel" min="0" max="10000" value="1000"/><br/>
+				</div>
+				<div class="form-group" id="ladsBlock">
+					<label for="lads">LADS</label>
+					<input type="number" name="lads" id="lads" min="0" max="1000" value="1000"/><br/>
+				</div>
+				<div class="form-group" id="ladsChanceBlock">
+					<label for="ladsChance">LADSChance</label>
+					<input type="number" name="ladsChance" id="ladsChance" min="0" max="50" value="25"/><br/>
+				</div>
+				<div class="form-group" id="mineDetectionBlock">
+					<label for="mineDetection">MineDetection</label>
+					<input type="number" name="mineDetection" id="mineDetection" min="0" max="100" value="50"/><br/>
+				</div>
+				<div class="form-group" id="transportCapacityBlock">
+					<label for="transportCapacity">TransportCapacity</label>
+					<input type="number" name="transportCapacity" id="transportCapacity" min="0" max="10" value="5"/><br/>
+				</div>
+				<div class="form-group" id="resupplyFuelBlock">
+					<label for="resupplyFuel">ResupplyFuel</label>
+					<input type="number" name="resupplyFuel" id="resupplyFuel" min="0" max="10" value="5"/><br/>
+				</div>
+				<div class="form-group" id="resupplyAmmoBlock">
+					<label for="resupplyAmmo">ResupplyAmmo</label>
+					<input type="number" name="resupplyAmmo" id="resupplyAmmo" min="0" max="10" value="5"/><br/>
+				</div>
+				<div class="form-group" id="armourFrontBlock">
+					<label for="armourFront">armourFront TODO TODO TODO TODO TODO TODO</label>
+					<input type="number" name="armourFront" id="armourFront" min="0" max="10" value="5"/><br/>
+				</div>
+			<form>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script>
+			function setType()
+			{
+				let element = document.getElementById("type")
+				let type = element.options[element.selectedIndex].text;
+				if (type == "Infantry")
+				{
+					document.getElementById("opticsIRBlock").style.display = "none";
+					document.getElementById("camouflageIRBlock").style.display = "none";
+					document.getElementById("radarAirBlock").style.display = "none";
+					document.getElementById("radarWeaponBlock").style.display = "none";
+					document.getElementById("camouflageRadarBlock").style.display = "none";
+					document.getElementById("ecmBlock").style.display = "none";
+					document.getElementById("ecmChanceBlock").style.display = "none";
+					document.getElementById("ircmChanceBlock").style.display = "none";
+					document.getElementById("chaffsBlock").style.display = "none";
+					document.getElementById("chaffChanceBlock").style.display = "none";
+					document.getElementById("flaresBlock").style.display = "none";
+					document.getElementById("flareChanceBlock").style.display = "none";
+					document.getElementById("smokeBlock").style.display = "none";
+					document.getElementById("radioJammerBlock").style.display = "none";
+					document.getElementById("radioJammerChanceBlock").style.display = "none";
+					document.getElementById("fuelBlock").style.display = "none";
+					document.getElementById("ladsBlock").style.display = "none";
+					document.getElementById("ladsChanceBlock").style.display = "none";
+					document.getElementById("transportCapacityBlock").style.display = "none";
+				}
+			}
+		</script>
+	</body>
+</html>

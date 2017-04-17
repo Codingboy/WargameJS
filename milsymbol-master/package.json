@@ -1,0 +1,31 @@
+{
+  "name": "milsymbol",
+  "version": "1.0.0",
+  "description": "Milsymbol.js is a small library in pure javascript that creates symbols according to MIL-STD-2525 and APP6.",
+  "main": "dist/milsymbol.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "webpack -p",
+    "build-dev": "webpack",
+    "test": "mocha test/.setup.js --recursive test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spatialillusions/milsymbol"
+  },
+  "author": "Måns Beckman (http://www.spatialillusions.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spatialillusions/milsymbol/issues"
+  },
+  "homepage": "https://github.com/spatialillusions/milsymbol",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "webpack": "^2.2.0",
+    "webpack-custom-var-library-name-plugin": "^1.0.2"
+  }
+}
