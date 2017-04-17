@@ -13,6 +13,7 @@
 		<script src="dms.js" type="text/javascript"></script>
 		<script src="latlon-spherical.js" type="text/javascript"></script>
 		<script src="milsymbol-master/dist/milsymbol.js"></script>
+		<script src="core.js"></script>
 		<title>BFT</title>
 	</head>
 	<body onclick="onClick(event);">
@@ -26,21 +27,9 @@
 			var visibleEnemyOpacity = 1.0;
 			var selectedOpacity = 1.0;
 			var unselectedOpacity = 0.66;
-			function Player()
-			{
-				this.name = "Coding";
-				this.team = 1;
-				this.groups = [];
-			}
-			Player.prototype.isEnemy = function()
-			{
-				return this.team != player.team;
-			};
-			Player.prototype.isFriend = function()
-			{
-				return this.team == player.team;
-			};
 			let blufor = new Player();
+			blufor.name = "Coding";
+			blufor.team = 1;
 			let opfor = new Player();
 			opfor.team = 2;
 			opfor.name = "duli";
@@ -75,209 +64,6 @@
 			let symbolSource = new ol.source.Vector({
 				features: []
 			});
-			function Unit()
-			{
-				this.group = null;
-				this.id = 1;
-				
-				this.speed = 15;//speed when using 100% power
-				this.optics = 200;//range the daylight optic is working with in meter
-				this.opticsIR = 0;//range the IR optic is working with in meter
-				this.ir = 25;//heat
-				this.camouflage = 0.75;//percentage of visibilillity
-				this.camouflageIR = 0.75;//percentage of emitted heat
-				this.sound = 10;//range the unit is hearable
-				this.radarAir = 0;//range of airradar
-				this.radarWeapon = 0;//range of weapon tracking radar
-				this.camouflageRadar = 0.0;//percentage of reflected radar
-				
-				this.ecm = 0;//range of ecm to suppress radars
-				this.ecmChance = 0;//successrate of ecm
-				this.ircmChance = 0;//successrate of ircm
-				this.flares = 0;//number of carried flares
-				this.flareChance = 0;//successrate of flares
-				this.chaffs = 0;//number of carried chaffs
-				this.chaffChance = 0;//successrate of chaffs
-				this.smoke = 0;//number of carried smoke
-				this.radio = 2000;//range of radio in meter
-				this.radioJammer = 0;//range of radioJammer
-				this.radioJammerChance = 0;//successrate of radioJammer
-				this.fuel = 0;//size of fueltank in liter
-				this.lads = 0;//range of lads
-				this.ladsChance = 0;//successrate of lads
-				this.mineDetection = 0;//range of the minedetector in meter
-				this.transportCapacity = 0;//men that can be transported
-				this.resupplyFuel = 0;//liters of fuel
-				this.resupplyAmmo = 0;//ammo
-				this.armourFront = 0;
-				this.armourSide = 0;
-				this.armourBack = 0;
-				this.armourTop = 0;
-				this.armourBottom = 0;
-				
-				this.radarAirJammed = false;
-				this.radarWeaponJammed = false;
-				this.radioJammed = false;
-				this.flaresLeft = 0;
-				this.chaffsLeft = 0;
-				this.smokeLeft = 0;
-				this.fuelLeft = 0;
-				this.suppression = 0.0;//percentage of suppression
-				this.type = "infantry";
-				this.prize = 0;
-			}
-			function Group()
-			{
-				this.min = new Unit();
-				this.units = [];
-				this.groups = [];
-				this.group = null;
-				this.olObject = null;
-				this.target = null;
-				this.player = null;
-				this.pos = [0,0];
-				this.moved = true;
-				this.visible = false;
-				this.spots = [];
-				this.altitude = 0;
-				this.dir = -1;
-				this.opacity = 0.0;
-			}
-			Group.prototype.addUnit = function(unit)
-			{
-				this.units.push(unit);
-				unit.group = this;
-				if (unit.speed < this.min.speed)
-				{
-					this.min.speed = unit.speed;
-				}
-				if (unit.optics > this.min.optics)
-				{
-					this.min.optics = unit.optics;
-				}
-				if (unit.opticsIR > this.min.opticsIR)
-				{
-					this.min.opticsIR = unit.opticsIR;
-				}
-				if (unit.ir*unit.camouflageIR > this.min.ir*this.min.camouflageIR)
-				{
-					this.min.ir = unit.ir;
-					this.min.camouflageIR = unit.camouflageIR;
-				}
-				if (unit.camouflage < this.min.camouflage)
-				{
-					this.min.camouflage = unit.camouflage;
-				}
-				if (unit.sound > this.min.sound)
-				{
-					this.min.sound = unit.sound;
-				}
-				if (unit.radarAir > this.min.radarAir)
-				{
-					this.min.radarAir = unit.radarAir;
-				}
-				if (unit.radarWeapon > this.min.radarWeapon)
-				{
-					this.min.radarWeapon = unit.radarWeapon;
-				}
-				if (unit.camouflageRadar < this.min.camouflageRadar)
-				{
-					this.min.camouflageRadar = unit.camouflageRadar;
-				}
-			};
-			Group.prototype.addGroup = function(group)
-			{
-				this.groups.push(group);
-				group.group = this;
-			};
-			Group.prototype.setPos = function(pos)
-			{
-				document.getElementById("lat").innerHTML = pos[0];
-				document.getElementById("lon").innerHTML = pos[1];
-				position = ol.proj.transform(pos, "EPSG:4326", "EPSG:3857");
-				this.olObject.getGeometry().setCoordinates(position);
-				this.pos3857 = position;
-				this.pos4326 = pos;
-				this.latlon = new LatLon(pos[0], pos[1]);
-			};
-			Group.prototype.getSymbol = function()
-			{
-				let version = "10"
-				let standardIdentity = "03";
-				if (this.isEnemy())
-				{
-					standardIdentity = "06";
-				}
-				let symbolSet = "10";
-				let status = "0";
-				let hqtfDummy = "0";
-				let amplifier = "11";
-				let entity = "12";
-				let entityType = "11";
-				let entitySuptype = "00";
-				let modifier1 = "00";
-				let modifier2 = "00";
-				let altitude = "";
-				if (this.altitude != 0)
-				{
-					altitude = ""+this.altitude;
-				}
-				let type = "";//TODO set to transported units name
-				let direction = undefined;
-				if (this.dir != -1)
-				{
-					direction = this.dir;
-				}
-				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:"Rifleman '90",altitudeDepth:altitude,direction:direction,speed:""+this.min.speed,combatEffectiveness:""+this.min.prize,headquartersElement:this.player.name,type:type});
-			};
-			Group.prototype.setOpacity = function(opacity)
-			{
-				this.opacity = opacity;
-				let ratio = window.devicePixelRatio || 1;
-				let symbol = this.getSymbol();
-				let olStyle = new ol.style.Style({
-					image: new ol.style.Icon({
-						anchor: [0.5, 0.5],
-						anchorXUnits: "fraction",
-						anchorYUnits: "fraction",
-						opacity: opacity,
-						imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
-						img: symbol.asCanvas(),
-						scale: 1/ratio
-					})
-				});
-				this.olObject.setStyle(olStyle);//TODO remove
-			};
-			Group.prototype.redraw = function()
-			{
-				let ratio = window.devicePixelRatio || 1;
-				let symbol = this.getSymbol();
-				let olStyle = new ol.style.Style({
-					image: new ol.style.Icon({
-						anchor: [0.5, 0.5],
-						anchorXUnits: "fraction",
-						anchorYUnits: "fraction",
-						opacity: this.opacity,
-						imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
-						img: symbol.asCanvas(),
-						scale: 1/ratio
-					})
-				});
-				this.olObject.setStyle(olStyle);
-			};
-			Group.prototype.canSee = function(group)
-			{
-				let distance = this.latlon.distanceTo(group.latlon);
-				return distance <= this.min.optics*group.min.camouflage;
-			};
-			Group.prototype.isEnemy = function()
-			{
-				return this.player.team != player.team;
-			};
-			Group.prototype.isFriend = function()
-			{
-				return this.player.team == player.team;
-			};
 			function addGroup(group)
 			{
 				let olObject = new ol.Feature({

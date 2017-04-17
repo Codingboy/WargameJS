@@ -103,8 +103,7 @@
 				</div>
 				<div class="form-group">
 					<input type="button" onclick="save()" value="Save"/><br/>
-					<input type="button" onclick="check()" value="Check"/><br/>
-					<input type="button" onclick="cl()" value="Clear"/><br/>
+					<input type="button" onclick="del()" value="Delete"/><br/>
 					<div id="success" class="alert alert-success" role="alert">
 						<strong>Success</strong>
 					</div>
@@ -116,31 +115,13 @@
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script src="core.js"></script>
 		<script>
-			function newDBWeapon()
-			{
-				return {
-					name: "G36",
-					type: "AssaultRifle",
-					guideType: "Unguided",
-					damageType: "FMJ",
-					rpm: 30,
-					magazineSize: 30,
-					magazines: 10,
-					reloadTime: 5,
-					range: 600,
-					damage: 1.0,
-					damageRadius: 0,
-					speed: 0,
-					lockChance: 0,
-					price: 3000,
-					inaccuracy: 0.1,
-					weight: 5.0
-				};
-			}
 			var db;
 			function init()
 			{
+				hideAll();
+				show(["typeBlock"]);
 				hide(["success","error"]);
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -158,7 +139,6 @@
 				{
 					db = event.target.result;
 					let name = gup("name");
-					listWeapons(function(ret){console.log(JSON.stringify(ret));});
 					if (name && name != "")
 					{
 						let req = db.transaction(["weapons"]).objectStore("weapons").get(name);
@@ -189,8 +169,6 @@
 				hide(["damageTypeHE","damageTypeHEAT","damageTypeHEDP","damageTypeAPI","damageTypeAPFSDS","damageTypeAP","damageTypeFMJ"]);
 				show(["nameBlock","price","inaccuracy","weight"]);
 			}
-			hideAll();
-			show(["typeBlock"]);
 			function hide(elements)
 			{
 				for (let element of elements)
@@ -361,53 +339,29 @@
 					};
 				}
 			}
-			function check()
+			function del()
 			{
-				let req = db.transaction(["weapons"]).objectStore("weapons").get("b");
-				req.onerror = function(event)
+				let name = gup("name");
+				if (name && name != "")
 				{
-					alert("DatabaseError");
-				};
-				req.onsuccess = function(event)
-				{
-					if (req.result)
+					let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").delete(name);
+					request.onerror = function(event)
 					{
-						alert(req.result.rpm);
-					}
-					else
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
 					{
-						alert("Unknown weapon.");
-					}
-				};
-			}
-			function cl()
-			{
-				let request = db.transaction(["weapons"], "readwrite").objectStore("weapons").clear();
-				request.onerror = function(event)
-				{
-					show(["error"]);
-					setTimeout(function()
-					{
-						hide(["error"]);
-					}, 5000);
-				};
-				request.onsuccess = function(event)
-				{
-					show(["success"]);
-					setTimeout(function()
-					{
-						hide(["success"]);
-					}, 5000);
-				};
-			}
-			function gup(name, url)
-			{
-				if (!url) url = location.href;
-				name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-				var regexS = "[\\?&]"+name+"=([^&#]*)";
-				var regex = new RegExp(regexS);
-				var results = regex.exec(url);
-				return results == null ? null : results[1];
+						show(["success"]);
+						setTimeout(function()
+						{
+							hide(["success"]);
+						}, 1000);
+					};
+				}
 			}
 			function setValues(element, min, value, max, step)
 			{
@@ -416,26 +370,6 @@
 				e.max = max;
 				e.value = value;
 				e.step = step;
-			}
-			function listWeapons(callback)
-			{
-				let ret = [];
-				var objectStore = db.transaction("weapons").objectStore("weapons");
-				objectStore.openCursor().onsuccess = function(event)
-				{
-					var cursor = event.target.result;
-					 
-					if (cursor)
-					{
-						console.log(JSON.stringify(cursor.value));
-						ret.push(cursor.value);
-						cursor.continue();
-					}
-					else
-					{
-						callback(ret);
-					}
-				};
 			}
 		</script>
 	</body>
