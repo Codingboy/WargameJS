@@ -122,6 +122,8 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
+			let allBlocks = ["criticalHitChanceBlock","nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
+			let allValues = ["criticalHitChance","name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
 			//TODO crits and sound
 			function init()
 			{
@@ -166,8 +168,6 @@
 				};
 			}
 			init();
-			let allBlocks = ["criticalHitChanceBlock","nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
-			let allValues = ["criticalHitChance","name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
 			function hideAll()
 			{
 				hide(allBlocks);
