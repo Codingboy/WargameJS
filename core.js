@@ -26,6 +26,7 @@ function newDBWeapon()
 		price: 3000,
 		inaccuracy: 0.1,
 		weight: 5.0,
+		suppressed: 0,
 		sound: 1000,//hearable within a range in meter
 		criticalHitChance: 0.01//critical hit chance
 	};

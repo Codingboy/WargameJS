@@ -93,6 +93,10 @@
 					<label for="criticalHitChance">CriticalHitChance</label>
 					<input type="number" name="criticalHitChance" id="criticalHitChance" onchange="recalc()"/><br/>
 				</div>
+				<div class="form-group" id="suppressedBlock">
+					<label for="suppressed">Suppressed</label>
+					<input type="number" name="suppressed" id="suppressed" onchange="recalc()"/><br/>
+				</div>
 				<div class="form-group">
 					<label for="price">Price</label>
 					<input type="number" name="price" id="price" readonly="readonly"/><br/>
@@ -104,6 +108,10 @@
 				<div class="form-group">
 					<label for="inaccuracy">Inaccuracy</label>
 					<input type="number" name="inaccuracy" id="inaccuracy" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<label for="sound">Sound</label>
+					<input type="number" name="sound" id="sound" readonly="readonly"/><br/>
 				</div>
 				<div class="form-group">
 					<input type="button" onclick="save()" value="Save"/><br/>
@@ -122,8 +130,8 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
-			let allBlocks = ["criticalHitChanceBlock","nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
-			let allValues = ["criticalHitChance","name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
+			let allBlocks = ["suppressedBlock","criticalHitChanceBlock","nameBlock","typeBlock","guideTypeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","rangeBlock","damageBlock","damageRadiusBlock","speedBlock","lockChanceBlock"];
+			let allValues = ["suppressed","sound","criticalHitChance","name","type","guideType","damageType","rpm","magazineSize","magazines","reloadTime","range","damage","damageRadius","speed","lockChance","price","inaccuracy","weight"];
 			//TODO crits and sound
 			function init()
 			{
@@ -172,7 +180,7 @@
 			{
 				hide(allBlocks);
 				hide(["damageTypeHE","damageTypeHEAT","damageTypeHEDP","damageTypeAPI","damageTypeAPFSDS","damageTypeAP","damageTypeFMJ"]);
-				show(["nameBlock","price","inaccuracy","weight"]);
+				show(["nameBlock","price","inaccuracy","weight","sound"]);
 			}
 			function setType()
 			{
@@ -181,7 +189,7 @@
 				if (type == "AssaultRifle")
 				{
 					hideAll();
-					show(["criticalHitChanceBlock","damageTypeAP","damageTypeFMJ","typeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","damageBlock","rangeBlock"]);
+					show(["suppressedBlock","criticalHitChanceBlock","damageTypeAP","damageTypeFMJ","typeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","damageBlock","rangeBlock"]);
 					document.getElementById("guideType").value = "Unguided";
 					document.getElementById("lockChance").value = "0";
 					document.getElementById("damageRadius").value = "0";
@@ -195,6 +203,7 @@
 					setValues("range", "400", "600", "800", "1");
 					setValues("damage", "0.1", "0.5", "1.0", "0.1");
 					setValues("criticalHitChance", "0.0", "0.01", "0.1", "0.01");
+					setValues("suppressed", "0.0", "0.0", "0.5", "0.01");
 				}
 				recalc();
 			}
@@ -220,11 +229,13 @@
 					let reloadTime = document.getElementById("reloadTime").value;
 					let criticalHitChance = document.getElementById("criticalHitChance").value;
 					let inaccuracy = Math.pow(rpm/240, 2)+0.01;
-					let price = 3000.0*damage*(rpm/30.0)	 +	 magazines*(30.0*(magazineSize/30.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0  +  Math.pow(criticalHitChance*100,2)*500;
+					let sound = range*1.5*(1-suppressed);
+					let price = 3000.0*damage*(rpm/30.0)	 +	 magazines*(30.0*(magazineSize/30.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0  +  Math.pow(criticalHitChance*100,2)*250  +  suppressed*2000;
 					let weight = 3 + magazines*(magazineSize*0.140/30)+magazineSize*magazines*damage*(range/800)*0.025;
 					document.getElementById("inaccuracy").value = inaccuracy;
 					document.getElementById("price").value = price;
 					document.getElementById("weight").value = weight;
+					document.getElementById("sound").value = sound;
 				}
 			}
 			function load(weapon)
