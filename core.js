@@ -31,13 +31,37 @@ function newDBWeapon()
 		criticalHitChance: 0.01//critical hit chance
 	};
 }
+function newDBGroup()
+{
+	return {
+		name: "",
+		units: [],
+		price: 0
+	};
+}
 function listWeapons(callback)
 {
 	let ret = [];
 	var objectStore = db.transaction("weapons").objectStore("weapons").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
-		 
+		if (cursor)
+		{
+			ret.push(cursor.value.name);
+			cursor.continue();
+		}
+		else
+		{
+			callback(ret);
+		}
+	};
+}
+function listUnits(callback)
+{
+	let ret = [];
+	var objectStore = db.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
+	{
+		var cursor = event.target.result;
 		if (cursor)
 		{
 			ret.push(cursor.value.name);

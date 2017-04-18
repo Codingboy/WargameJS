@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<title>BFT</title>
+	</head>
+	<body>
+		<div class="container">
+			<form class="form-horizontal">
+				<div class="form-group" id="nameBlock">
+					<label for="name">Name</label>
+					<input type="text" name="name" id="name" required="required" onchange="recalc()"/><br/>
+				</div>
+				<div class="form-group" id="unitBlock">
+					<input type="button" onclick="addUnit()" value="Add Unit"/>
+					<select name="unit" id="unit" onchange="setType()">
+					</select>
+				</div>
+				<div class="form-group" id="unitsBlock">
+				</div>
+				<div class="form-group">
+					<label for="price">Price</label>
+					<input type="number" name="price" id="price" readonly="readonly"/><br/>
+				</div>
+				<div class="form-group">
+					<input type="button" onclick="save()" value="Save"/><br/>
+					<input type="button" onclick="del()" value="Delete"/><br/>
+					<div id="success" class="alert alert-success" role="alert">
+						<strong>Success</strong>
+					</div>
+					<div id="error" class="alert alert-danger" role="alert">
+						<strong>Failed</strong>
+					</div>
+				</div>
+			<form>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="core.js"></script>
+		<script>
+			var db;
+			let allBlocks = ["nameBlock"];
+			let allValues = ["price","name"];
+			function init()
+			{
+				hide(["success","error"]);
+				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+				let request = window.indexedDB.open("wargame", 1);
+				request.onupgradeneeded = function(event)
+				{
+					db = event.target.result;
+					if (!db.objectStoreNames.contains("groups"))
+					{
+						db.createObjectStore("groups", {keyPath: "name"});
+					}
+				};
+				request.onsuccess = function(event)
+				{
+					db = event.target.result;
+					let name = gup("name");
+					if (name && name != "")
+					{
+						let req = db.transaction(["groups"]).objectStore("groups").get(name);
+						req.onerror = function(event)
+						{
+							alert("DatabaseError");
+						};
+						req.onsuccess = function(event)
+						{
+							if (req.result)
+							{
+								load(req.result);
+							}
+							else
+							{
+								alert("Unknown group.");
+							}
+						};
+					}
+				};
+				listUnits(function(units)
+				{
+					let selectElement = document.getElementById("unit");
+					for (let i=0; i<selectElement.length; i++)
+					{
+						selectElement.remove(i);
+					}
+					for (let unit of units)
+					{
+						//TODO filter units
+						let option = document.createElement("option");
+						option.value = unit;
+						option.innerHTML = unit;
+						selectElement.appendChild(option);
+					}
+				});
+			}
+			init();
+			function hideAll()
+			{
+				hide(allBlocks);
+				show(["nameBlock","price"]);
+			}
+			function addUnit()
+			{
+				let unit = document.getElementById("unit").value;
+				let units = document.getElementById("units");
+				let div = document.createElement("div");
+				let label = document.createElement("label");
+				label.value = unit;
+				label.innerHTML = unit;
+				div.appendChild(label);
+				units.appendChild(div);
+				recalc()
+			}
+			function recalc()
+			{
+				return;
+				let element = document.getElementById("type");
+				let type = element.options[element.selectedIndex].text;
+				if (type == "Infantry")
+				{
+					let optics = document.getElementById("optics").value;
+					let opticsQuality = document.getElementById("opticsQuality").value;
+					let camouflage = document.getElementById("camouflage").value;
+					let radio = document.getElementById("radio").value;
+					let mineDetection = document.getElementById("mineDetection").value;
+					let mineDetectionChance = document.getElementById("mineDetectionChance").value;
+					let resupplyMedical = document.getElementById("resupplyMedical").value;
+					let plateCarrier = document.getElementById("plateCarrier").value;
+					let courage = document.getElementById("courage").value;
+					let weaponName = document.getElementById("weapon1").value;
+					if (weaponName && weaponName != "")
+					{
+						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
+						req.onerror = function(event)
+						{
+							alert("DatabaseError");
+						};
+						req.onsuccess = function(event)
+						{
+							if (req.result)
+							{
+								let weapon = req.result;
+								let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000  +  weapon.price;
+								let bodyweight = 90;
+								let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10  +  weapon.weight;
+								let speed = 15*(bodyweight/weight);
+								document.getElementById("speed").value = speed;
+								document.getElementById("price").value = price;
+								document.getElementById("weight").value = weight;
+							}
+						};
+					}
+					else
+					{
+						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
+						let bodyweight = 90;
+						let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
+						let speed = 15*(bodyweight/weight);
+						document.getElementById("speed").value = speed;
+						document.getElementById("price").value = price;
+						document.getElementById("weight").value = weight;
+					}
+				}
+			}
+			function load(unit)
+			{
+				console.log("load "+JSON.stringify(unit));
+				for (let variable of Object.keys(unit))
+				{
+					if (variable == "weapons")
+					{
+						let weapons = unit[variable];
+						for (let i=0; i<weapons.length; i++)
+						{
+							document.getElementById("weapon"+(i+1)).value = weapons[i];
+						}
+					}
+					else
+					{
+						document.getElementById(variable).value = unit[variable];
+					}
+				}
+				setType();
+				for (let variable of Object.keys(unit))
+				{
+					if (variable == "weapons")
+					{
+						let weapons = unit[variable];
+						for (let i=0; i<weapons.length; i++)
+						{
+							document.getElementById("weapon"+(i+1)).value = weapons[i];
+						}
+					}
+					else
+					{
+						document.getElementById(variable).value = unit[variable];
+					}
+				}
+				recalc();
+			}
+			function save()
+			{
+				recalc();
+				let unit = newDBUnit();
+				let weapons = [];
+				for (element of allValues)
+				{
+					if (element == "weapon1" || element == "weapon2" || element == "weapon3" || element == "weapon4" || element == "weapon5")
+					{
+						let e = document.getElementById(element);
+						let value = e.value;
+						if (e.type != "number")
+						{
+							value = '"'+value+'"';
+						}
+						eval("weapons.push("+value+");");
+					}
+					else
+					{
+						let e = document.getElementById(element);
+						let value = e.value;
+						if (e.type != "number")
+						{
+							value = '"'+value+'"';
+						}
+						eval("unit."+element+" = "+value+";");
+					}
+				}
+				unit.weapons = weapons;
+				console.log("save "+JSON.stringify(unit));
+				hide(["error"]);
+				hide(["success"]);
+				let rename = false;
+				let name = gup("name");
+				if (name && name != "")
+				{
+					if (name != unit.name)
+					{
+						rename = true;
+					}
+				}
+				if (rename)
+				{
+					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
+					request.onerror = function(event)
+					{
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
+					{
+						let req = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
+						req.onerror = function(event)
+						{
+							show(["error"]);
+							setTimeout(function()
+							{
+								hide(["error"]);
+							}, 1000);
+						};
+						req.onsuccess = function(event)
+						{
+							show(["success"]);
+							setTimeout(function()
+							{
+								hide(["success"]);
+								location.search = "?name="+unit.name;
+							}, 1000);
+						};
+					};
+				}
+				else
+				{
+					let request = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
+					request.onerror = function(event)
+					{
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
+					{
+						show(["success"]);
+						setTimeout(function()
+						{
+							hide(["success"]);
+							location.search = "?name="+unit.name;
+						}, 1000);
+					};
+				}
+				//TODO update group
+			}
+			function del()
+			{
+				let name = gup("name");
+				if (name && name != "")
+				{
+					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
+					request.onerror = function(event)
+					{
+						show(["error"]);
+						setTimeout(function()
+						{
+							hide(["error"]);
+						}, 1000);
+					};
+					request.onsuccess = function(event)
+					{
+						show(["success"]);
+						setTimeout(function()
+						{
+							hide(["success"]);
+						}, 1000);
+					};
+				}
+			}
+		</script>
+	</body>
+</html>

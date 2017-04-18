@@ -433,17 +433,39 @@
 			}
 			function load(unit)
 			{
-				//TODO wepons
 				console.log("load "+JSON.stringify(unit));
 				for (let variable of Object.keys(unit))
 				{
-					document.getElementById(variable).value = unit[variable];
+					if (variable == "weapons")
+					{
+						let weapons = unit[variable];
+						for (let i=0; i<weapons.length; i++)
+						{
+							document.getElementById("weapon"+(i+1)).value = weapons[i];
+						}
+					}
+					else
+					{
+						document.getElementById(variable).value = unit[variable];
+					}
 				}
 				setType();
 				for (let variable of Object.keys(unit))
 				{
-					document.getElementById(variable).value = unit[variable];
+					if (variable == "weapons")
+					{
+						let weapons = unit[variable];
+						for (let i=0; i<weapons.length; i++)
+						{
+							document.getElementById("weapon"+(i+1)).value = weapons[i];
+						}
+					}
+					else
+					{
+						document.getElementById(variable).value = unit[variable];
+					}
 				}
+				recalc();
 			}
 			function save()
 			{
@@ -540,6 +562,7 @@
 						}, 1000);
 					};
 				}
+				//TODO update group
 			}
 			function del()
 			{
