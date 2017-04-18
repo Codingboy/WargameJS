@@ -228,6 +228,7 @@
 					let damage = document.getElementById("damage").value;
 					let reloadTime = document.getElementById("reloadTime").value;
 					let criticalHitChance = document.getElementById("criticalHitChance").value;
+					let suppressed = document.getElementById("suppressed").value;
 					let inaccuracy = Math.pow(rpm/240, 2)+0.01;
 					let sound = range*1.5*(1-suppressed);
 					let price = 3000.0*damage*(rpm/30.0)	 +	 magazines*(30.0*(magazineSize/30.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0  +  Math.pow(criticalHitChance*100,2)*250  +  suppressed*2000;
