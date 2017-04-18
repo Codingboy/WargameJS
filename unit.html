@@ -196,9 +196,29 @@
 					<label for="courage">Courage</label>
 					<input type="number" name="courage" id="courage" onchange="recalc()"/><br/>
 				</div>
-				<div class="form-group" id="weaponsBlock">
-					<label for="weapons">weapons</label>
-					<select name="weapons" id="weapons" onchange="setWeapon()">
+				<div class="form-group" id="weapon1Block">
+					<label for="weapon1">weapon1</label>
+					<select name="weapon1" id="weapon1" onchange="setWeapon()">
+					</select>
+				</div>
+				<div class="form-group" id="weapon2Block">
+					<label for="weapon2">weapon2</label>
+					<select name="weapon2" id="weapon2" onchange="setWeapon()">
+					</select>
+				</div>
+				<div class="form-group" id="weapon3Block">
+					<label for="weapon3">weapon3</label>
+					<select name="weapon3" id="weapon3" onchange="setWeapon()">
+					</select>
+				</div>
+				<div class="form-group" id="weapon4Block">
+					<label for="weapon4">weapon4</label>
+					<select name="weapon4" id="weapon4" onchange="setWeapon()">
+					</select>
+				</div>
+				<div class="form-group" id="weapon5Block">
+					<label for="weapon5">weapon5</label>
+					<select name="weapon5" id="weapon5" onchange="setWeapon()">
 					</select>
 				</div>
 				<div class="form-group">
@@ -234,8 +254,8 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
-			let allBlocks = ["fuelConsumptionBlock","courageBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","weaponsBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock","name"];
-			let allValues = ["courage","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","weapons","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
+			let allBlocks = ["weapon1Block","weapon2Block","weapon3Block","weapon4Block","weapon5Block","fuelConsumptionBlock","courageBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock","name"];
+			let allValues = ["weapon1","weapon2","weapon3","weapon4","weapon5","courage","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
 			function init()
 			{
 				hideAll();
@@ -290,7 +310,7 @@
 				if (type == "Infantry")
 				{
 					hideAll();
-					show(["weaponsBlock","courageBlock","plateCarrierBlock","resupplyMedicalBlock","mineDetectionChanceBlock","mineDetectionBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
+					show(["weapon1Block","courageBlock","plateCarrierBlock","resupplyMedicalBlock","mineDetectionChanceBlock","mineDetectionBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
 					document.getElementById("sound").value = "10";
 					document.getElementById("opticsIR").value = "0";
 					document.getElementById("opticsIRQuality").value = "0";
@@ -327,6 +347,10 @@
 					document.getElementById("armourType2").value = "";
 					document.getElementById("fuelConsumption").value = "0";
 					document.getElementById("stabilisator").value = "0";
+					document.getElementById("weapon2").value = "";
+					document.getElementById("weapon3").value = "";
+					document.getElementById("weapon4").value = "";
+					document.getElementById("weapon5").value = "";
 					
 					setValues("optics", "400", "1000", "2000", "1");
 					setValues("opticsQuality", "0", "0", "0.75", "0.01");
@@ -337,6 +361,23 @@
 					setValues("resupplyMedical", "0", "0", "10", "1");
 					setValues("plateCarrier", "0", "1", "1", "1");
 					setValues("courage", "0", "0", "0.75", "0.01");
+					
+					listWeapons(function(weapons)
+					{
+						let selectElement = document.getElementById("weapons");
+						for (let i=0; i<selectElement.length; i++)
+						{
+							selectElement.remove(i);
+						}
+						for (let weapon of weapons)
+						{
+							//TODO filter weapons
+							let option = document.createElement("option");
+							option.value = weapon;
+							option.innerHTML = weapon;
+							selectElement.appendChild(option);
+						}
+					});
 				}
 				recalc()
 			}
@@ -383,17 +424,31 @@
 			{
 				recalc();
 				let unit = newDBUnit();
+				let weapons = [];
 				for (element of allValues)
 				{
-					let e = document.getElementById(element);
-					let value = e.value;
-					if (e.type != "number")
+					if (element == "weapon1" || element == "weapon2" || element == "weapon3" || element == "weapon4" || element == "weapon5")
 					{
-						value = '"'+value+'"';
+						let e = document.getElementById(element);
+						let value = e.value;
+						if (e.type != "number")
+						{
+							value = '"'+value+'"';
+						}
+						eval("weapons.push("+value+");");
 					}
-					eval("unit."+element+" = "+value+";");
-					console.log(element+"="+value);
+					else
+					{
+						let e = document.getElementById(element);
+						let value = e.value;
+						if (e.type != "number")
+						{
+							value = '"'+value+'"';
+						}
+						eval("unit."+element+" = "+value+";");
+					}
 				}
+				unit.weapons = weapons;
 				console.log("save "+JSON.stringify(unit));
 				hide(["error"]);
 				hide(["success"]);
