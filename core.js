@@ -41,7 +41,7 @@ function listWeapons(callback)
 		if (cursor)
 		{
 			console.log(JSON.stringify(cursor.value));
-			ret.push(cursor.value);
+			ret.push(cursor.value.name);
 			cursor.continue();
 		}
 		else
