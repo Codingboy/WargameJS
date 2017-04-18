@@ -198,27 +198,27 @@
 				</div>
 				<div class="form-group" id="weapon1Block">
 					<label for="weapon1">weapon1</label>
-					<select name="weapon1" id="weapon1" onchange="setWeapon()">
+					<select name="weapon1" id="weapon1" onchange="recalc()">
 					</select>
 				</div>
 				<div class="form-group" id="weapon2Block">
 					<label for="weapon2">weapon2</label>
-					<select name="weapon2" id="weapon2" onchange="setWeapon()">
+					<select name="weapon2" id="weapon2" onchange="recalc()">
 					</select>
 				</div>
 				<div class="form-group" id="weapon3Block">
 					<label for="weapon3">weapon3</label>
-					<select name="weapon3" id="weapon3" onchange="setWeapon()">
+					<select name="weapon3" id="weapon3" onchange="recalc()">
 					</select>
 				</div>
 				<div class="form-group" id="weapon4Block">
 					<label for="weapon4">weapon4</label>
-					<select name="weapon4" id="weapon4" onchange="setWeapon()">
+					<select name="weapon4" id="weapon4" onchange="recalc()">
 					</select>
 				</div>
 				<div class="form-group" id="weapon5Block">
 					<label for="weapon5">weapon5</label>
-					<select name="weapon5" id="weapon5" onchange="setWeapon()">
+					<select name="weapon5" id="weapon5" onchange="recalc()">
 					</select>
 				</div>
 				<div class="form-group">
@@ -364,7 +364,6 @@
 					
 					listWeapons(function(weapons)
 					{
-						alert(JSON.stringify(weapons));
 						let selectElement = document.getElementById("weapon1");
 						for (let i=0; i<selectElement.length; i++)
 						{
@@ -377,7 +376,6 @@
 							option.value = weapon;
 							option.innerHTML = weapon;
 							selectElement.appendChild(option);
-							alert(weapon);
 						}
 					});
 				}
@@ -398,14 +396,39 @@
 					let resupplyMedical = document.getElementById("resupplyMedical").value;
 					let plateCarrier = document.getElementById("plateCarrier").value;
 					let courage = document.getElementById("courage").value;
-					//TODO weapon
-					let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
-					let bodyweight = 90;
-					let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
-					let speed = 15*(bodyweight/weight);
-					document.getElementById("speed").value = speed;
-					document.getElementById("price").value = price;
-					document.getElementById("weight").value = weight;
+					let weaponName = document.getElementById("weapon1").value;
+					if (weaponName && weaponName != "")
+					{
+						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
+						req.onerror = function(event)
+						{
+							alert("DatabaseError");
+						};
+						req.onsuccess = function(event)
+						{
+							if (req.result)
+							{
+								let weapon = req.result;
+								let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000  +  weapon.price;
+								let bodyweight = 90;
+								let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10  +  weapon.weight;
+								let speed = 15*(bodyweight/weight);
+								document.getElementById("speed").value = speed;
+								document.getElementById("price").value = price;
+								document.getElementById("weight").value = weight;
+							}
+						};
+					}
+					else
+					{
+						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
+						let bodyweight = 90;
+						let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
+						let speed = 15*(bodyweight/weight);
+						document.getElementById("speed").value = speed;
+						document.getElementById("price").value = price;
+						document.getElementById("weight").value = weight;
+					}
 				}
 			}
 			function load(unit)
