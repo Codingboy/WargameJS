@@ -46,6 +46,7 @@ function listWeapons(callback)
 		}
 		else
 		{
+			alert(JSON.stringify(ret));
 			callback(ret);
 		}
 	};
