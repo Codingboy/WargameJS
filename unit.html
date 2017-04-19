@@ -182,11 +182,22 @@
 				</div>
 				<div class="form-group" id="armourType1Block">
 					<label for="armourType1">armourType1</label>
-					<input type="number" name="armourType1" id="armourType1" onchange="recalc()"/><br/>
+					<select name="armourType1" id="armourType1" onchange="setArmourType1()">
+						<option value="Aluminium">Aluminium</option>
+						<option value="Titan">Titan</option>
+						<option value="Steel">Steel</option>
+						<option value="Uranium">Uranium</option>
+						<option value="Composite">Composite</option>
+					</select>
 				</div>
 				<div class="form-group" id="armourType2Block">
 					<label for="armourType2">armourType2</label>
 					<input type="number" name="armourType2" id="armourType2" onchange="recalc()"/><br/>
+					<select name="armourType2" id="armourType2" onchange="setArmourType2()">
+						<option value="Reactive">Reactive</option>
+						<option value="SLAT">SLAT</option>
+						<option value="Sloped">Sloped</option>
+					</select>
 				</div>
 				<div class="form-group" id="stabilisatorBlock">
 					<label for="stabilisator">stabilisator</label>
@@ -298,6 +309,14 @@
 				};
 			}
 			init();
+			function setArmourType1()
+			{
+				recalc();
+			}
+			function setArmourType2()
+			{
+				recalc();
+			}
 			function hideAll()
 			{
 				hide(allBlocks);
