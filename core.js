@@ -1,3 +1,4 @@
+var db;
 function gup(name, url)
 {
 	if (!url) url = location.href;
@@ -36,7 +37,7 @@ function openDB(callback)
 	let request = window.indexedDB.open("wargame", 2);
 	request.onupgradeneeded = function(event)
 	{
-		let db = event.target.result;
+		db = event.target.result;
 		if (!db.objectStoreNames.contains("units"))
 		{
 			db.createObjectStore("units", {keyPath: "name"});
@@ -52,7 +53,7 @@ function openDB(callback)
 	};
 	request.onsuccess = function(event)
 	{
-		let db = event.target.result;
+		db = event.target.result;
 		callback(event);
 	};
 }
