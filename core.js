@@ -31,7 +31,7 @@ function newDBWeapon()
 		criticalHitChance: 0.01//critical hit chance
 	};
 }
-function openDB(callback)
+function initDB(callback)
 {
 	console.log("openDB");
 	let request = window.indexedDB.open("wargame", 2);
