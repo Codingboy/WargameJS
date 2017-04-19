@@ -1,3 +1,4 @@
+var db;
 function gup(name, url)
 {
 	if (!url) url = location.href;
