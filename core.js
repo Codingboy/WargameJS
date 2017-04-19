@@ -1,4 +1,3 @@
-var coreCB;
 function gup(name, url)
 {
 	if (!url) url = location.href;
@@ -37,23 +36,23 @@ function openDB(callback)
 	let request = window.indexedDB.open("wargame", 2);
 	request.onupgradeneeded = function(event)
 	{
-		coreCB = event.target.result;
-		if (!db.objectStoreNames.contains("units"))
+		coreDB = event.target.result;
+		if (!coreDB.objectStoreNames.contains("units"))
 		{
-			db.createObjectStore("units", {keyPath: "name"});
+			coreDB.createObjectStore("units", {keyPath: "name"});
 		}
-		if (!db.objectStoreNames.contains("weapons"))
+		if (!coreDB.objectStoreNames.contains("weapons"))
 		{
-			db.createObjectStore("weapons", {keyPath: "name"});
+			coreDB.createObjectStore("weapons", {keyPath: "name"});
 		}
-		if (!db.objectStoreNames.contains("groups"))
+		if (!coreDB.objectStoreNames.contains("groups"))
 		{
-			db.createObjectStore("groups", {keyPath: "name"});
+			coreDB.createObjectStore("groups", {keyPath: "name"});
 		}
 	};
 	request.onsuccess = function(event)
 	{
-		coreCB = event.target.result;
+		coreDB = event.target.result;
 		callback(event);
 	};
 }
@@ -68,7 +67,7 @@ function newDBGroup()
 function listWeapons(callback)
 {
 	let ret = [];
-	var objectStore = coreCB.transaction("weapons").objectStore("weapons").openCursor().onsuccess = function(event)
+	var objectStore = coreDB.transaction("weapons").objectStore("weapons").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
 		if (cursor)
@@ -85,7 +84,7 @@ function listWeapons(callback)
 function listUnits(callback)
 {
 	let ret = [];
-	var objectStore = coreCB.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
+	var objectStore = coreDB.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
 		if (cursor)
