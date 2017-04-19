@@ -1,4 +1,4 @@
-var db;
+var coreCB;
 function gup(name, url)
 {
 	if (!url) url = location.href;
@@ -37,7 +37,7 @@ function openDB(callback)
 	let request = window.indexedDB.open("wargame", 2);
 	request.onupgradeneeded = function(event)
 	{
-		db = event.target.result;
+		coreCB = event.target.result;
 		if (!db.objectStoreNames.contains("units"))
 		{
 			db.createObjectStore("units", {keyPath: "name"});
@@ -53,7 +53,7 @@ function openDB(callback)
 	};
 	request.onsuccess = function(event)
 	{
-		db = event.target.result;
+		coreCB = event.target.result;
 		callback(event);
 	};
 }
@@ -68,7 +68,7 @@ function newDBGroup()
 function listWeapons(callback)
 {
 	let ret = [];
-	var objectStore = db.transaction("weapons").objectStore("weapons").openCursor().onsuccess = function(event)
+	var objectStore = coreCB.transaction("weapons").objectStore("weapons").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
 		if (cursor)
@@ -85,7 +85,7 @@ function listWeapons(callback)
 function listUnits(callback)
 {
 	let ret = [];
-	var objectStore = db.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
+	var objectStore = coreCB.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
 		if (cursor)
