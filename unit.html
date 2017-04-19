@@ -455,12 +455,12 @@
 						let weapons = unit[variable];
 						for (let i=0; i<weapons.length; i++)
 						{
+							console.log("weapon"+(i+1)+" = "+weapons[i]);
 							document.getElementById("weapon"+(i+1)).value = weapons[i];
 						}
 					}
 					else
 					{
-						console.log(variable);
 						document.getElementById(variable).value = unit[variable];
 					}
 				}
