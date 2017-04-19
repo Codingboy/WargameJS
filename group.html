@@ -53,42 +53,42 @@
 				initDB(function(event)
 				{
 					db = event.target.result;
-					let name = gup("name");
-					if (name && name != "")
+					listUnits(function(units)
 					{
-						let req = db.transaction(["groups"]).objectStore("groups").get(name);
-						req.onerror = function(event)
+						let selectElement = document.getElementById("unit");
+						for (let i=0; i<selectElement.length; i++)
 						{
-							alert("DatabaseError");
-						};
-						req.onsuccess = function(event)
+							selectElement.remove(i);
+						}
+						for (let unit of units)
 						{
-							if (req.result)
+							//TODO filter units
+							let option = document.createElement("option");
+							option.value = unit;
+							option.innerHTML = unit;
+							selectElement.appendChild(option);
+						}
+						let name = gup("name");
+						if (name && name != "")
+						{
+							let req = db.transaction(["groups"]).objectStore("groups").get(name);
+							req.onerror = function(event)
 							{
-								load(req.result);
-							}
-							else
+								alert("DatabaseError");
+							};
+							req.onsuccess = function(event)
 							{
-								alert("Unknown group.");
-							}
-							listUnits(function(units)
-							{
-								let selectElement = document.getElementById("unit");
-								for (let i=0; i<selectElement.length; i++)
+								if (req.result)
 								{
-									selectElement.remove(i);
+									load(req.result);
 								}
-								for (let unit of units)
+								else
 								{
-									//TODO filter units
-									let option = document.createElement("option");
-									option.value = unit;
-									option.innerHTML = unit;
-									selectElement.appendChild(option);
+									alert("Unknown group.");
 								}
-							});
-						};
-					}
+							};
+						}
+					});
 				});
 			}
 			init();
