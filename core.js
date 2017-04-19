@@ -37,7 +37,7 @@ function initDB(callback)
 	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 	window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-	let request = window.indexedDB.open("wargame", 3);
+	let request = window.indexedDB.open("wargame", 4);
 	request.onupgradeneeded = function(event)
 	{
 		coreDB = event.target.result;
