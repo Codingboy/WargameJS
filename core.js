@@ -50,7 +50,7 @@ function openDB(callback)
 			db.createObjectStore("groups", {keyPath: "name"});
 		}
 	};
-	request.onsuccess = callback();
+	request.onsuccess = callback;
 }
 function newDBGroup()
 {
