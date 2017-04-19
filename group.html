@@ -12,11 +12,11 @@
 			<form class="form-horizontal">
 				<div class="form-group" id="nameBlock">
 					<label for="name">Name</label>
-					<input type="text" name="name" id="name" required="required" onchange="recalc()"/><br/>
+					<input type="text" name="name" id="name" required="required"/><br/>
 				</div>
 				<div class="form-group" id="unitBlock">
 					<input type="button" onclick="addUnit()" value="Add Unit"/>
-					<select name="unit" id="unit" onchange="setType()">
+					<select name="unit" id="unit"">
 					</select>
 				</div>
 				<div class="form-group" id="unitsBlock">
@@ -47,6 +47,7 @@
 			function init()
 			{
 				hide(["success","error"]);
+				document.getElementById("price").value = "0";
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
@@ -92,11 +93,6 @@
 				});
 			}
 			init();
-			function hideAll()
-			{
-				hide(allBlocks);
-				show(["nameBlock","price"]);
-			}
 			function addUnit()
 			{
 				let unit = document.getElementById("unit").value;
@@ -105,60 +101,31 @@
 				let label = document.createElement("label");
 				label.value = unit;
 				label.innerHTML = unit;
-				div.appendChild(label);
-				units.appendChild(div);
-				recalc()
-			}
-			function recalc()
-			{
-				return;
-				let element = document.getElementById("type");
-				let type = element.options[element.selectedIndex].text;
-				if (type == "Infantry")
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = "Remove";
+				button.onclick = function()
 				{
-					let optics = document.getElementById("optics").value;
-					let opticsQuality = document.getElementById("opticsQuality").value;
-					let camouflage = document.getElementById("camouflage").value;
-					let radio = document.getElementById("radio").value;
-					let mineDetection = document.getElementById("mineDetection").value;
-					let mineDetectionChance = document.getElementById("mineDetectionChance").value;
-					let resupplyMedical = document.getElementById("resupplyMedical").value;
-					let plateCarrier = document.getElementById("plateCarrier").value;
-					let courage = document.getElementById("courage").value;
-					let weaponName = document.getElementById("weapon1").value;
-					if (weaponName && weaponName != "")
+					//TODO delete div and edit price
+				};
+				div.appendChild(label);
+				div.appendChild(button);
+				units.appendChild(div);
+				
+				let req = db.transaction(["groups"]).objectStore("groups").get(unit);
+				req.onerror = function(event)
+				{
+					alert("DatabaseError");
+				};
+				req.onsuccess = function(event)
+				{
+					if (req.result)
 					{
-						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
-						req.onerror = function(event)
-						{
-							alert("DatabaseError");
-						};
-						req.onsuccess = function(event)
-						{
-							if (req.result)
-							{
-								let weapon = req.result;
-								let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000  +  weapon.price;
-								let bodyweight = 90;
-								let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10  +  weapon.weight;
-								let speed = 15*(bodyweight/weight);
-								document.getElementById("speed").value = speed;
-								document.getElementById("price").value = price;
-								document.getElementById("weight").value = weight;
-							}
-						};
-					}
-					else
-					{
-						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
-						let bodyweight = 90;
-						let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
-						let speed = 15*(bodyweight/weight);
-						document.getElementById("speed").value = speed;
+						let price = document.getElementById("price").value;
+						price += req.result.price;
 						document.getElementById("price").value = price;
-						document.getElementById("weight").value = weight;
 					}
-				}
+				};
 			}
 			function load(unit)
 			{
@@ -178,27 +145,9 @@
 						document.getElementById(variable).value = unit[variable];
 					}
 				}
-				setType();
-				for (let variable of Object.keys(unit))
-				{
-					if (variable == "weapons")
-					{
-						let weapons = unit[variable];
-						for (let i=0; i<weapons.length; i++)
-						{
-							document.getElementById("weapon"+(i+1)).value = weapons[i];
-						}
-					}
-					else
-					{
-						document.getElementById(variable).value = unit[variable];
-					}
-				}
-				recalc();
 			}
 			function save()
 			{
-				recalc();
 				let unit = newDBUnit();
 				let weapons = [];
 				for (element of allValues)
