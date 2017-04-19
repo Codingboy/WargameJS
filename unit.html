@@ -16,7 +16,7 @@
 				</div>
 				<div class="form-group" id="typeBlock">
 					<label for="type">Type</label>
-					<select name="type" id="type" onchange="setType()">
+					<select name="type" id="type" onchange="setType(function(){})">
 						<option value="Infantry">Infantry</option>
 						<option value="MachineGun">Wheeled</option>
 						<option value="SniperRifle">Tracked</option>
@@ -316,7 +316,7 @@
 				hide(allBlocks);
 				show(["nameBlock","typeBlock","price","weight","speed"]);
 			}
-			function setType()
+			function setType(callback)
 			{
 				let element = document.getElementById("type")
 				let type = element.options[element.selectedIndex].text;
@@ -391,9 +391,10 @@
 							option.innerHTML = weapon;
 							selectElement.appendChild(option);
 						}
+						recalc();
+						callback();
 					});
 				}
-				recalc();
 			}
 			function recalc()
 			{
@@ -464,23 +465,25 @@
 						document.getElementById(variable).value = unit[variable];
 					}
 				}
-				setType();
-				for (let variable of Object.keys(unit))
+				setType(function()
 				{
-					if (variable == "weapons")
+					for (let variable of Object.keys(unit))
 					{
-						let weapons = unit[variable];
-						for (let i=0; i<weapons.length; i++)
+						if (variable == "weapons")
 						{
-							document.getElementById("weapon"+(i+1)).value = weapons[i];
+							let weapons = unit[variable];
+							for (let i=0; i<weapons.length; i++)
+							{
+								document.getElementById("weapon"+(i+1)).value = weapons[i];
+							}
+						}
+						else
+						{
+							document.getElementById(variable).value = unit[variable];
 						}
 					}
-					else
-					{
-						document.getElementById(variable).value = unit[variable];
-					}
-				}
-				recalc();
+					recalc();
+				});
 			}
 			function save()
 			{
