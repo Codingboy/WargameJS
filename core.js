@@ -37,7 +37,7 @@ function initDB(callback)
 	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 	window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-	let request = window.indexedDB.open("wargame", 2);
+	let request = window.indexedDB.open("wargame", 3);
 	request.onupgradeneeded = function(event)
 	{
 		coreDB = event.target.result;
@@ -60,6 +60,10 @@ function initDB(callback)
 		coreDB = event.target.result;
 		console.log("coreDB");
 		callback(event);
+	};
+	request.onerror = function(event)
+	{
+		alert("DBError");
 	};
 }
 function newDBGroup()
