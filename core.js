@@ -33,10 +33,12 @@ function newDBWeapon()
 }
 function openDB(callback)
 {
+	console.log("openDB");
 	let request = window.indexedDB.open("wargame", 2);
 	request.onupgradeneeded = function(event)
 	{
 		coreDB = event.target.result;
+		console.log("coreDB");
 		if (!coreDB.objectStoreNames.contains("units"))
 		{
 			coreDB.createObjectStore("units", {keyPath: "name"});
@@ -53,6 +55,7 @@ function openDB(callback)
 	request.onsuccess = function(event)
 	{
 		coreDB = event.target.result;
+		console.log("coreDB");
 		callback(event);
 	};
 }
