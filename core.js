@@ -31,6 +31,27 @@ function newDBWeapon()
 		criticalHitChance: 0.01//critical hit chance
 	};
 }
+function openDB(callback)
+{
+	let request = window.indexedDB.open("wargame", 2);
+	request.onupgradeneeded = function(event)
+	{
+		db = event.target.result;
+		if (!db.objectStoreNames.contains("units"))
+		{
+			db.createObjectStore("units", {keyPath: "name"});
+		}
+		if (!db.objectStoreNames.contains("weapons"))
+		{
+			db.createObjectStore("weapons", {keyPath: "name"});
+		}
+		if (!db.objectStoreNames.contains("groups"))
+		{
+			db.createObjectStore("groups", {keyPath: "name"});
+		}
+	};
+	request.onsuccess = callback();
+}
 function newDBGroup()
 {
 	return {

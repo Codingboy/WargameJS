@@ -50,15 +50,7 @@
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-				let request = window.indexedDB.open("wargame", 1);
-				request.onupgradeneeded = function(event)
-				{
-					db = event.target.result;
-					if (!db.objectStoreNames.contains("groups"))
-					{
-						db.createObjectStore("groups", {keyPath: "name"});
-					}
-				};
+				openDB(function(event)
 				request.onsuccess = function(event)
 				{
 					db = event.target.result;
@@ -80,23 +72,23 @@
 							{
 								alert("Unknown group.");
 							}
+							listUnits(function(units)
+							{
+								let selectElement = document.getElementById("unit");
+								for (let i=0; i<selectElement.length; i++)
+								{
+									selectElement.remove(i);
+								}
+								for (let unit of units)
+								{
+									//TODO filter units
+									let option = document.createElement("option");
+									option.value = unit;
+									option.innerHTML = unit;
+									selectElement.appendChild(option);
+								}
+							});
 						};
-					}
-				};
-				listUnits(function(units)
-				{
-					let selectElement = document.getElementById("unit");
-					for (let i=0; i<selectElement.length; i++)
-					{
-						selectElement.remove(i);
-					}
-					for (let unit of units)
-					{
-						//TODO filter units
-						let option = document.createElement("option");
-						option.value = unit;
-						option.innerHTML = unit;
-						selectElement.appendChild(option);
 					}
 				});
 			}

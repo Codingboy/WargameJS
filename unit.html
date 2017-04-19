@@ -273,16 +273,7 @@
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-				let request = window.indexedDB.open("wargame", 1);
-				request.onupgradeneeded = function(event)
-				{
-					db = event.target.result;
-					if (!db.objectStoreNames.contains("units"))
-					{
-						db.createObjectStore("units", {keyPath: "name"});
-					}
-				};
-				request.onsuccess = function(event)
+				openDB(function(event)
 				{
 					db = event.target.result;
 					let name = gup("name");
@@ -305,7 +296,7 @@
 							}
 						};
 					}
-				};
+				});
 			}
 			init();
 			function setArmourType1()
@@ -487,15 +478,11 @@
 			}
 			function save()
 			{
-				console.log("42");
 				recalc();
-				console.log("42");
 				let unit = newDBUnit();
-				console.log("42");
 				let weapons = [];
 				for (element of allValues)
 				{
-					console.log(element);
 					if (element == "weapon1" || element == "weapon2" || element == "weapon3" || element == "weapon4" || element == "weapon5")
 					{
 						let e = document.getElementById(element);
