@@ -195,10 +195,6 @@
 				let unitsElement = document.getElementById("unitsBlock");
 				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
-					console.log(i);
-					console.log(unitsElement);
-					console.log(unitsElement.childNodes[i]);
-					console.log(unitsElement.childNodes[i].value);
 					let unit = unitsElement.childNodes[i].value;
 					units.push(unit);
 				}
@@ -243,7 +239,7 @@
 							setTimeout(function()
 							{
 								hide(["success"]);
-								location.search = "?name="+group.name;
+								//location.search = "?name="+group.name;
 							}, 1000);
 						};
 					};
@@ -265,7 +261,7 @@
 						setTimeout(function()
 						{
 							hide(["success"]);
-							location.search = "?name="+group.name;
+							//location.search = "?name="+group.name;
 						}, 1000);
 					};
 				}
