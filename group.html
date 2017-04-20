@@ -23,7 +23,7 @@
 				</div>
 				<div class="form-group">
 					<label for="price">Price</label>
-					<input type="number" name="price" id="price" readonly="readonly" lang="en-150"/><br/>
+					<input type="number" name="price" id="price" readonly="readonly"/><br/>
 				</div>
 				<div class="form-group">
 					<input type="button" onclick="save()" value="Save"/><br/>
@@ -104,9 +104,10 @@
 				let button = document.createElement("input");
 				button.type = "button";
 				button.value = "Remove";
-				button.onclick = function()
+				button.onclick = function(e)
 				{
 					//TODO delete div and edit price
+					e.parentNode.parentNode.removeChild(e.parentNode);
 				};
 				div.appendChild(label);
 				div.appendChild(button);
