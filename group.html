@@ -198,9 +198,8 @@
 					console.log(i);
 					console.log(unitsElement);
 					console.log(unitsElement.childNodes[i]);
-					console.log(unitsElement.childNodes[i].firstChild);
-					console.log(unitsElement.childNodes[i].firstChild.value);
-					let unit = unitsElement.childNodes[i].firstChild.value;
+					console.log(unitsElement.childNodes[i].value);
+					let unit = unitsElement.childNodes[i].value;
 					units.push(unit);
 				}
 				group.units = units;
