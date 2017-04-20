@@ -21,9 +21,12 @@
 				</div>
 				<div class="form-group" id="unitsBlock">
 				</div>
-				<div class="form-group">
-					<label for="price">Price</label>
-					<input type="number" name="price" id="price" readonly="readonly"/><br/>
+				<div class="form-group" id="groupBlock">
+					<input type="button" onclick="addGroup()" value="Add Group"/>
+					<select name="group" id="group">
+					</select>
+				</div>
+				<div class="form-group" id="groupsBlock">
 				</div>
 				<div class="form-group">
 					<input type="button" onclick="save()" value="Save"/><br/>
@@ -47,7 +50,6 @@
 			function init()
 			{
 				hide(["success","error"]);
-				document.getElementById("price").value = "0";
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
@@ -63,31 +65,37 @@
 						}
 						for (let unit of units)
 						{
-							//TODO filter units
 							let option = document.createElement("option");
 							option.value = unit;
 							option.innerHTML = unit;
 							selectElement.appendChild(option);
 						}
-						let name = gup("name");
-						if (name && name != "")
+						listGroups(function(groups)
 						{
-							let req = db.transaction(["groups"]).objectStore("groups").get(name);
-							req.onerror = function(event)
+							let selectElement = document.getElementById("group");
+							for (let group of groups)
 							{
-								alert("DatabaseError");
-							};
-							req.onsuccess = function(event)
+								let option = document.createElement("option");
+								option.value = group;
+								option.innerHTML = group;
+								selectElement.appendChild(option);
+							}
+							let name = gup("name");
+							if (name && name != "")
 							{
-								if (req.result)
+								let req = db.transaction(["decks"]).objectStore("decks").get(name);
+								req.onsuccess = function(event)
 								{
-									load(req.result);
-								}
-								else
-								{
-									alert("Unknown group.");
-								}
-							};
+									if (req.result)
+									{
+										load(req.result);
+									}
+									else
+									{
+										alert("Unknown deck.");
+									}
+								};
+							}
 						}
 					});
 				});
@@ -108,90 +116,94 @@
 				{
 					let unit = this.parentNode.firstChild.value;
 					this.parentNode.parentNode.removeChild(this.parentNode);
-					let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
-					req.onsuccess = function(event)
-					{
-						if (req.result)
-						{
-							let price = parseInt(document.getElementById("price").value);
-							price -= req.result.price;
-							document.getElementById("price").value = ""+price;
-						}
-					};
 				};
 				div.appendChild(label);
 				div.appendChild(button);
 				units.appendChild(div);
-				let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
-				req.onsuccess = function(event)
-				{
-					if (req.result)
-					{
-						let price = parseInt(document.getElementById("price").value);
-						price += req.result.price;
-						document.getElementById("price").value = ""+price;
-					}
-				};
 			}
-			function load(group)
+			function addGroup()
 			{
-				console.log("load "+JSON.stringify(group));
-				document.getElementById("price").value = group.price;
-				document.getElementById("name").value = group.name;
-				loadUnits(group.units, 0);
+				let group = document.getElementById("group").value;
+				let groups = document.getElementById("groupsBlock");
+				let div = document.createElement("div");
+				let label = document.createElement("label");
+				label.value = group;
+				label.innerHTML = group;
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = "Remove";
+				button.onclick = function()
+				{
+					let group = this.parentNode.firstChild.value;
+					this.parentNode.parentNode.removeChild(this.parentNode);
+				};
+				div.appendChild(label);
+				div.appendChild(button);
+				groups.appendChild(div);
 			}
-			function loadUnits(units, price)
+			function load(deck)
+			{
+				console.log("load "+JSON.stringify(deck));
+				document.getElementById("name").value = deck.name;
+				loadUnits(deck.units, deck.groups);
+			}
+			function loadUnits(units, groups)
 			{
 				let unit = units.shift();
-				let req = db.transaction(["units"]).objectStore("units").get(unit);
-				req.onsuccess = function(event)
+				let unitsElement = document.getElementById("unitsBlock");
+				let div = document.createElement("div");
+				let label = document.createElement("label");
+				label.value = unit;
+				label.innerHTML = unit;
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = "Remove";
+				button.onclick = function()
 				{
-					if (req.result)
-					{
-						price += req.result.price;
-						let unitsElement = document.getElementById("unitsBlock");
-						let div = document.createElement("div");
-						let label = document.createElement("label");
-						label.value = unit;
-						label.innerHTML = unit;
-						let button = document.createElement("input");
-						button.type = "button";
-						button.value = "Remove";
-						button.onclick = function()
-						{
-							let unit = this.parentNode.firstChild.value;
-							this.parentNode.parentNode.removeChild(this.parentNode);
-							let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
-							req.onsuccess = function(event)
-							{
-								if (req.result)
-								{
-									let price = parseInt(document.getElementById("price").value);
-									price -= req.result.price;
-									document.getElementById("price").value = ""+price;
-								}
-							};
-						};
-						div.appendChild(label);
-						div.appendChild(button);
-						unitsElement.appendChild(div);
-						if (units.length > 0)
-						{
-							loadUnits(units, price);
-						}
-						else
-						{
-							document.getElementById("price").value = price;
-						}
-					}
+					let unit = this.parentNode.firstChild.value;
+					this.parentNode.parentNode.removeChild(this.parentNode);
 				};
+				div.appendChild(label);
+				div.appendChild(button);
+				unitsElement.appendChild(div);
+				if (units.length > 0)
+				{
+					loadUnits(units, groups);
+				}
+				else
+				{
+					loadGroups(groups);
+				}
+			}
+			function loadGroups(groups)
+			{
+				let group = groups.shift();
+				let groupsElement = document.getElementById("groupsBlock");
+				let div = document.createElement("div");
+				let label = document.createElement("label");
+				label.value = group;
+				label.innerHTML = group;
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = "Remove";
+				button.onclick = function()
+				{
+					let group = this.parentNode.firstChild.value;
+					this.parentNode.parentNode.removeChild(this.parentNode);
+				};
+				div.appendChild(label);
+				div.appendChild(button);
+				groupsElement.appendChild(div);
+				if (groups.length > 0)
+				{
+					loadUnits( groups);
+				}
 			}
 			function save()
 			{
-				let group = newDBGroup();
+				let deck = newDBDeck();
 				let units = [];
-				group.name = document.getElementById("name").value;
-				group.price = document.getElementById("price").value;
+				deck.name = document.getElementById("name").value;
 				let unitsElement = document.getElementById("unitsBlock");
 				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
@@ -201,22 +213,32 @@
 						units.push(unit);
 					}
 				}
-				group.units = units;
-				console.log("save "+JSON.stringify(group));
+				deck.units = units;
+				let groupsElement = document.getElementById("groupsBlock");
+				for (let i=0; i<groupsElement.childNodes.length; i++)
+				{
+					if (groupsElement.childNodes[i].firstChild)
+					{
+						let group = groupsElement.childNodes[i].firstChild.innerHTML;
+						group.push(unit);
+					}
+				}
+				deck.groups = groups;
+				console.log("save "+JSON.stringify(deck));
 				hide(["error"]);
 				hide(["success"]);
 				let rename = false;
 				let name = gup("name");
 				if (name && name != "")
 				{
-					if (name != unit.name)
+					if (name != deck.name)
 					{
 						rename = true;
 					}
 				}
 				if (rename)
 				{
-					let request = db.transaction(["groups"], "readwrite").objectStore("groups").delete(name);
+					let request = db.transaction(["decks"], "readwrite").objectStore("decks").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -227,7 +249,7 @@
 					};
 					request.onsuccess = function(event)
 					{
-						let req = db.transaction(["groups"], "readwrite").objectStore("groups").put(group);
+						let req = db.transaction(["decks"], "readwrite").objectStore("decks").put(group);
 						req.onerror = function(event)
 						{
 							show(["error"]);
@@ -242,14 +264,14 @@
 							setTimeout(function()
 							{
 								hide(["success"]);
-								location.search = "?name="+group.name;
+								location.search = "?name="+deck.name;
 							}, 1000);
 						};
 					};
 				}
 				else
 				{
-					let request = db.transaction(["groups"], "readwrite").objectStore("groups").put(group);
+					let request = db.transaction(["decks"], "readwrite").objectStore("decks").put(group);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -264,7 +286,7 @@
 						setTimeout(function()
 						{
 							hide(["success"]);
-							location.search = "?name="+group.name;
+							location.search = "?name="+deck.name;
 						}, 1000);
 					};
 				}
@@ -274,7 +296,7 @@
 				let name = gup("name");
 				if (name && name != "")
 				{
-					let request = db.transaction(["groups"], "readwrite").objectStore("groups").delete(name);
+					let request = db.transaction(["decks"], "readwrite").objectStore("decks").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);

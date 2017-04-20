@@ -37,7 +37,7 @@ function initDB(callback)
 	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 	window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-	let request = window.indexedDB.open("wargame", 4);
+	let request = window.indexedDB.open("wargame", 5);
 	request.onupgradeneeded = function(event)
 	{
 		coreDB = event.target.result;
@@ -53,6 +53,10 @@ function initDB(callback)
 		if (!coreDB.objectStoreNames.contains("groups"))
 		{
 			coreDB.createObjectStore("groups", {keyPath: "name"});
+		}
+		if (!coreDB.objectStoreNames.contains("decks"))
+		{
+			coreDB.createObjectStore("decks", {keyPath: "name"});
 		}
 	};
 	request.onsuccess = function(event)
@@ -72,6 +76,14 @@ function newDBGroup()
 		name: "",
 		units: [],
 		price: 0
+	};
+}
+function newDBDeck()
+{
+	return {
+		name: "",
+		units: [],
+		groups: []
 	};
 }
 function listWeapons(callback)
@@ -95,6 +107,23 @@ function listUnits(callback)
 {
 	let ret = [];
 	var objectStore = coreDB.transaction("units").objectStore("units").openCursor().onsuccess = function(event)
+	{
+		var cursor = event.target.result;
+		if (cursor)
+		{
+			ret.push(cursor.value.name);
+			cursor.continue();
+		}
+		else
+		{
+			callback(ret);
+		}
+	};
+}
+function listGroups(callback)
+{
+	let ret = [];
+	var objectStore = coreDB.transaction("groups").objectStore("groups").openCursor().onsuccess = function(event)
 	{
 		var cursor = event.target.result;
 		if (cursor)
