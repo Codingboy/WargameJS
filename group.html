@@ -112,11 +112,7 @@
 				div.appendChild(button);
 				units.appendChild(div);
 				
-				let req = db.transaction(["groups"]).objectStore("groups").get(unit);
-				req.onerror = function(event)
-				{
-					alert("DatabaseError");
-				};
+				let req = db.transaction(["units"]).objectStore("units").get(unit);
 				req.onsuccess = function(event)
 				{
 					if (req.result)
