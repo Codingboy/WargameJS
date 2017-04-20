@@ -250,7 +250,7 @@
 					};
 					request.onsuccess = function(event)
 					{
-						let req = db.transaction(["decks"], "readwrite").objectStore("decks").put(group);
+						let req = db.transaction(["decks"], "readwrite").objectStore("decks").put(deck);
 						req.onerror = function(event)
 						{
 							show(["error"]);
@@ -272,7 +272,7 @@
 				}
 				else
 				{
-					let request = db.transaction(["decks"], "readwrite").objectStore("decks").put(group);
+					let request = db.transaction(["decks"], "readwrite").objectStore("decks").put(deck);
 					request.onerror = function(event)
 					{
 						show(["error"]);
