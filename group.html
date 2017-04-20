@@ -133,54 +133,73 @@
 					}
 				};
 			}
-			function load(unit)
+			function load(group)
 			{
-				console.log("load "+JSON.stringify(unit));
-				for (let variable of Object.keys(unit))
+				console.log("load "+JSON.stringify(group));
+				document.getElementById("price").value = group.price;
+				document.getElementById("name").value = group.name;
+				loadUnits(group.units, 0);
+			}
+			function loadUnits(units, price)
+			{
+				let unit = units.shift();
+				let req = db.transaction(["units"]).objectStore("units").get(unit);
+				req.onsuccess = function(event)
 				{
-					if (variable == "weapons")
+					if (req.result)
 					{
-						let weapons = unit[variable];
-						for (let i=0; i<weapons.length; i++)
+						price += req.result.price;
+						let unitsElement = document.getElementById("unitsBlock");
+						let div = document.createElement("div");
+						let label = document.createElement("label");
+						label.value = unit;
+						label.innerHTML = unit;
+						let button = document.createElement("input");
+						button.type = "button";
+						button.value = "Remove";
+						button.onclick = function()
 						{
-							document.getElementById("weapon"+(i+1)).value = weapons[i];
+							let unit = this.parentNode.firstChild.value;
+							this.parentNode.parentNode.removeChild(this.parentNode);
+							let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
+							req.onsuccess = function(event)
+							{
+								if (req.result)
+								{
+									let price = parseInt(document.getElementById("price").value);
+									price -= req.result.price;
+									document.getElementById("price").value = ""+price;
+								}
+							};
+						};
+						div.appendChild(label);
+						div.appendChild(button);
+						unitsElement.appendChild(div);
+						if (units.length > 0)
+						{
+							loadUnits(units, price);
+						}
+						else
+						{
+							document.getElementById("price").value = price;
 						}
 					}
-					else
-					{
-						document.getElementById(variable).value = unit[variable];
-					}
-				}
+				};
 			}
 			function save()
 			{
-				let unit = newDBUnit();
-				let weapons = [];
-				for (element of allValues)
+				let group = newDBGroup();
+				let units = [];
+				group.name = document.getElementById("name").value;
+				group.price = document.getElementById("price").value;
+				let unitsElement = document.getElementById("units");
+				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
-					if (element == "weapon1" || element == "weapon2" || element == "weapon3" || element == "weapon4" || element == "weapon5")
-					{
-						let e = document.getElementById(element);
-						let value = e.value;
-						if (e.type != "number")
-						{
-							value = '"'+value+'"';
-						}
-						eval("weapons.push("+value+");");
-					}
-					else
-					{
-						let e = document.getElementById(element);
-						let value = e.value;
-						if (e.type != "number")
-						{
-							value = '"'+value+'"';
-						}
-						eval("unit."+element+" = "+value+";");
-					}
+					let unit = unitsElement.childNodes[i].firstChild.value;
+					units.push(unit);
 				}
-				unit.weapons = weapons;
-				console.log("save "+JSON.stringify(unit));
+				group.units = units;
+				console.log("save "+JSON.stringify(group));
 				hide(["error"]);
 				hide(["success"]);
 				let rename = false;
@@ -194,7 +213,7 @@
 				}
 				if (rename)
 				{
-					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
+					let request = db.transaction(["groups"], "readwrite").objectStore("groups").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -205,7 +224,7 @@
 					};
 					request.onsuccess = function(event)
 					{
-						let req = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
+						let req = db.transaction(["groups"], "readwrite").objectStore("groups").put(group);
 						req.onerror = function(event)
 						{
 							show(["error"]);
@@ -220,14 +239,14 @@
 							setTimeout(function()
 							{
 								hide(["success"]);
-								location.search = "?name="+unit.name;
+								location.search = "?name="+group.name;
 							}, 1000);
 						};
 					};
 				}
 				else
 				{
-					let request = db.transaction(["units"], "readwrite").objectStore("units").put(unit);
+					let request = db.transaction(["groups"], "readwrite").objectStore("groups").put(group);
 					request.onerror = function(event)
 					{
 						show(["error"]);
@@ -242,18 +261,17 @@
 						setTimeout(function()
 						{
 							hide(["success"]);
-							location.search = "?name="+unit.name;
+							location.search = "?name="+group.name;
 						}, 1000);
 					};
 				}
-				//TODO update group
 			}
 			function del()
 			{
 				let name = gup("name");
 				if (name && name != "")
 				{
-					let request = db.transaction(["units"], "readwrite").objectStore("units").delete(name);
+					let request = db.transaction(["groups"], "readwrite").objectStore("groups").delete(name);
 					request.onerror = function(event)
 					{
 						show(["error"]);
