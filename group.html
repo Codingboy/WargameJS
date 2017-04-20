@@ -104,7 +104,11 @@
 				let button = document.createElement("input");
 				button.type = "button";
 				button.value = "Remove";
-				button.onclick = deleteElement(this);
+				button.onclick = function()
+				{
+					//TODO edit price
+					this.parentNode.parentNode.removeChild(this.parentNode);
+				};
 				div.appendChild(label);
 				div.appendChild(button);
 				units.appendChild(div);
@@ -122,9 +126,8 @@
 			}
 			function deleteElement(element)
 			{
-				//TODO edit price
-				element.parentNode.parentNode.removeChild(element.parentNode);
-			};
+			
+			}
 			function load(unit)
 			{
 				console.log("load "+JSON.stringify(unit));
