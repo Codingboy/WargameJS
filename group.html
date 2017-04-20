@@ -195,8 +195,11 @@
 				let unitsElement = document.getElementById("unitsBlock");
 				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
-					let unit = unitsElement.childNodes[i].firstChild.innerHTML;
-					units.push(unit);
+					if (unitsElement.childNodes[i].firstChild)
+					{
+						let unit = unitsElement.childNodes[i].firstChild.innerHTML;
+						units.push(unit);
+					}
 				}
 				group.units = units;
 				console.log("save "+JSON.stringify(group));
