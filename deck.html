@@ -149,6 +149,10 @@
 			}
 			function loadUnits(units, groups)
 			{
+				if (units.length == 0)
+				{
+					loadGroups(groups);
+				}
 				let unit = units.shift();
 				let unitsElement = document.getElementById("unitsBlock");
 				let div = document.createElement("div");
@@ -177,6 +181,10 @@
 			}
 			function loadGroups(groups)
 			{
+				if (groups.length == 0)
+				{
+					return;
+				}
 				let group = groups.shift();
 				let groupsElement = document.getElementById("groupsBlock");
 				let div = document.createElement("div");
