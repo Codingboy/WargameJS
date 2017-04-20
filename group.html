@@ -195,7 +195,7 @@
 				let unitsElement = document.getElementById("unitsBlock");
 				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
-					let unit = unitsElement.childNodes[i].innerHTML;
+					let unit = unitsElement.childNodes[i].firstChild.innerHTML;
 					units.push(unit);
 				}
 				group.units = units;
