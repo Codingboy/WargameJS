@@ -106,10 +106,9 @@
 				button.value = "Remove";
 				button.onclick = function()
 				{
-					//TODO edit price
 					let unit = this.parentNode.firstChild.value;
 					this.parentNode.parentNode.removeChild(this.parentNode);
-					let req = db.transaction(["units"]).objectStore("units").get(unit);
+					let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
 					req.onsuccess = function(event)
 					{
 						if (req.result)
@@ -123,7 +122,7 @@
 				div.appendChild(label);
 				div.appendChild(button);
 				units.appendChild(div);
-				let req = db.transaction(["units"]).objectStore("units").get(unit);
+				let req = db.transaction(["units"]).objectStore("units").get(unit);//TODO recalc price
 				req.onsuccess = function(event)
 				{
 					if (req.result)
@@ -133,10 +132,6 @@
 						document.getElementById("price").value = ""+price;
 					}
 				};
-			}
-			function deleteElement(element)
-			{
-			
 			}
 			function load(unit)
 			{
