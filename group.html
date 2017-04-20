@@ -195,6 +195,11 @@
 				let unitsElement = document.getElementById("unitsBlock");
 				for (let i=0; i<unitsElement.childNodes.length; i++)
 				{
+					console.log(i);
+					console.log(unitsElement);
+					console.log(unitsElement.childNodes[i]);
+					console.log(unitsElement.childNodes[i].firstChild);
+					console.log(unitsElement.childNodes[i].firstChild.value);
 					let unit = unitsElement.childNodes[i].firstChild.value;
 					units.push(unit);
 				}
