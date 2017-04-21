@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<title>BFT</title>
+	</head>
+	<body>
+		<div class="container">
+			<form class="form-horizontal">
+				<div class="form-group" id="unitBlock">
+					<input type="button" onclick="showGroups()" value="Groups"/>
+					<input type="button" onclick="showInfantry()" value="Infantry"/>
+				</div>
+				<div class="form-group" id="buttonsBlock">
+				</div>
+			<form>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="core.js"></script>
+		<script>
+			var db;
+			let allBlocks = ["nameBlock"];
+			let allValues = ["price","name"];
+			function init()
+			{
+				hide(["success","error"]);
+				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+				initDB(function(event)
+				{
+					db = event.target.result;
+					listUnits(function(units)
+					{
+						let selectElement = document.getElementById("unit");
+						for (let i=0; i<selectElement.length; i++)
+						{
+							selectElement.remove(i);
+						}
+						for (let unit of units)
+						{
+							let option = document.createElement("option");
+							option.value = unit;
+							option.innerHTML = unit;
+							selectElement.appendChild(option);
+						}
+						listGroups(function(groups)
+						{
+							let selectElement = document.getElementById("group");
+							for (let group of groups)
+							{
+								let option = document.createElement("option");
+								option.value = group;
+								option.innerHTML = group;
+								selectElement.appendChild(option);
+							}
+							let name = gup("name");
+							if (name && name != "")
+							{
+								let req = db.transaction(["decks"]).objectStore("decks").get(name);
+								req.onsuccess = function(event)
+								{
+									if (req.result)
+									{
+										load(req.result);
+									}
+									else
+									{
+										alert("Unknown deck.");
+									}
+								};
+							}
+						});
+					});
+				});
+			}
+			init();
+			function reset()
+			{
+				let groupsElement = document.getElementById("buttonsBlock");
+				for (let i=0; i<groupsElement.childNodes.length; i++)
+				{
+					if (groupsElement.childNodes[i])
+					{
+						let group = groupsElement.removeChild(groupsElement.childNodes[i]);
+					}
+				}
+			}
+			function showGroups()
+			{
+				reset();
+				let name = gup("deck");
+				let req = db.transaction(["decks"]).objectStore("decks").get(name);
+				req.onsuccess = function(event)
+				{
+					if (req.result)
+					{
+						let deck = req.result;
+						for (let group of deck.groups)
+						{
+							addGroup(group);
+						}
+					}
+				};
+			}
+			function showInfantry()
+			{
+				reset();
+				let name = gup("deck");
+				let req = db.transaction(["decks"]).objectStore("decks").get(name);
+				req.onsuccess = function(event)
+				{
+					if (req.result)
+					{
+						let deck = req.result;
+						for (let unit of deck.units)
+						{
+							//TODO filter infantry
+							addUnit(unit);
+						}
+					}
+				};
+			}
+			function addUnit(unit)
+			{
+				let units = document.getElementById("buttonsBlock");
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = "Remove";
+				button.onclick = function()
+				{
+					let unit = this.value;
+					//TODO prepare for spawn
+				};
+				units.appendChild(button);
+			}
+			function addGroup(group)
+			{
+				let groups = document.getElementById("buttonsBlock");
+				let button = document.createElement("input");
+				button.type = "button";
+				button.value = group.name;
+				button.onclick = function()
+				{
+					let group = this.value;
+					//TODO prepare for spawn
+				};
+				groups.appendChild(button);
+			}
+		</script>
+	</body>
+</html>
