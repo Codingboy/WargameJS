@@ -23,11 +23,8 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
-			let allBlocks = ["nameBlock"];
-			let allValues = ["price","name"];
 			function init()
 			{
-				hide(["success","error"]);
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
