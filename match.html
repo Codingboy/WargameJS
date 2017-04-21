@@ -13,6 +13,7 @@
 				<div class="form-group" id="unitBlock">
 					<input type="button" onclick="showGroups()" value="Groups"/>
 					<input type="button" onclick="showInfantry()" value="Infantry"/>
+					<input type="button" onclick="abortBuy()" value="Abort"/>
 				</div>
 				<div class="form-group" id="buttonsBlock">
 				</div>
@@ -23,6 +24,7 @@
 		<script src="core.js"></script>
 		<script>
 			var db;
+			var toBeSpawned = [];
 			function init()
 			{
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -90,6 +92,7 @@
 				{
 					let unit = this.value;
 					//TODO prepare for spawn
+					toBeSpawned.push(unit);
 				};
 				units.appendChild(button);
 			}
@@ -105,6 +108,10 @@
 					//TODO prepare for spawn
 				};
 				groups.appendChild(button);
+			}
+			function abortBuy()
+			{
+				toBeSpawned = [];
 			}
 		</script>
 	</body>

@@ -206,6 +206,216 @@ function newDBUnit()
 		courage: 0.0//TODO
 	};
 }
+function newUnit(dbUnit)
+{
+	let ret = {
+		dbUnit: dbUnit,
+		flaresLeft: dbUnit.flares,
+		chaffsLeft: dbUnit.chaffs,
+		smokeLeft: dbUnit.smoke,
+		fuelLeft: dbUnit.fuel,
+		transportUnits: [],
+		transportWeightLeft: dbUnit.transportWeight,
+		resupplyFuelLeft: dbUnit.resupplyFuel,
+		resupplyAmmoLeft: dbUnit.resupplyAmmo,
+		resupplyRepairLeft: dbUnit.resupplyRepair,
+		resupplyMedicalLeft: dbUnit.resupplyMedical,
+		suppression: 0,
+		weapons: [],
+		radarAirJammed: [],
+		radarAirJammedBy: [],
+		radarWeaponJammed: [],
+		radarWeaponJammedBy: [],
+		radioJammed: [],
+		radioJammedBy: [],
+		spots: [],
+		spotsIR: [],
+		spotsRadarAir: [],
+		spotsRadarWeapon: [],
+		hears: [],
+		spottedBy: [],
+		spottedIRBy: [],
+		spottedRadarAirBy: [],
+		spottedRadarWeaponBy: [],
+		hearedBy: [],
+	};
+	for (let weapon of dbUnit.weapons)
+	{
+		ret.weapons.push(newWeapon(weapon));
+	}
+	return ret;
+}
+function newGroup(owner)
+{
+	let ret = {
+		owner: owner,
+		units: [],
+		representation: null,
+		pos: null,
+		altitude: 0,
+		dir: -1,
+		getSymbol: function()//http://explorer.milsymb.net/#/explore/
+		{
+			if (representation.dbUnit.type == "Infantry")
+			{
+				let version = "10"
+				let standardIdentity = "01";
+				if (this.owner.isFriend())
+				{
+					standardIdentity = "03";
+				}
+				if (this.owner.isEnemy())
+				{
+					standardIdentity = "06";
+				}
+				if (this.owner.isNeutral())
+				{
+					standardIdentity = "04";
+				}
+				if (this.isEnemy())
+				{
+					standardIdentity = "06";
+				}
+				let symbolSet = "10";//TODO missiles, air
+				let status = "0";//TODO 3=damaged, 4=destroyed
+				let hqtfDummy = "0";
+				let amplifier = "11";
+				if (representation.dbUnit.type == "Infantry")
+				{
+					let count = this.units.length;
+					if (count <= 2)
+					{
+						amplifier = "11";
+					}
+					else if (count <= 4)
+					{
+						amplifier = "12";
+					}
+					else if (count <= 8)
+					{
+						amplifier = "13";
+					}
+					else if (count <= 16)
+					{
+						amplifier = "14";
+					}
+					else if (count <= 32)
+					{
+						amplifier = "15";
+					}
+					else if (count <= 64)
+					{
+						amplifier = "16";
+					}
+					else if (count <= 128)
+					{
+						amplifier = "17";
+					}
+					else if (count <= 256)
+					{
+						amplifier = "18";
+					}
+				}
+				else
+				{
+					let count = this.units.length;
+					if (count == 1)
+					{
+						amplifier = "11";
+					}
+					else if (count == 2)
+					{
+						amplifier = "12";
+					}
+					else if (count == 3)
+					{
+						amplifier = "13";
+					}
+					else if (count == 4)
+					{
+						amplifier = "14";
+					}
+					else if (count == 5)
+					{
+						amplifier = "15";
+					}
+					else if (count == 6)
+					{
+						amplifier = "16";
+					}
+					else if (count == 7)
+					{
+						amplifier = "17";
+					}
+					else if (count == 8)
+					{
+						amplifier = "18";
+					}
+				}
+				let entity = "12";
+				let entityType = "11";
+				if (representation.dbUnit.type == "Infantry")
+				{
+					entityType = "11";
+				}
+				let entitySuptype = "00";
+				let modifier1 = "00";
+				let modifier2 = "00";
+				let altitude = "";
+				if (this.altitude != 0)
+				{
+					altitude = ""+this.altitude;
+				}
+				let type = "";//TODO set to transported units name
+				let direction = undefined;
+				if (this.dir != -1)
+				{
+					direction = this.dir;
+				}
+				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:this.representation.name,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
+			}
+		}
+	};
+	return ret;
+}
+Group.prototype.getSymbol = function()
+{
+	let version = "10"
+	let standardIdentity = "03";
+	if (this.isEnemy())
+	{
+		standardIdentity = "06";
+	}
+	let symbolSet = "10";
+	let status = "0";
+	let hqtfDummy = "0";
+	let amplifier = "11";
+	let entity = "12";
+	let entityType = "11";
+	let entitySuptype = "00";
+	let modifier1 = "00";
+	let modifier2 = "00";
+	let altitude = "";
+	if (this.altitude != 0)
+	{
+		altitude = ""+this.altitude;
+	}
+	let type = "";//TODO set to transported units name
+	let direction = undefined;
+	if (this.dir != -1)
+	{
+		direction = this.dir;
+	}
+	return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:"Rifleman '90",altitudeDepth:altitude,direction:direction,speed:""+this.min.speed,combatEffectiveness:""+this.min.prize,headquartersElement:this.player.name,type:type});
+};
+function newWeapon(dbWeapon)
+{
+	return {
+		dbWeapon: dbWeapon,
+		magazinesLeft: dbWeapon.magazines,//amount of magazines excluding loaded magazine
+		bulletsLeft: dbWeapon.magazineSize//rounds in current magazine
+	};
+}
 function setValues(element, min, value, max, step)
 {
 	e = document.getElementById(element);
@@ -327,36 +537,6 @@ Group.prototype.setPos = function(pos)
 	this.pos3857 = position;
 	this.pos4326 = pos;
 	this.latlon = new LatLon(pos[0], pos[1]);
-};
-Group.prototype.getSymbol = function()
-{
-	let version = "10"
-	let standardIdentity = "03";
-	if (this.isEnemy())
-	{
-		standardIdentity = "06";
-	}
-	let symbolSet = "10";
-	let status = "0";
-	let hqtfDummy = "0";
-	let amplifier = "11";
-	let entity = "12";
-	let entityType = "11";
-	let entitySuptype = "00";
-	let modifier1 = "00";
-	let modifier2 = "00";
-	let altitude = "";
-	if (this.altitude != 0)
-	{
-		altitude = ""+this.altitude;
-	}
-	let type = "";//TODO set to transported units name
-	let direction = undefined;
-	if (this.dir != -1)
-	{
-		direction = this.dir;
-	}
-	return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:"Rifleman '90",altitudeDepth:altitude,direction:direction,speed:""+this.min.speed,combatEffectiveness:""+this.min.prize,headquartersElement:this.player.name,type:type});
 };
 Group.prototype.setOpacity = function(opacity)
 {
