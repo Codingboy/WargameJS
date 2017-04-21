@@ -34,48 +34,6 @@
 				initDB(function(event)
 				{
 					db = event.target.result;
-					listUnits(function(units)
-					{
-						let selectElement = document.getElementById("unit");
-						for (let i=0; i<selectElement.length; i++)
-						{
-							selectElement.remove(i);
-						}
-						for (let unit of units)
-						{
-							let option = document.createElement("option");
-							option.value = unit;
-							option.innerHTML = unit;
-							selectElement.appendChild(option);
-						}
-						listGroups(function(groups)
-						{
-							let selectElement = document.getElementById("group");
-							for (let group of groups)
-							{
-								let option = document.createElement("option");
-								option.value = group;
-								option.innerHTML = group;
-								selectElement.appendChild(option);
-							}
-							let name = gup("name");
-							if (name && name != "")
-							{
-								let req = db.transaction(["decks"]).objectStore("decks").get(name);
-								req.onsuccess = function(event)
-								{
-									if (req.result)
-									{
-										load(req.result);
-									}
-									else
-									{
-										alert("Unknown deck.");
-									}
-								};
-							}
-						});
-					});
 				});
 			}
 			init();
