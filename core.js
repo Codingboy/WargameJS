@@ -296,11 +296,13 @@ Group.prototype.addUnit = function(unit)
 };
 Group.prototype.addGroup = function(group)
 {
+	console.log(JSON.stringify(this));
 	let req = db.transaction(["groups"]).objectStore("groups").get(group);
 	req.onsuccess = function(event)
 	{
 		if (req.result)
 		{
+			console.log(JSON.stringify(this));
 			if (this.name == "")
 			{
 				this.name = req.result.name;
