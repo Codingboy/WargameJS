@@ -5,6 +5,13 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="ol.css" type="text/css">
+		<style>
+			.map {
+				height: 100%;
+				width: 100%;
+			}
+		</style>
 		<title>BFT</title>
 	</head>
 	<body onclick="onClick(event);">
@@ -144,6 +151,7 @@
 			init();
 			function reset()
 			{
+				toBeSpawned = [];
 				let groupsElement = document.getElementById("buttonsBlock");
 				for (let i=0; i<groupsElement.childNodes.length; i++)
 				{
@@ -217,7 +225,7 @@
 			}
 			function abortBuy()
 			{
-				toBeSpawned = [];
+				reset();
 			}
 			function updateUI()
 			{
