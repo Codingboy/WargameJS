@@ -294,6 +294,7 @@ Group.prototype.addUnit = function(unit)
 			}
 		}
 	};
+	req.onsuccess.bind(this);
 };
 Group.prototype.addGroup = function(group)
 {
