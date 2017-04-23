@@ -293,7 +293,7 @@ Group.prototype.addUnit = function(unit)
 			}
 		}
 	};
-}
+};
 Group.prototype.addGroup = function(group)
 {
 	let req = db.transaction(["groups"]).objectStore("groups").get(group);
@@ -312,7 +312,7 @@ Group.prototype.addGroup = function(group)
 			needsRedraw = true;
 		}
 	};
-}
+};
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 {
 	if (representation.dbUnit.type == "Infantry")
@@ -434,7 +434,7 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		let commonIdentifier = this.name;
 		return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
 	}
-}
+};
 Group.prototype.redraw = function()
 {
 	let ratio = window.devicePixelRatio || 1;
@@ -451,7 +451,7 @@ Group.prototype.redraw = function()
 		})
 	});
 	this.olObject.setStyle(olStyle);
-}
+};
 function newWeapon(dbWeapon)
 {
 	return {
