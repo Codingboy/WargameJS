@@ -510,5 +510,5 @@ Group.prototype.canSee = function(group)//TODO
 	}
 	//TODO
 }
-myGroup = new Group(player, [0,0]);
+myGroup = new Group(new Player(), [0,0]);
 myGroup.addUnit("Rifleman");
