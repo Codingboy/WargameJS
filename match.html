@@ -52,6 +52,12 @@
 			let fps = 10;
 			let timeFactor = 10;
 			
+			let symbolSource = new ol.source.Vector({
+				features: []
+			});
+			let symbolLayer = new ol.layer.Vector({
+				source: symbolSource
+			});
 			let map = new ol.Map({
 				target: "map",
 				layers: [
@@ -125,12 +131,6 @@
 				shift = e.shiftKey;
 				ctrl = e.ctrlKey;
 			}
-			let symbolSource = new ol.source.Vector({
-				features: []
-			});
-			let symbolLayer = new ol.layer.Vector({
-				source: symbolSource
-			});
 			function init()
 			{
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
