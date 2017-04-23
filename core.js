@@ -271,6 +271,7 @@ function Group(owner, pos)
 	{
 		this.opacity = 0;
 	}
+	this.setPos(pos);
 }
 Group.prototype.addUnit = function(unit)
 {
@@ -315,7 +316,7 @@ Group.prototype.addGroup = function(group)
 };
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 {
-	if (representation.dbUnit.type == "Infantry")
+	if (this.representation.dbUnit.type == "Infantry")
 	{
 		let version = "10"
 		let standardIdentity = "01";
@@ -339,7 +340,7 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		let status = "0";//TODO 3=damaged, 4=destroyed
 		let hqtfDummy = "0";
 		let amplifier = "11";
-		if (representation.dbUnit.type == "Infantry")
+		if (this.representation.dbUnit.type == "Infantry")
 		{
 			let count = this.units.length;
 			if (count <= 2)
