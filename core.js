@@ -287,7 +287,7 @@ Group.prototype.addUnit = function(unit)
 			{
 				this.name = dbUnit.name;
 			}
-			needsRedraw = true;
+			this.needsRedraw = true;
 			if (this.representation == null)
 			{
 				this.representation = newUnit();//TODO
@@ -510,3 +510,5 @@ Group.prototype.canSee = function(group)//TODO
 	}
 	//TODO
 }
+myGroup = new Group(player, [0,0]);
+myGroup.addUnit("Rifleman");
