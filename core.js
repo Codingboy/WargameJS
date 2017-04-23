@@ -288,7 +288,7 @@ Group.prototype.addUnit = function(unit)
 				this.name = dbUnit.name;
 			}
 			this.needsRedraw = true;
-			if (this.representation == null)
+			if (!this.representation)
 			{
 				this.representation = new Unit(dbUnit, this);//TODO
 			}
