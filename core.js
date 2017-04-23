@@ -309,7 +309,7 @@ Group.prototype.addGroup = function(group)
 			{
 				this.addUnit(unit);
 			}
-			needsRedraw = true;
+			this.needsRedraw = true;
 		}
 	}.bind(this);
 };
@@ -452,6 +452,12 @@ Group.prototype.redraw = function()
 	});
 	this.olObject.setStyle(olStyle);
 };
+Group.prototype.setPos(pos)
+{
+	this.pos = pos;
+	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
+	this.olObject.getGeometry().setCoordinates(position);
+}
 function newWeapon(dbWeapon)
 {
 	return {

@@ -155,8 +155,6 @@
 				initDB(function(event)
 				{
 					db = event.target.result;
-myGroup = new Group(new Player(), [0,0]);
-myGroup.addUnit("Rifleman");
 				});
 			}
 			init();
@@ -258,7 +256,7 @@ myGroup.addUnit("Rifleman");
 							{
 								group.waypoints.shift();
 								group.dir = -1;
-								group.pos = dst;
+								group.setPos(dst);
 								group.redraw();
 							}
 							else
@@ -271,13 +269,25 @@ myGroup.addUnit("Rifleman");
 									group.dir = bearing;
 									group.redraw();
 								}
-								group.pos = [destination.lat, destination.lon];
+								group.setPos([destination.lat, destination.lon]);
 							}
 							group.moved = true;
 						}
 						else
 						{
 							group.moved = false;
+						}
+					}
+				}
+				
+				
+				for (let p of allPlayers)
+				{
+					for (let group of p.groups)
+					{
+						if (group.needsRedraw)
+						{
+							group.redraw();
 						}
 					}
 				}
