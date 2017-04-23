@@ -246,18 +246,62 @@ function newUnit(dbUnit)
 	}
 	return ret;
 }
-function newGroup(owner)
+function newGroup(owner, pos)
 {
 	let ret = {
+		olObject: new ol.Feature({
+					geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
+				}),
 		owner: owner,
 		units: [],
 		representation: null,
-		pos: null,
+		pos: pos,
 		altitude: 0,
 		dir: -1,
 		moved: false,
 		waypoints: [],
 		needsRedraw: false,
+		name: "",
+		opacity: 1,
+		addUnit: function(unit)
+		{
+			let req = db.transaction(["units"]).objectStore("units").get(unit);
+			req.onsuccess = function(event)
+			{
+				if (req.result)
+				{
+					this.units.push(req.result);
+					if (this.name == "")
+					{
+						this.name = req.result.name;
+					}
+					needsRedraw = true;
+					if (this.representation == null)
+					{
+						this.representation = newUnit();
+					}
+				}
+			};
+		},
+		addGroup: function(group)
+		{
+			let req = db.transaction(["groups"]).objectStore("groups").get(group);
+			req.onsuccess = function(event)
+			{
+				if (req.result)
+				{
+					if (this.name == "")
+					{
+						this.name = req.result.name;
+					}
+					for (unit of req.result.units)
+					{
+						this.addUnit(unit);
+					}
+					needsRedraw = true;
+				}
+			};
+		},
 		getSymbol: function()//http://explorer.milsymb.net/#/explore/
 		{
 			if (representation.dbUnit.type == "Infantry")
@@ -376,10 +420,39 @@ function newGroup(owner)
 				{
 					direction = this.dir;
 				}
-				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:this.representation.name,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
+				let commonIdentifier = this.name;
+				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
 			}
+		},
+		redraw: function()
+		{
+			let ratio = window.devicePixelRatio || 1;
+			let symbol = this.getSymbol();
+			let olStyle = new ol.style.Style({
+				image: new ol.style.Icon({
+					anchor: [0.5, 0.5],
+					anchorXUnits: "fraction",
+					anchorYUnits: "fraction",
+					opacity: this.opacity,
+					imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
+					img: symbol.asCanvas(),
+					scale: 1/ratio
+				})
+			});
+			this.olObject.setStyle(olStyle);
 		}
 	};
+	ret.owner.groups.push(ret);
+	ret.olObject.set("group", ret);
+	symbolSource.addFeature(ret.olObject);
+	if (ret.owner.isFriend())
+	{
+		ret.opacity = unselectedOpacity;
+	}
+	else
+	{
+		ret.opacity = 0;
+	}
 	return ret;
 }
 function newWeapon(dbWeapon)
