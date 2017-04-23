@@ -130,11 +130,13 @@
 						{
 							for (let g of selectedGroups)
 							{
-								g.setOpacity(unselectedOpacity);
+								g.opacity = unselectedOpacity;
+								g.needsRedraw = true;
 							}
 							selectedGroups = [group];
 						}
-						group.setOpacity(selectedOpacity);
+						group.opacity = selectedOpacity;
+						group.needsRedraw = true;
 					}
 					if (!selected)
 					{
