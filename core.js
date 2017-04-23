@@ -246,214 +246,211 @@ function newUnit(dbUnit)
 	}
 	return ret;
 }
-function newGroup(owner, pos)
+function Group(owner, pos)
 {
-	let ret = {
-		olObject: new ol.Feature({
-					geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
-				}),
-		owner: owner,
-		units: [],
-		representation: null,
-		pos: pos,
-		altitude: 0,
-		dir: -1,
-		moved: false,
-		waypoints: [],
-		needsRedraw: false,
-		name: "",
-		opacity: 1,
-		addUnit: function(unit)
-		{
-			let req = db.transaction(["units"]).objectStore("units").get(unit);
-			req.onsuccess = function(event)
-			{
-				if (req.result)
-				{
-					this.units.push(req.result);
-					if (this.name == "")
-					{
-						this.name = req.result.name;
-					}
-					needsRedraw = true;
-					if (this.representation == null)
-					{
-						this.representation = newUnit();
-					}
-				}
-			};
-		},
-		addGroup: function(group)
-		{
-			let req = db.transaction(["groups"]).objectStore("groups").get(group);
-			req.onsuccess = function(event)
-			{
-				if (req.result)
-				{
-					if (this.name == "")
-					{
-						this.name = req.result.name;
-					}
-					for (unit of req.result.units)
-					{
-						this.addUnit(unit);
-					}
-					needsRedraw = true;
-				}
-			};
-		},
-		getSymbol: function()//http://explorer.milsymb.net/#/explore/
-		{
-			if (representation.dbUnit.type == "Infantry")
-			{
-				let version = "10"
-				let standardIdentity = "01";
-				if (this.owner.isFriend())
-				{
-					standardIdentity = "03";
-				}
-				if (this.owner.isEnemy())
-				{
-					standardIdentity = "06";
-				}
-				if (this.owner.isNeutral())
-				{
-					standardIdentity = "04";
-				}
-				if (this.isEnemy())
-				{
-					standardIdentity = "06";
-				}
-				let symbolSet = "10";//TODO missiles, air
-				let status = "0";//TODO 3=damaged, 4=destroyed
-				let hqtfDummy = "0";
-				let amplifier = "11";
-				if (representation.dbUnit.type == "Infantry")
-				{
-					let count = this.units.length;
-					if (count <= 2)
-					{
-						amplifier = "11";
-					}
-					else if (count <= 4)
-					{
-						amplifier = "12";
-					}
-					else if (count <= 8)
-					{
-						amplifier = "13";
-					}
-					else if (count <= 16)
-					{
-						amplifier = "14";
-					}
-					else if (count <= 32)
-					{
-						amplifier = "15";
-					}
-					else if (count <= 64)
-					{
-						amplifier = "16";
-					}
-					else if (count <= 128)
-					{
-						amplifier = "17";
-					}
-					else if (count <= 256)
-					{
-						amplifier = "18";
-					}
-				}
-				else
-				{
-					let count = this.units.length;
-					if (count == 1)
-					{
-						amplifier = "11";
-					}
-					else if (count == 2)
-					{
-						amplifier = "12";
-					}
-					else if (count == 3)
-					{
-						amplifier = "13";
-					}
-					else if (count == 4)
-					{
-						amplifier = "14";
-					}
-					else if (count == 5)
-					{
-						amplifier = "15";
-					}
-					else if (count == 6)
-					{
-						amplifier = "16";
-					}
-					else if (count == 7)
-					{
-						amplifier = "17";
-					}
-					else if (count == 8)
-					{
-						amplifier = "18";
-					}
-				}
-				let entity = "12";
-				let entityType = "11";
-				if (representation.dbUnit.type == "Infantry")
-				{
-					entityType = "11";
-				}
-				let entitySuptype = "00";
-				let modifier1 = "00";
-				let modifier2 = "00";
-				let altitude = "";
-				if (this.altitude != 0)
-				{
-					altitude = ""+this.altitude;
-				}
-				let type = "";//TODO set to transported units name
-				let direction = undefined;
-				if (this.dir != -1)
-				{
-					direction = this.dir;
-				}
-				let commonIdentifier = this.name;
-				return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
-			}
-		},
-		redraw: function()
-		{
-			let ratio = window.devicePixelRatio || 1;
-			let symbol = this.getSymbol();
-			let olStyle = new ol.style.Style({
-				image: new ol.style.Icon({
-					anchor: [0.5, 0.5],
-					anchorXUnits: "fraction",
-					anchorYUnits: "fraction",
-					opacity: this.opacity,
-					imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
-					img: symbol.asCanvas(),
-					scale: 1/ratio
-				})
+	this.olObject = new ol.Feature({
+				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
 			});
-			this.olObject.setStyle(olStyle);
-		}
-	};
-	ret.owner.groups.push(ret);
-	ret.olObject.set("group", ret);
-	symbolSource.addFeature(ret.olObject);
-	if (ret.owner.isFriend())
+	this.owner = owner;
+	this.units = [];
+	this.representation = null;
+	this.pos = pos;
+	this.altitude = 0;
+	this.dir = -1;
+	this.moved = false;
+	this.waypoints = [];
+	this.needsRedraw = false;
+	this.name = "";
+	this.opacity = 1;
+	this.owner.groups.push(this);
+	this.olObject.set("group", this);
+	symbolSource.addFeature(this.olObject);
+	if (this.owner.isFriend())
 	{
-		ret.opacity = unselectedOpacity;
+		this.opacity = unselectedOpacity;
 	}
 	else
 	{
-		ret.opacity = 0;
+		this.opacity = 0;
 	}
-	return ret;
+}
+Group.prototype.addUnit = function(unit)
+{
+	let req = db.transaction(["units"]).objectStore("units").get(unit);
+	req.onsuccess = function(event)
+	{
+		if (req.result)
+		{
+			this.units.push(req.result);
+			if (this.name == "")
+			{
+				this.name = req.result.name;
+			}
+			needsRedraw = true;
+			if (this.representation == null)
+			{
+				this.representation = newUnit();
+			}
+		}
+	};
+}
+Group.prototype.addGroup = function(group)
+{
+	let req = db.transaction(["groups"]).objectStore("groups").get(group);
+	req.onsuccess = function(event)
+	{
+		if (req.result)
+		{
+			if (this.name == "")
+			{
+				this.name = req.result.name;
+			}
+			for (unit of req.result.units)
+			{
+				this.addUnit(unit);
+			}
+			needsRedraw = true;
+		}
+	};
+}
+Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
+{
+	if (representation.dbUnit.type == "Infantry")
+	{
+		let version = "10"
+		let standardIdentity = "01";
+		if (this.owner.isFriend())
+		{
+			standardIdentity = "03";
+		}
+		if (this.owner.isEnemy())
+		{
+			standardIdentity = "06";
+		}
+		if (this.owner.isNeutral())
+		{
+			standardIdentity = "04";
+		}
+		if (this.isEnemy())
+		{
+			standardIdentity = "06";
+		}
+		let symbolSet = "10";//TODO missiles, air
+		let status = "0";//TODO 3=damaged, 4=destroyed
+		let hqtfDummy = "0";
+		let amplifier = "11";
+		if (representation.dbUnit.type == "Infantry")
+		{
+			let count = this.units.length;
+			if (count <= 2)
+			{
+				amplifier = "11";
+			}
+			else if (count <= 4)
+			{
+				amplifier = "12";
+			}
+			else if (count <= 8)
+			{
+				amplifier = "13";
+			}
+			else if (count <= 16)
+			{
+				amplifier = "14";
+			}
+			else if (count <= 32)
+			{
+				amplifier = "15";
+			}
+			else if (count <= 64)
+			{
+				amplifier = "16";
+			}
+			else if (count <= 128)
+			{
+				amplifier = "17";
+			}
+			else if (count <= 256)
+			{
+				amplifier = "18";
+			}
+		}
+		else
+		{
+			let count = this.units.length;
+			if (count == 1)
+			{
+				amplifier = "11";
+			}
+			else if (count == 2)
+			{
+				amplifier = "12";
+			}
+			else if (count == 3)
+			{
+				amplifier = "13";
+			}
+			else if (count == 4)
+			{
+				amplifier = "14";
+			}
+			else if (count == 5)
+			{
+				amplifier = "15";
+			}
+			else if (count == 6)
+			{
+				amplifier = "16";
+			}
+			else if (count == 7)
+			{
+				amplifier = "17";
+			}
+			else if (count == 8)
+			{
+				amplifier = "18";
+			}
+		}
+		let entity = "12";
+		let entityType = "11";
+		if (representation.dbUnit.type == "Infantry")
+		{
+			entityType = "11";
+		}
+		let entitySuptype = "00";
+		let modifier1 = "00";
+		let modifier2 = "00";
+		let altitude = "";
+		if (this.altitude != 0)
+		{
+			altitude = ""+this.altitude;
+		}
+		let type = "";//TODO set to transported units name
+		let direction = undefined;
+		if (this.dir != -1)
+		{
+			direction = this.dir;
+		}
+		let commonIdentifier = this.name;
+		return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+this.representation.speed,combatEffectiveness:""+this.representation.prize,headquartersElement:this.player.name,type:type});
+	}
+}
+Group.prototype.redraw = function()
+{
+	let ratio = window.devicePixelRatio || 1;
+	let symbol = this.getSymbol();
+	let olStyle = new ol.style.Style({
+		image: new ol.style.Icon({
+			anchor: [0.5, 0.5],
+			anchorXUnits: "fraction",
+			anchorYUnits: "fraction",
+			opacity: this.opacity,
+			imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
+			img: symbol.asCanvas(),
+			scale: 1/ratio
+		})
+	});
+	this.olObject.setStyle(olStyle);
 }
 function newWeapon(dbWeapon)
 {
@@ -500,24 +497,7 @@ function Unit()
 	this.type = "infantry";
 	this.prize = 0;
 }
-function Group()
-{
-	this.min = new Unit();
-	this.units = [];
-	this.groups = [];
-	this.group = null;
-	this.olObject = null;
-	this.target = null;
-	this.player = null;
-	this.pos = [0,0];
-	this.moved = true;
-	this.visible = false;
-	this.spots = [];
-	this.altitude = 0;
-	this.dir = -1;
-	this.opacity = 0.0;
-}
-Group.prototype.canSee = function(group)
+Group.prototype.canSee = function(group)//TODO
 {
 	let camouflage = group.camouflage*(1-this.opticsQuality);
 	let optics = this.optics*(1-camouflage);
@@ -528,103 +508,3 @@ Group.prototype.canSee = function(group)
 	}
 	//TODO
 }
-Group.prototype.addUnit = function(unit)
-{
-	this.units.push(unit);
-	unit.group = this;
-	if (unit.speed < this.min.speed)
-	{
-		this.min.speed = unit.speed;
-	}
-	if (unit.optics > this.min.optics)
-	{
-		this.min.optics = unit.optics;
-	}
-	if (unit.opticsIR > this.min.opticsIR)
-	{
-		this.min.opticsIR = unit.opticsIR;
-	}
-	if (unit.ir*unit.camouflageIR > this.min.ir*this.min.camouflageIR)
-	{
-		this.min.ir = unit.ir;
-		this.min.camouflageIR = unit.camouflageIR;
-	}
-	if (unit.camouflage < this.min.camouflage)
-	{
-		this.min.camouflage = unit.camouflage;
-	}
-	if (unit.sound > this.min.sound)
-	{
-		this.min.sound = unit.sound;
-	}
-	if (unit.radarAir > this.min.radarAir)
-	{
-		this.min.radarAir = unit.radarAir;
-	}
-	if (unit.radarWeapon > this.min.radarWeapon)
-	{
-		this.min.radarWeapon = unit.radarWeapon;
-	}
-	if (unit.camouflageRadar < this.min.camouflageRadar)
-	{
-		this.min.camouflageRadar = unit.camouflageRadar;
-	}
-};
-Group.prototype.addGroup = function(group)
-{
-	this.groups.push(group);
-	group.group = this;
-};
-Group.prototype.setPos = function(pos)
-{
-	document.getElementById("lat").innerHTML = pos[0];
-	document.getElementById("lon").innerHTML = pos[1];
-	position = ol.proj.transform(pos, "EPSG:4326", "EPSG:3857");
-	this.olObject.getGeometry().setCoordinates(position);
-	this.pos3857 = position;
-	this.pos4326 = pos;
-	this.latlon = new LatLon(pos[0], pos[1]);
-};
-Group.prototype.setOpacity = function(opacity)
-{
-	this.opacity = opacity;
-	let ratio = window.devicePixelRatio || 1;
-	let symbol = this.getSymbol();
-	let olStyle = new ol.style.Style({
-		image: new ol.style.Icon({
-			anchor: [0.5, 0.5],
-			anchorXUnits: "fraction",
-			anchorYUnits: "fraction",
-			opacity: opacity,
-			imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
-			img: symbol.asCanvas(),
-			scale: 1/ratio
-		})
-	});
-	this.olObject.setStyle(olStyle);//TODO remove
-};
-Group.prototype.redraw = function()
-{
-	let ratio = window.devicePixelRatio || 1;
-	let symbol = this.getSymbol();
-	let olStyle = new ol.style.Style({
-		image: new ol.style.Icon({
-			anchor: [0.5, 0.5],
-			anchorXUnits: "fraction",
-			anchorYUnits: "fraction",
-			opacity: this.opacity,
-			imgSize: [Math.floor(symbol.getSize().width), Math.floor(symbol.getSize().height)],
-			img: symbol.asCanvas(),
-			scale: 1/ratio
-		})
-	});
-	this.olObject.setStyle(olStyle);
-};
-Group.prototype.isEnemy = function()
-{
-	return this.player.team != player.team;
-};
-Group.prototype.isFriend = function()
-{
-	return this.player.team == player.team;
-};

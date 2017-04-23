@@ -99,7 +99,7 @@
 				let lon = latlon[1];
 				if (toBeSpawnedUnits.length+toBeSpawnedGroups.length > 0)
 				{
-					let group = newGroup(player, [lat, lon]);
+					let group = new Group(player, [lat, lon]);
 					for (unit of toBeSpawnedUnits)
 					{
 						group.addUnit(unit);
