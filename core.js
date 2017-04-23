@@ -206,7 +206,7 @@ function newDBUnit()
 		courage: 0.0//TODO
 	};
 }
-function Unit(dbUnit)
+function Unit(dbUnit, group)
 {
 	this.dbUnit = dbUnit;
 	this.flaresLeft = dbUnit.flares;
@@ -237,7 +237,7 @@ function Unit(dbUnit)
 	this.spottedRadarAirBy = [];
 	this.spottedRadarWeaponBy = [];
 	this.hearedBy = [];
-	this.group = null;
+	this.group = group;
 	for (let weapon of this.dbUnit.weapons)
 	{
 		this.weapons.push(newWeapon(weapon));
@@ -280,7 +280,7 @@ Group.prototype.addUnit = function(unit)
 		let dbUnit = event.target.result;
 		if (dbUnit)
 		{
-			this.units.push(dbUnit);
+			this.units.push(new Unit(dbUnit, this));
 			if (this.name == "")
 			{
 				this.name = dbUnit.name;
@@ -288,7 +288,7 @@ Group.prototype.addUnit = function(unit)
 			this.needsRedraw = true;
 			if (this.representation == null)
 			{
-				this.representation = new Unit();//TODO
+				this.representation = new Unit(dbUnit, this);//TODO
 			}
 		}
 	}.bind(this);
@@ -311,7 +311,7 @@ Group.prototype.addGroup = function(group)
 			}
 			needsRedraw = true;
 		}
-	};
+	}.bind(this);
 };
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 {
