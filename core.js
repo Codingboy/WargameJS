@@ -490,21 +490,6 @@ function show(elements)
 		document.getElementById(element).style.display = "block";
 	}
 }
-function Unit()
-{
-	this.group = null;
-	this.id = 1;
-	this.radarAirJammed = false;
-	this.radarWeaponJammed = false;
-	this.radioJammed = false;
-	this.flaresLeft = 0;
-	this.chaffsLeft = 0;
-	this.smokeLeft = 0;
-	this.fuelLeft = 0;
-	this.suppression = 0.0;//percentage of suppression
-	this.type = "infantry";
-	this.prize = 0;
-}
 Group.prototype.canSee = function(group)//TODO
 {
 	let camouflage = group.camouflage*(1-this.opticsQuality);
