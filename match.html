@@ -7,7 +7,7 @@
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<title>BFT</title>
 	</head>
-	<body>
+	<body onclick="onClick(event);">
 		<div class="container">
 			<form class="form-horizontal">
 				<div class="form-group" id="unitBlock">
@@ -19,12 +19,115 @@
 				</div>
 			<form>
 		</div>
+		<div id="map" class="map"></div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="core.js"></script>
 		<script>
-			var db;
-			var toBeSpawned = [];
+			var visibleEnemyOpacity = 1.0;
+			var selectedOpacity = 1.0;
+			var unselectedOpacity = 0.66;
+			let blufor = new Player();
+			blufor.name = "Coding";
+			blufor.team = 1;
+			let opfor = new Player();
+			opfor.team = 2;
+			opfor.name = "duli";
+			let player = blufor;
+			let allPlayers = [];
+			allPlayers.push(blufor);
+			allPlayers.push(opfor);
+			
+			let shift = false;
+			let ctrl = false;
+			
+			let db;
+			let toBeSpawned = [];
+			let selectedGroups = [];
+			
+			let fps = 10;
+			let timeFactor = 10;
+			
+			let map = new ol.Map({
+				target: "map",
+				layers: [
+					new ol.layer.Tile({
+						preload: Infinity,
+						source: new ol.source.OSM()
+					}),
+					vector,
+					symbolLayer
+				],
+				view: new ol.View({
+					center: ol.proj.fromLonLat([8.2, 50.05]),
+					zoom: 15
+				}),
+				interactions: ol.interaction.defaults({
+					doubleClickZoom: false,
+					shiftDragZoom: false,
+					altShiftDragRotate: false,
+					keyboard: false,
+					pinchRotate: false,
+					pinchZoom: false
+				}),
+				controls: ol.control.defaults().extend([
+					new ol.control.ScaleLine()
+				])
+			});
+			map.on("singleclick", function(evt){
+				let latlon = ol.proj.transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
+				let lat = latlon[0];
+				let lon = latlon[1];
+				document.getElementById("lat").innerHTML = lat;
+				document.getElementById("lon").innerHTML = lon;
+				/*feature = symbolSource.getClosestFeatureToCoordinate(evt.coordinate);
+				group = feature.get("group");
+				selected = [group];
+				for (group of selected)
+				{
+					group.target = latlon;
+				}*/
+				let selected = false;
+				feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
+				{
+					return feature;
+				});
+				if (feature)
+				{
+					group = feature.get("group");
+					selected = true;
+					if (shift)
+					{
+						selectedGroups.push(group);
+					}
+					else
+					{
+						for (let g of selectedGroups)
+						{
+							g.setOpacity(unselectedOpacity);
+						}
+						selectedGroups = [group];
+					}
+					group.setOpacity(selectedOpacity);
+				}
+				if (!selected)
+				{
+					for (group of selectedGroups)
+					{
+						group.target = latlon;
+					}
+				}
+			});
+			function onClick(e){
+				shift = e.shiftKey;
+				ctrl = e.ctrlKey;
+			}
+			let symbolSource = new ol.source.Vector({
+				features: []
+			});
+			let symbolLayer = new ol.layer.Vector({
+				source: symbolSource
+			});
 			function init()
 			{
 				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -113,6 +216,152 @@
 			{
 				toBeSpawned = [];
 			}
+			function updateUI()
+			{
+				//move groups
+				for (let p of allPlayers)
+				{
+					for (let group of p.groups)
+					{
+						if (group.target)
+						{
+							let dst = group.target;
+							let minMoveDistance = group.min.speed/(3.6*fps);
+							let srcLatLon = group.latlon;
+							let dstLatLon = new LatLon(dst[0], dst[1]);
+							let distance = srcLatLon.distanceTo(dstLatLon);
+							if (distance < minMoveDistance)
+							{
+								group.target = null;
+								group.dir = -1;
+								group.redraw();
+								group.setPos(dst);
+							}
+							else
+							{
+								let bearing = srcLatLon.finalBearingTo(dstLatLon);
+								let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+								bearing = (360-bearing+90)%360;
+								if (Math.round(group.dir) != Math.round(bearing))
+								{
+									group.dir = bearing;
+									group.redraw();
+								}
+								group.setPos([destination.lat, destination.lon]);
+							}
+							group.moved = true;
+						}
+						else
+						{
+							group.moved = false;
+						}
+					}
+				}
+				
+				//make spotted enemies visible
+				let visible = new Set();
+				let becameVisible = new Set();
+				let enemies = new Set();
+				for (let p of allPlayers)
+				{
+					if (p.isEnemy())
+					{
+						for (let group of p.groups)
+						{
+							enemies.add(group);
+						}
+					}
+				}
+				for (let p of allPlayers)
+				{
+					if (p.isFriend())
+					{
+						for (let group of p.groups)
+						{
+							if (group.moved)
+							{
+								//recheck all enemies
+								group.spots = [];
+								for (let g of enemies)
+								{
+									if (group.canSee(g))
+									{
+										if (g.visible)
+										{
+											visible.add(g);
+											group.spots.push(g);
+										}
+										else
+										{
+											becameVisible.add(g);
+											g.visible = true;
+										}
+									}
+								}
+							}
+							else
+							{
+								//recheck all enemies that moved
+								for (let g of enemies)
+								{
+									if (g.moved)
+									{
+										if (group.canSee(g))
+										{
+											if (g.visible)
+											{
+												visible.add(g);
+											}
+											else
+											{
+												becameVisible.add(g);
+												g.visible = true;
+											}
+										}
+										else
+										{
+											group.spots.delete(g);
+										}
+									}
+									else
+									{
+										if (group.spots.indexOf(g) != -1)
+										{
+											visible.add(g);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				for (let group of becameVisible)
+				{
+					if (!visible.has(group))
+					{
+						visible.add(group);
+						group.setOpacity(visibleEnemyOpacity);
+					}
+				}
+				for (let p of allPlayers)
+				{
+					if (p.isEnemy())
+					{
+						for (let group of p.groups)
+						{
+							if (group.visible)
+							{
+								if (!visible.has(group))
+								{
+									group.visible = false;
+									group.setOpacity(0.0);
+								}
+							}
+						}
+					}
+				}
+			}
+			let t = setInterval(updateUI, 1000/fps);
 		</script>
 	</body>
 </html>

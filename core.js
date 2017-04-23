@@ -238,6 +238,7 @@ function newUnit(dbUnit)
 		spottedRadarAirBy: [],
 		spottedRadarWeaponBy: [],
 		hearedBy: [],
+		group: null
 	};
 	for (let weapon of dbUnit.weapons)
 	{
@@ -254,6 +255,9 @@ function newGroup(owner)
 		pos: null,
 		altitude: 0,
 		dir: -1,
+		moved: false,
+		waypoints: [],
+		needsRedraw: false,
 		getSymbol: function()//http://explorer.milsymb.net/#/explore/
 		{
 			if (representation.dbUnit.type == "Infantry")
@@ -378,36 +382,6 @@ function newGroup(owner)
 	};
 	return ret;
 }
-Group.prototype.getSymbol = function()
-{
-	let version = "10"
-	let standardIdentity = "03";
-	if (this.isEnemy())
-	{
-		standardIdentity = "06";
-	}
-	let symbolSet = "10";
-	let status = "0";
-	let hqtfDummy = "0";
-	let amplifier = "11";
-	let entity = "12";
-	let entityType = "11";
-	let entitySuptype = "00";
-	let modifier1 = "00";
-	let modifier2 = "00";
-	let altitude = "";
-	if (this.altitude != 0)
-	{
-		altitude = ""+this.altitude;
-	}
-	let type = "";//TODO set to transported units name
-	let direction = undefined;
-	if (this.dir != -1)
-	{
-		direction = this.dir;
-	}
-	return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",commonIdentifier:"Rifleman '90",altitudeDepth:altitude,direction:direction,speed:""+this.min.speed,combatEffectiveness:""+this.min.prize,headquartersElement:this.player.name,type:type});
-};
 function newWeapon(dbWeapon)
 {
 	return {
