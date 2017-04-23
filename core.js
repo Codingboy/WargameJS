@@ -206,43 +206,41 @@ function newDBUnit()
 		courage: 0.0//TODO
 	};
 }
-function newUnit(dbUnit)
+function Unit(dbUnit)
 {
-	let ret = {
-		dbUnit: dbUnit,
-		flaresLeft: dbUnit.flares,
-		chaffsLeft: dbUnit.chaffs,
-		smokeLeft: dbUnit.smoke,
-		fuelLeft: dbUnit.fuel,
-		transportUnits: [],
-		transportWeightLeft: dbUnit.transportWeight,
-		resupplyFuelLeft: dbUnit.resupplyFuel,
-		resupplyAmmoLeft: dbUnit.resupplyAmmo,
-		resupplyRepairLeft: dbUnit.resupplyRepair,
-		resupplyMedicalLeft: dbUnit.resupplyMedical,
-		suppression: 0,
-		weapons: [],
-		radarAirJammed: [],
-		radarAirJammedBy: [],
-		radarWeaponJammed: [],
-		radarWeaponJammedBy: [],
-		radioJammed: [],
-		radioJammedBy: [],
-		spots: [],
-		spotsIR: [],
-		spotsRadarAir: [],
-		spotsRadarWeapon: [],
-		hears: [],
-		spottedBy: [],
-		spottedIRBy: [],
-		spottedRadarAirBy: [],
-		spottedRadarWeaponBy: [],
-		hearedBy: [],
-		group: null
-	};
-	for (let weapon of dbUnit.weapons)
+	this.dbUnit = dbUnit;
+	this.flaresLeft = dbUnit.flares;
+	this.chaffsLeft = dbUnit.chaffs;
+	this.smokeLeft = dbUnit.smoke;
+	this.fuelLeft = dbUnit.fuel;
+	this.transportUnits = [];
+	this.transportWeightLeft = dbUnit.transportWeight;
+	this.resupplyFuelLeft = dbUnit.resupplyFuel;
+	this.resupplyAmmoLeft = dbUnit.resupplyAmmo;
+	this.resupplyRepairLeft = dbUnit.resupplyRepair;
+	this.resupplyMedicalLeft = dbUnit.resupplyMedical;
+	this.suppression = 0;
+	this.weapons = [];
+	this.radarAirJammed = [];
+	this.radarAirJammedBy = [];
+	this.radarWeaponJammed = [];
+	this.radarWeaponJammedBy = [];
+	this.radioJammed = [];
+	this.radioJammedBy = [];
+	this.spots = [];
+	this.spotsIR = [];
+	this.spotsRadarAir = [];
+	this.spotsRadarWeapon = [];
+	this.hears = [];
+	this.spottedBy = [];
+	this.spottedIRBy = [];
+	this.spottedRadarAirBy = [];
+	this.spottedRadarWeaponBy = [];
+	this.hearedBy = [];
+	this.group = null;
+	for (let weapon of this.dbUnit.weapons)
 	{
-		ret.weapons.push(newWeapon(weapon));
+		this.weapons.push(newWeapon(weapon));
 	}
 	return ret;
 }
@@ -290,7 +288,7 @@ Group.prototype.addUnit = function(unit)
 			this.needsRedraw = true;
 			if (this.representation == null)
 			{
-				this.representation = newUnit();//TODO
+				this.representation = new Unit();//TODO
 			}
 		}
 	}.bind(this);
