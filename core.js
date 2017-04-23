@@ -279,35 +279,35 @@ Group.prototype.addUnit = function(unit)
 	let req = db.transaction(["units"]).objectStore("units").get(unit);
 	req.onsuccess = function(event)
 	{
-		if (req.result)
+		let dbUnit = event.target.result;
+		if (dbUnit)
 		{
-			this.units.push(req.result);
+			this.units.push(dbUnit);
 			if (this.name == "")
 			{
-				this.name = req.result.name;
+				this.name = dbUnit.name;
 			}
 			needsRedraw = true;
 			if (this.representation == null)
 			{
-				this.representation = newUnit();
+				this.representation = newUnit();//TODO
 			}
 		}
 	};
 };
 Group.prototype.addGroup = function(group)
 {
-	console.log(JSON.stringify(this));
 	let req = db.transaction(["groups"]).objectStore("groups").get(group);
 	req.onsuccess = function(event)
 	{
-		if (req.result)
+		let dbGroup = event.target.result;
+		if (dbGroup)
 		{
-			console.log(JSON.stringify(this));
 			if (this.name == "")
 			{
-				this.name = req.result.name;
+				this.name = dbGroup.name;
 			}
-			for (unit of req.result.units)
+			for (unit of dbGroup.units)
 			{
 				this.addUnit(unit);
 			}
