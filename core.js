@@ -293,7 +293,11 @@ Group.prototype.addUnit = function(unit)
 			this.needsRedraw = true;
 			if (!this.representation)
 			{
-				this.representation = new Unit(dbUnit, this);//TODO
+				this.representation = new Unit(dbUnit, this);
+			}
+			else
+			{
+				this.representation.dbUnit.price += dbUnit.price;//TODO other values
 			}
 		}
 	}.bind(this);
