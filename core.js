@@ -414,7 +414,7 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		}
 		let entity = "12";
 		let entityType = "11";
-		if (representation.dbUnit.type == "Infantry")
+		if (this.representation.dbUnit.type == "Infantry")
 		{
 			entityType = "11";
 		}
