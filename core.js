@@ -454,7 +454,7 @@ Group.prototype.redraw = function()
 	});
 	this.olObject.setStyle(olStyle);
 };
-Group.prototype.setPos(pos)
+Group.prototype.setPos = function(pos)
 {
 	this.pos = pos;
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
