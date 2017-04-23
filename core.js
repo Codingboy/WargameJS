@@ -293,8 +293,7 @@ Group.prototype.addUnit = function(unit)
 				this.representation = newUnit();//TODO
 			}
 		}
-	};
-	req.onsuccess.bind(this);
+	}.bind(this);
 };
 Group.prototype.addGroup = function(group)
 {
