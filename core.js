@@ -336,10 +336,6 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		{
 			standardIdentity = "04";
 		}
-		if (this.isEnemy())
-		{
-			standardIdentity = "06";
-		}
 		let symbolSet = "10";//TODO missiles, air
 		let status = "0";//TODO 3=damaged, 4=destroyed
 		let hqtfDummy = "0";
