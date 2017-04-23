@@ -242,7 +242,6 @@ function Unit(dbUnit, group)
 	{
 		this.weapons.push(newWeapon(weapon));
 	}
-	return ret;
 }
 function Group(owner, pos)
 {
