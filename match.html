@@ -140,7 +140,14 @@
 					{
 						for (group of selectedGroups)
 						{
-							group.target = latlon;
+							if (shift)
+							{
+								group.waypoints.push([latlon]);
+							}
+							else
+							{
+								group.waypoints = [latlon];
+							}
 						}
 					}
 				}
