@@ -249,6 +249,8 @@ function Group(owner, pos)
 	this.olObject = new ol.Feature({
 				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
 			});
+	let position = ol.proj.transform(pos, "EPSG:4326", "EPSG:3857");
+	this.olObject.getGeometry().setCoordinates(position);
 	this.owner = owner;
 	this.units = [];
 	this.representation = null;
@@ -271,7 +273,6 @@ function Group(owner, pos)
 	{
 		this.opacity = 0;
 	}
-	this.setPos(pos);
 }
 Group.prototype.addUnit = function(unit)
 {
