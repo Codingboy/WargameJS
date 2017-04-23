@@ -276,7 +276,7 @@ function Group(owner, pos)
 }
 Group.prototype.addUnit = function(unit)
 {
-	let req = db.transaction(["units"]).objectStore("units").get(unit);
+	let req = coreDB.transaction(["units"]).objectStore("units").get(unit);
 	req.onsuccess = function(event)
 	{
 		let dbUnit = event.target.result;
@@ -297,7 +297,7 @@ Group.prototype.addUnit = function(unit)
 };
 Group.prototype.addGroup = function(group)
 {
-	let req = db.transaction(["groups"]).objectStore("groups").get(group);
+	let req = coreDB.transaction(["groups"]).objectStore("groups").get(group);
 	req.onsuccess = function(event)
 	{
 		let dbGroup = event.target.result;
