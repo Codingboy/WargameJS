@@ -145,7 +145,11 @@ function Player()
 }
 Player.prototype.isEnemy = function()
 {
-	return this.team != player.team;
+	return this.team != player.team && !this.isNeutral();
+};
+Player.prototype.isNeutral = function()
+{
+	return this.team == -1;
 };
 Player.prototype.isFriend = function()
 {
