@@ -7,29 +7,27 @@ function gup(name, url)
 	var results = regex.exec(url);
 	return results == null ? null : results[1];
 }
-function newDBWeapon()
+function DBWeapon()
 {
-	return {
-		name: "G36",
-		type: "AssaultRifle",
-		guideType: "Unguided",
-		damageType: "FMJ",
-		rpm: 30,
-		magazineSize: 30,
-		magazines: 10,
-		reloadTime: 5,
-		range: 600,
-		damage: 1.0,
-		damageRadius: 0,
-		speed: 0,
-		lockChance: 0,
-		price: 3000,
-		inaccuracy: 0.1,
-		weight: 5.0,
-		suppressed: 0,
-		sound: 1000,//hearable within a range in meter
-		criticalHitChance: 0.01//critical hit chance
-	};
+	this.name = "G36";
+	this.type = "AssaultRifle";
+	this.guideType = "Unguided";
+	this.damageType = "FMJ";
+	this.rpm = 30;
+	this.magazineSize = 30;
+	this.magazines = 10;
+	this.reloadTime = 5;
+	this.range = 600;
+	this.damage = 1.0;
+	this.damageRadius = 0;
+	this.speed = 0;
+	this.lockChance = 0;
+	this.price = 3000;
+	this.inaccuracy = 0.1;
+	this.weight = 5.0;
+	this.suppressed = 0;
+	this.sound = 1000;//hearable within a range in meter
+	this.criticalHitChance = 0.01;//critical hit chance
 }
 function initDB(callback)
 {
@@ -158,6 +156,7 @@ Player.prototype.isFriend = function()
 function newDBUnit()
 {
 	return {
+		size: 1.0,
 		name: "",
 		type: "Infantry",
 		sound: 10,//hearable within a range in meter
@@ -465,13 +464,121 @@ Group.prototype.setPos = function(pos)
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
 	this.olObject.getGeometry().setCoordinates(position);
 }
-function newWeapon(dbWeapon)
+function Weapon(dbWeapon)
 {
-	return {
-		dbWeapon: dbWeapon,
-		magazinesLeft: dbWeapon.magazines,//amount of magazines excluding loaded magazine
-		bulletsLeft: dbWeapon.magazineSize//rounds in current magazine
+	this.dbWeapon = dbWeapon;
+	this.magazinesLeft = dbWeapon.magazines;//amount of magazines excluding loaded magazine
+	this.bulletsLeft = dbWeapon.magazineSize;//rounds in current magazine
+	this.reloadTimeLeft = 0;
+	this.unusedTime = 0;
+}
+Weapon.prototype.dealDamage = function(group, hits)
+{
+	//TODO calculate
+	//TODO select target
+	for (let i=0; i<hits; i++)
+	{
+		let index = Math.floor(Math.random() * group.units.length);
+		let unit = group.units[index];
+		let damage = this.dbWeapon.damage;
+		let damageFactor = 1;
+		if (unit.dbUnit.plateCarrier == 1)
+		{
+			if (this.dbWeapon.damageType == "FMJ")
+			{
+				damageFactor = 0.25;
+			}
+			if (this.dbWeapon.damageType == "AP")
+			{
+				damageFactor = 0.5;
+			}
+		}
+		else
+		{
+			if (this.dbWeapon.damageType == "FMJ")
+			{
+				damageFactor = 1.0;
+			}
+			if (this.dbWeapon.damageType == "AP")
+			{
+				damageFactor = 0.5;
+			}
+		}
+		damage *= damageFactor;
+		//unit.hp//TODO
+	}
+}
+Weapon.prototype.shoot = function(myGroup, group, shots)
+{
+	//TODO rockets
+	let distance = myGroup.latlon.distanceTo(group.latlon);
+	let hits = 0;
+	for (let i=0; i<shots; i++)
+	{
+		let rnd = Math.random()*this.dbWeapon.inaccuracy;
+		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
+		let area = radius*radius*Math.PI;
+		if (area <= group.representation.dbUnit.size)//TODO use cover, suppression, not moving
+		{
+			hits += 1;
+		}
 	};
+	if (hits > 0)
+	{
+		this.dealDamage(group, hits);
+	}
+	//TODO targets size
+	//TODO suppress target
+}
+Weapon.prototype.use = function(myGroup, group, timeAvailable)
+{//TODO block on guided weapons
+	if (this.unusedTime > 0)
+	{
+		timeAvailable += this.unusedTime;
+		this.unusedTime = 0;
+	}
+	if (timeAvailable > 0)
+	{
+		if (this.bulletsLeft == 0)
+		{
+			if (this.magazinesLeft > 0)
+			{
+				if (this.reloadTimeLeft > timeAvailable)
+				{
+					this.reloadTimeLeft -= timeAvailable;
+					timeAvailable = 0;
+				}
+				else
+				{
+					timeAvailable -= this.reloadTimeLeft;
+					this.reloadTimeLeft = 0;
+					this.bulletsLeft = this.dbWeapon.magazineSize;
+					this.magazinesLeft -= 1;
+					this.use(myGroup, group, timeAvailable);
+				}
+			}
+		}
+		else
+		{
+			let timePerShoot = 1000*this.dbWeapon.rpm/60;
+			let shots = Math.floor(timeAvailable/timePerShoot);
+			if (shots < this.bulletsLeft)
+			{
+				timeAvailable -= timePerShoot*shots;
+				this.shoot(group, shots);
+				this.bulletsLeft -= shots;
+				this.unusedTime = timeAvailable;
+			}
+			else
+			{
+				timeAvailable -= timePerShoot*this.bulletsLeft;
+				this.shoot(group, this.bulletsLeft);
+				this.bulletsLeft = 0;
+				this.reloadTimeLeft = 1000*this.dbWeapon.reloadTime;
+				this.use(myGroup, group, timeAvailable);
+			}
+		}
+	}
 }
 function setValues(element, min, value, max, step)
 {
