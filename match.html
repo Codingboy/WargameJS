@@ -166,6 +166,8 @@
 				initDB(function(event)
 				{
 					db = event.target.result;
+					let group = new Group(opfor, [8.2, 50.05]);
+					group.addUnit("Rifleman");
 				});
 			}
 			init();
@@ -289,21 +291,7 @@
 					}
 				}
 				
-				
-				for (let p of allPlayers)
-				{
-					for (let group of p.groups)
-					{
-						if (group.needsRedraw)
-						{
-							group.redraw();
-						}
-					}
-				}
-				
 				//make spotted enemies visible
-				/*let visible = new Set();
-				let becameVisible = new Set();
 				let enemies = new Set();
 				for (let p of allPlayers)
 				{
@@ -327,19 +315,7 @@
 								group.spots = [];
 								for (let g of enemies)
 								{
-									if (group.canSee(g))
-									{
-										if (g.visible)
-										{
-											visible.add(g);
-											group.spots.push(g);
-										}
-										else
-										{
-											becameVisible.add(g);
-											g.visible = true;
-										}
-									}
+									group.handleDetection(g);
 								}
 							}
 							else
@@ -349,60 +325,24 @@
 								{
 									if (g.moved)
 									{
-										if (group.canSee(g))
-										{
-											if (g.visible)
-											{
-												visible.add(g);
-											}
-											else
-											{
-												becameVisible.add(g);
-												g.visible = true;
-											}
-										}
-										else
-										{
-											group.spots.delete(g);
-										}
-									}
-									else
-									{
-										if (group.spots.indexOf(g) != -1)
-										{
-											visible.add(g);
-										}
+										group.handleDetection(g);
 									}
 								}
 							}
 						}
 					}
 				}
-				for (let group of becameVisible)
-				{
-					if (!visible.has(group))
-					{
-						visible.add(group);
-						group.setOpacity(visibleEnemyOpacity);
-					}
-				}
+				
 				for (let p of allPlayers)
 				{
-					if (p.isEnemy())
+					for (let group of p.groups)
 					{
-						for (let group of p.groups)
+						if (group.needsRedraw)
 						{
-							if (group.visible)
-							{
-								if (!visible.has(group))
-								{
-									group.visible = false;
-									group.setOpacity(0.0);
-								}
-							}
+							group.redraw();
 						}
 					}
-				}*/
+				}
 			}
 			let t = setInterval(updateUI, 1000/fps);
 		</script>

@@ -493,14 +493,38 @@ function show(elements)
 		document.getElementById(element).style.display = "block";
 	}
 }
-Group.prototype.canSee = function(group)//TODO
+Group.prototype.handleDetection = function(group)
 {
+	let distance = this.latlon.distanceTo(group.latlon);
 	let camouflage = group.camouflage*(1-this.opticsQuality);
 	let optics = this.optics*(1-camouflage);
-	let distance = this.latlon.distanceTo(group.latlon);
 	if (optics >= distance)
 	{
-		return true;
+		this.spots.push(group);
+		group.spottedBy.push(this);
+		if (group.spottedBy.length == 1)
+		{
+			group.opacity = visibleEnemyOpacity;
+			group.needsRedraw = true;
+		}
 	}
-	//TODO
-}
+	else
+	{
+		let index = group.spottedBy.indexOf(this);
+		if (index > -1)
+		{
+			group.spottedBy.splice(index, 1);
+			if (group.spottedBy.length == 0)
+			{
+				group.opacity = 0;
+				group.needsRedraw = true;
+			}
+		}
+		index = this.spots.indexOf(group);
+		if (index > -1)
+		{
+			this.spots.splice(index, 1);
+		}
+	}
+	//TODO other detection methods
+};
