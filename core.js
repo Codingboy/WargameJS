@@ -249,6 +249,7 @@ function Unit(dbUnit, group)
 }
 function Group(owner, pos)
 {
+	this.latlon = new LatLon(pos[0], pos[1]);
 	this.olObject = new ol.Feature({
 				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
 			});
@@ -460,6 +461,7 @@ Group.prototype.redraw = function()
 Group.prototype.setPos = function(pos)
 {
 	this.pos = pos;
+	this.latlon = new LatLon(pos[0], pos[1]);
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
 	this.olObject.getGeometry().setCoordinates(position);
 }

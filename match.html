@@ -260,7 +260,7 @@
 						{
 							let dst = group.waypoints[0];
 							let minMoveDistance = group.representation.dbUnit.speed/(3.6*fps);
-							let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
+							let srcLatLon = group.latlon;
 							let dstLatLon = new LatLon(dst[0], dst[1]);
 							let distance = srcLatLon.distanceTo(dstLatLon);
 							if (distance < minMoveDistance)
