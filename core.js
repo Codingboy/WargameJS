@@ -275,7 +275,7 @@ function Group(owner, pos)
 	}
 	else
 	{
-		this.opacity = 0;
+		this.opacity = invisibleEnemyOpacity;
 	}
 }
 Group.prototype.addUnit = function(unit)
@@ -518,7 +518,7 @@ Group.prototype.handleDetection = function(group)
 			group.spottedBy.splice(index, 1);
 			if (group.spottedBy.length == 0)
 			{
-				group.opacity = 0;
+				group.opacity = invisibleEnemyOpacity;
 				group.needsRedraw = true;
 			}
 		}
