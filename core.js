@@ -231,16 +231,6 @@ function Unit(dbUnit, group)
 	this.radarWeaponJammedBy = [];
 	this.radioJammed = [];
 	this.radioJammedBy = [];
-	this.spots = [];
-	this.spotsIR = [];
-	this.spotsRadarAir = [];
-	this.spotsRadarWeapon = [];
-	this.hears = [];
-	this.spottedBy = [];
-	this.spottedIRBy = [];
-	this.spottedRadarAirBy = [];
-	this.spottedRadarWeaponBy = [];
-	this.hearedBy = [];
 	this.group = group;
 	for (let weapon of this.dbUnit.weapons)
 	{
@@ -266,6 +256,16 @@ function Group(owner, pos)
 	this.needsRedraw = false;
 	this.name = "";
 	this.opacity = 1;
+	this.spots = [];
+	this.spotsIR = [];
+	this.spotsRadarAir = [];
+	this.spotsRadarWeapon = [];
+	this.hears = [];
+	this.spottedBy = [];
+	this.spottedIRBy = [];
+	this.spottedRadarAirBy = [];
+	this.spottedRadarWeaponBy = [];
+	this.hearedBy = [];
 	this.owner.groups.push(this);
 	this.olObject.set("group", this);
 	symbolSource.addFeature(this.olObject);
