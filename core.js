@@ -498,7 +498,7 @@ function show(elements)
 Group.prototype.handleDetection = function(group)
 {
 	let distance = this.latlon.distanceTo(group.latlon);
-	let camouflage = group.representation.dbUnit.camouflage*(1-this.opticsQuality);
+	let camouflage = group.representation.dbUnit.camouflage*(1-this.representation.dbUnit.opticsQuality);
 	let optics = this.representation.dbUnit.optics*(1-camouflage);
 	if (optics >= distance)
 	{
