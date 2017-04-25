@@ -235,7 +235,15 @@ function Unit(dbUnit, group)
 	this.healthLeft = dbUnit.health;
 	for (let weapon of this.dbUnit.weapons)
 	{
-		this.weapons.push(new Weapon(weapon));
+		let req = coreDB.transaction(["weapons"]).objectStore("weapons").get(weapon);
+		req.onsuccess = function(event)
+		{
+			let dbWeapon = event.target.result;
+			if (dbWeapon)
+			{
+				this.weapons.push(new Weapon(dbWeapon));
+			}
+		}.bind(this);
 	}
 }
 function Group(owner, pos)
