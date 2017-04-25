@@ -350,7 +350,7 @@
 								{
 									for (let weapon of unit.weapons)
 									{
-										if (distance < weapon.dbWeapon.distance)
+										if (distance < weapon.dbWeapon.range)
 										{
 											weapon.use(group, target, 1000/fps);
 										}
