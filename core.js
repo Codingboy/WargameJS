@@ -518,6 +518,7 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
 		let area = radius*radius*Math.PI*(0.5+(1-group.suppressed)*0.5);
+		console.log(rnd+" "+area+" "+group.representation.dbUnit.size);
 		if (area <= group.representation.dbUnit.size)//TODO use cover, not moving
 		{
 			hits += 1;
