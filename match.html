@@ -397,12 +397,17 @@
 					}
 				}
 				
+				let now = Date.now();
 				for (let p of allPlayers)
 				{
 					for (let group of p.groups)
 					{
-						if (group.needsRedraw)
+						if (group.needsRedraw || group.lastShot > 0))
 						{
+							if (now - group.lastShot > 1000)
+							{
+								group.lastShot = 0;
+							}
 							group.redraw();
 						}
 					}

@@ -247,6 +247,7 @@ function Unit(dbUnit, group)
 }
 function Group(owner, pos)
 {
+	this.lastShot = 0;
 	this.olObject = new ol.Feature({
 				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
 			});
@@ -446,7 +447,12 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 			direction = this.dir;
 		}
 		let commonIdentifier = this.name;
-		return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",staffComments:"fighting",commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.dbUnit.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.dbUnit.price),headquartersElement:this.owner.name,type:type});
+		let staffComments = "";
+		if (Date.now() - this.lastShot <= 1000)
+		{
+			staffComments = "Fighting";
+		}
+		return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",staffComments:staffComments,commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.dbUnit.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.dbUnit.price),headquartersElement:this.owner.name,type:type});
 	}
 };
 Group.prototype.redraw = function()
@@ -521,6 +527,8 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
 	let distance = srcLatLon.distanceTo(dstLatLon);
 	let hits = 0;
+	myGroup.lastShot = Date.now();
+	mygroup.needsRedraw = true;
 	for (let i=0; i<shots; i++)
 	{
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
