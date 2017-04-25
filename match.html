@@ -343,12 +343,12 @@
 					{
 						for (let group of p.groups)
 						{
-							for (target of group.spots)//TODO list allTargets, select target
+							for (let target of group.spots)//TODO list allTargets, select target
 							{
 								let distance = group.latlon.distanceTo(target.latlon);
-								for (unit of group.units)
+								for (let unit of group.units)
 								{
-									for (weapon of unit.weapons)
+									for (let weapon of unit.weapons)
 									{
 										if (distance < weapon.dbWeapon.distance)
 										{
