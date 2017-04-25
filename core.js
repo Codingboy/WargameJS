@@ -247,7 +247,6 @@ function Unit(dbUnit, group)
 }
 function Group(owner, pos)
 {
-	this.latlon = new LatLon(pos[0], pos[1]);
 	this.olObject = new ol.Feature({
 				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))
 			});
@@ -470,7 +469,6 @@ Group.prototype.redraw = function()
 Group.prototype.setPos = function(pos)
 {
 	this.pos = pos;
-	this.latlon = new LatLon(pos[0], pos[1]);
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
 	this.olObject.getGeometry().setCoordinates(position);
 }
@@ -519,7 +517,9 @@ Weapon.prototype.dealDamage = function(group, hits)
 Weapon.prototype.shoot = function(myGroup, group, shots)
 {
 	//TODO rockets
-	let distance = myGroup.latlon.distanceTo(group.latlon);
+	let srcLatLon = new LatLon(myGroup.pos[0], myGroup.pos[1]);
+	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
+	let distance = srcLatLon.distanceTo(dstLatLon);
 	let hits = 0;
 	for (let i=0; i<shots; i++)
 	{
@@ -611,7 +611,9 @@ function show(elements)
 }
 Group.prototype.handleDetection = function(group)
 {
-	let distance = this.latlon.distanceTo(group.latlon);
+	let srcLatLon = new LatLon(this.pos[0], this.pos[1]);
+	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
+	let distance = srcLatLon.distanceTo(dstLatLon);
 	let camouflage = group.representation.dbUnit.camouflage*(1-this.representation.dbUnit.opticsQuality);
 	let optics = this.representation.dbUnit.optics*(1-camouflage);
 	if (optics >= distance)

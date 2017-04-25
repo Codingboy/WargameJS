@@ -262,9 +262,10 @@
 					{
 						if (group.waypoints.length > 0)
 						{
+							let src = group.pos;
 							let dst = group.waypoints[0];
 							let minMoveDistance = group.representation.dbUnit.speed/(3.6*fps);
-							let srcLatLon = group.latlon;
+							let srcLatLon = new LatLon(src[0], src[1]);
 							let dstLatLon = new LatLon(dst[0], dst[1]);
 							let distance = srcLatLon.distanceTo(dstLatLon);
 							if (distance < minMoveDistance)
@@ -345,7 +346,9 @@
 						{
 							for (let target of group.spots)//TODO list allTargets, select target
 							{
-								let distance = group.latlon.distanceTo(target.latlon);
+								let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
+								let dstLatLon = new LatLon(target.pos[0], target.pos[1]);
+								let distance = srcLatLon.distanceTo(dstLatLon);
 								for (let unit of group.units)
 								{
 									for (let weapon of unit.weapons)
