@@ -206,7 +206,8 @@ function newDBUnit()
 		price: 50000,//price of the unit including weapon
 		weapons: [],//weaponnames,
 		stabilisatorQuality: 0.0,//TODO
-		courage: 0.0//TODO
+		courage: 0.0,//TODO
+		health: 1
 	};
 }
 function Unit(dbUnit, group)
@@ -231,6 +232,7 @@ function Unit(dbUnit, group)
 	this.radioJammed = [];
 	this.radioJammedBy = [];
 	this.group = group;
+	this.healthLeft = dbUnit.health;
 	for (let weapon of this.dbUnit.weapons)
 	{
 		this.weapons.push(newWeapon(weapon));
@@ -474,13 +476,11 @@ function Weapon(dbWeapon)
 }
 Weapon.prototype.dealDamage = function(group, hits)
 {
-	//TODO calculate
-	//TODO select target
 	for (let i=0; i<hits; i++)
 	{
 		let index = Math.floor(Math.random() * group.units.length);
 		let unit = group.units[index];
-		let damage = this.dbWeapon.damage;
+		let damage = this.dbWeapon.damage;//TODO distance
 		let damageFactor = 1;
 		if (unit.dbUnit.plateCarrier == 1)
 		{
@@ -505,7 +505,7 @@ Weapon.prototype.dealDamage = function(group, hits)
 			}
 		}
 		damage *= damageFactor;
-		//unit.hp//TODO
+		unit.healthLeft -= damage;
 	}
 }
 Weapon.prototype.shoot = function(myGroup, group, shots)
@@ -515,10 +515,10 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 	let hits = 0;
 	for (let i=0; i<shots; i++)
 	{
-		let rnd = Math.random()*this.dbWeapon.inaccuracy;
+		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
-		let area = radius*radius*Math.PI;
-		if (area <= group.representation.dbUnit.size)//TODO use cover, suppression, not moving
+		let area = radius*radius*Math.PI*(0.5+(1-group.suppressed)*0.5);
+		if (area <= group.representation.dbUnit.size)//TODO use cover, not moving
 		{
 			hits += 1;
 		}
@@ -527,8 +527,6 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 	{
 		this.dealDamage(group, hits);
 	}
-	//TODO targets size
-	//TODO suppress target
 }
 Weapon.prototype.use = function(myGroup, group, timeAvailable)
 {//TODO block on guided weapons

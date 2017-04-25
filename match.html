@@ -336,6 +336,47 @@
 				
 				for (let p of allPlayers)
 				{
+					if (p.isFriend())
+					{
+						for (let group of p.groups)
+						{
+							for (target of group.spots)//TODO list allTargets, select target
+							{
+								let distance = group.latlon.distanceTo(target.latlon);
+								for (unit of group.units)
+								{
+									for (weapon of unit.weapons)
+									{
+										if (distance < weapon.dbWeapon.distance)
+										{
+											weapon.use(group, target, 1000/fps);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				//remove dead units
+				for (let enemy of enemies)
+				{
+					for (let unit of enemy.units)
+					{
+						if (unit.healthLeft < 0)
+						{
+							let index = enemy.units.indexOf(unit);
+							if (index > -1)
+							{
+								enemy.units.splice(index, 1);
+								enemy.needsRedraw = true;
+							}
+						}
+					}
+				}
+				
+				for (let p of allPlayers)
+				{
 					for (let group of p.groups)
 					{
 						if (group.needsRedraw)
