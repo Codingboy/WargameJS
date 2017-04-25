@@ -168,7 +168,10 @@
 				{
 					db = event.target.result;
 					let group = new Group(opfor, [8.2, 50.05]);
-					group.addUnit("Rifleman");
+					for (let i=0; i<32; i++)
+					{
+						group.addUnit("Rifleman");
+					}
 				});
 			}
 			init();
