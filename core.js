@@ -235,7 +235,7 @@ function Unit(dbUnit, group)
 	this.healthLeft = dbUnit.health;
 	for (let weapon of this.dbUnit.weapons)
 	{
-		this.weapons.push(newWeapon(weapon));
+		this.weapons.push(new Weapon(weapon));
 	}
 }
 function Group(owner, pos)
