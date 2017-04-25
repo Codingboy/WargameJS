@@ -379,6 +379,22 @@
 							}
 						}
 					}
+					if (enemy.units.length == 0)
+					{
+						let index = enemies.indexOf(enemy);
+						if (index > -1)
+						{
+							enemies.splice(index, 1);
+						}
+						let owner = enemy.owner;
+						index = owner.groups.indexOf(enemy);
+						if (index > -1)
+						{
+							owner.groups.splice(index, 1);
+						}
+						symbolSource.removeFeature(enemy.olObject);
+						//TODO delete references in other groups (spots, spottedBy, ...)
+					}
 				}
 				
 				for (let p of allPlayers)
