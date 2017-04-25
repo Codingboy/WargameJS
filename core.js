@@ -569,20 +569,27 @@ Weapon.prototype.use = function(myGroup, group, timeAvailable)
 		{
 			let timePerShot = 1000*this.dbWeapon.rpm/60;
 			let shots = Math.floor(timeAvailable/timePerShot);
-			if (shots < this.bulletsLeft)
+			if (shots == 0)
 			{
-				timeAvailable -= timePerShot*shots;
-				this.shoot(myGroup, group, shots);
-				this.bulletsLeft -= shots;
 				this.unusedTime = timeAvailable;
 			}
 			else
 			{
-				timeAvailable -= timePerShot*this.bulletsLeft;
-				this.shoot(group, this.bulletsLeft);
-				this.bulletsLeft = 0;
-				this.reloadTimeLeft = 1000*this.dbWeapon.reloadTime;
-				this.use(myGroup, group, timeAvailable);
+				if (shots < this.bulletsLeft)
+				{
+					timeAvailable -= timePerShot*shots;
+					this.shoot(myGroup, group, shots);
+					this.bulletsLeft -= shots;
+					this.unusedTime = timeAvailable;
+				}
+				else
+				{
+					timeAvailable -= timePerShot*this.bulletsLeft;
+					this.shoot(mygroup, group, this.bulletsLeft);
+					this.bulletsLeft = 0;
+					this.reloadTimeLeft = 1000*this.dbWeapon.reloadTime;
+					this.use(myGroup, group, timeAvailable);
+				}
 			}
 		}
 	}
