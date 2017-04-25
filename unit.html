@@ -247,6 +247,10 @@
 					<label for="price">Price</label>
 					<input type="number" name="price" id="price" readonly="readonly"/><br/>
 				</div>
+				<div class="form-group">
+					<label for="size">Size</label>
+					<input type="number" name="size" id="size" readonly="readonly"/><br/>
+				</div>
 				<div class="form-group" id="fuelConsumptionBlock">
 					<label for="fuelConsumption">FuelConsumption</label>
 					<input type="number" name="fuelConsumption" id="fuelConsumption" readonly="readonly"/><br/>
@@ -269,7 +273,7 @@
 		<script>
 			var db;
 			let allBlocks = ["weapon1Block","weapon2Block","weapon3Block","weapon4Block","weapon5Block","fuelConsumptionBlock","courageBlock","stabilisatorQualityBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock"];
-			let allValues = ["weapon1","weapon2","weapon3","weapon4","weapon5","courage","stabilisatorQuality","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
+			let allValues = ["size","weapon1","weapon2","weapon3","weapon4","weapon5","courage","stabilisatorQuality","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
 			function init()
 			{
 				hideAll();
@@ -431,6 +435,7 @@
 								document.getElementById("speed").value = speed;
 								document.getElementById("price").value = price;
 								document.getElementById("weight").value = weight;
+								document.getElementById("size").value = 1;
 							}
 						};
 					}
@@ -443,6 +448,7 @@
 						document.getElementById("speed").value = speed;
 						document.getElementById("price").value = price;
 						document.getElementById("weight").value = weight;
+						document.getElementById("size").value = 1;
 					}
 				}
 			}
