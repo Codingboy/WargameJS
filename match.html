@@ -402,12 +402,13 @@
 				{
 					for (let group of p.groups)
 					{
-						if (group.needsRedraw || group.lastShot > 0))
+						if (group.lastShot > 0 && now - group.lastShot > 1000)
 						{
-							if (now - group.lastShot > 1000)
-							{
-								group.lastShot = 0;
-							}
+							group.lastShot = 0;
+							group.needsRedraw = true;
+						}
+						if (group.needsRedraw)
+						{
 							group.redraw();
 						}
 					}
