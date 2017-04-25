@@ -223,7 +223,6 @@ function Unit(dbUnit, group)
 	this.resupplyAmmoLeft = dbUnit.resupplyAmmo;
 	this.resupplyRepairLeft = dbUnit.resupplyRepair;
 	this.resupplyMedicalLeft = dbUnit.resupplyMedical;
-	this.suppression = 0;
 	this.weapons = [];
 	this.radarAirJammed = [];
 	this.radarAirJammedBy = [];
@@ -277,6 +276,7 @@ function Group(owner, pos)
 	this.hearedBy = [];
 	this.owner.groups.push(this);
 	this.olObject.set("group", this);
+	this.suppressed = 0;
 	symbolSource.addFeature(this.olObject);
 	if (this.owner.isFriend())
 	{
