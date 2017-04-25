@@ -297,14 +297,14 @@
 				}
 				
 				//make spotted enemies visible
-				let enemies = new Set();
+				let enemies = [];
 				for (let p of allPlayers)
 				{
 					if (p.isEnemy())
 					{
 						for (let group of p.groups)
 						{
-							enemies.add(group);
+							enemies.push(group);
 						}
 					}
 				}
