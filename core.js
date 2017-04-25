@@ -585,7 +585,7 @@ Weapon.prototype.use = function(myGroup, group, timeAvailable)
 				else
 				{
 					timeAvailable -= timePerShot*this.bulletsLeft;
-					this.shoot(mygroup, group, this.bulletsLeft);
+					this.shoot(myGroup, group, this.bulletsLeft);
 					this.bulletsLeft = 0;
 					this.reloadTimeLeft = 1000*this.dbWeapon.reloadTime;
 					this.use(myGroup, group, timeAvailable);
