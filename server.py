@@ -26,7 +26,8 @@ if __name__ == "__main__":
 	socketio.run(app, port=PORT)
 
 def replaceIDs(json, matchID):
-	jsonType = type(json)
+	pass
+	"""jsonType = type(json)
 	if (jsonType is list):
 		for (entry in json):
 			replaceIDs(entry)
@@ -42,7 +43,7 @@ def replaceIDs(json, matchID):
 					conn.commit()
 					conn.close()
 			else:
-				replaceIDs(json[key], matchID)
+				replaceIDs(json[key], matchID)"""
 class MessageType(Enum):
 	Create = 0
 	Update = 1
