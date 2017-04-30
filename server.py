@@ -7,6 +7,23 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, join_room, leave_room
 import sqlite3
 from enum import Enum
+import logging
+
+PROJECTNAME = "WargameJS"
+DBNAME = PROJECTNAME+".sqlite"
+
+logger = logging.getLogger(PROJECTNAME)
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler(PROJECTNAME+".log")
+fh.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+logger.addHandler(fh)
+logger.addHandler(ch)
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
@@ -15,7 +32,7 @@ PORT = 62155
 HOST = "coding42.diphda.uberspace.de"
 
 if __name__ == "__main__":
-	conn = sqlite3.connect("wargame.db")
+	conn = sqlite3.connect(DBNAME)
 	conn.execute("CREATE TABLE IF NOT EXISTS participates (userID NUMBER, matchID NUMBER, PRIMARY KEY(userID, matchID))")
 	conn.execute("CREATE TABLE IF NOT EXISTS users (userID NUMBER, name TEXT, password TEXT, PRIMARY KEY(userID))")
 	conn.execute("CREATE TABLE IF NOT EXISTS matches (matchID NUMBER, objectID NUMBER, name TEXT, password TEXT, PRIMARY KEY(matchID))")
@@ -36,7 +53,7 @@ def replaceIDs(json, matchID):
 		for (key in json):
 			if (key == "id")
 				if (json[key] == -1):
-					conn = sqlite3.connect("wargame.db", isolation_level="EXCLUSIVE")
+					conn = sqlite3.connect(DBNAME, isolation_level="EXCLUSIVE")
 					objectID = conn.execute("SELECT objectID FROM matches WHERE matchID=?", (matchID,)).fetchone()
 					jsin[key] = objectID
 					objectID += 1
@@ -86,7 +103,7 @@ class MessageType(Enum):
 """
 @socketio.on("communicate")
 def handleJSON(json):
-	print(json)
+	logger.info(str(json))
 	matchID = json["matchID"]
 	senderID = json["senderID"]
 	messages = json["messages"]
@@ -101,8 +118,10 @@ def handleJSON(json):
 	
 @socketio.on("connect")
 def handleConnect():
+    logger.info("connected")
     pass#TODO participate
 
 @socketio.on("disconnect")
 def handleDisconnect():
+    logger.info("disconnected")
     pass#TODO dont participate
