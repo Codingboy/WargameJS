@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
 socketio = SocketIO(app)
 PORT = 62155
+HOST = "coding42.diphda.uberspace.de"
 
 if __name__ == "__main__":
 	conn = sqlite3.connect("wargame.db")
@@ -23,7 +24,7 @@ if __name__ == "__main__":
 	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (1,1,))
 	conn.commit()
 	conn.close()
-	socketio.run(app, port=PORT)
+	socketio.run(app, host=HOST, port=PORT)
 
 def replaceIDs(json, matchID):
 	pass
@@ -66,7 +67,7 @@ class MessageType(Enum):
 						"id": -1
 					},
 					{
-						"name": "anotgher weapon",
+						"name": "another weapon",
 						"id": -1
 					}
 				]
@@ -83,7 +84,7 @@ class MessageType(Enum):
 	]
 }
 """
-@socketio.on("json")
+@socketio.on("communicate")
 def handleJSON(json):
 	matchID = json["matchID"]
 	senderID = json["senderID"]
@@ -95,7 +96,7 @@ def handleJSON(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == MessageType.Update):
 			pass
-	send(json, json=True, room=matchID)
+	send("communicate", json, room=matchID)
 	
 @socketio.on("connect")
 def handleConnect():

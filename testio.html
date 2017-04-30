@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io("http://coding42.diphda.uberspace.de:62155/");
+			socket.on("connect", function(){
+				socket.emit("communicate", {
+	"matchID": 1,
+	"senderID": 1,
+	"messages":
+	[
+		{
+			"type": 0,
+			"data":
+			{
+				"name": "a unit",
+				"id": -1,
+				"weapons":
+				[
+					{
+						"name": "a weapon",
+						"id": -1
+					},
+					{
+						"name": "another weapon",
+						"id": -1
+					}
+				]
+			}
+		},
+		{
+			"type": 0,
+			"data":
+			{
+				"name": "another unit",
+				"id": -1
+			}
+		}
+	]
+})
+			});
+			socket.on("communicate", function(json){
+				console.log(json);
+			});
+		</script>
+	</head>
+	<body>
+		<ul id="messages"></ul>
+	</body>
+</html>
