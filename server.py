@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
 socketio = SocketIO(app)
 PORT = 62155
-HOST = "http://coding42.diphda.uberspace.de"
+HOST = "coding42.diphda.uberspace.de"
 
 if __name__ == "__main__":
 	conn = sqlite3.connect("wargame.db")
@@ -86,6 +86,7 @@ class MessageType(Enum):
 """
 @socketio.on("communicate")
 def handleJSON(json):
+	print(json)
 	matchID = json["matchID"]
 	senderID = json["senderID"]
 	messages = json["messages"]
