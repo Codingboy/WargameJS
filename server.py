@@ -116,8 +116,8 @@ def handleJSON(json):
 			pass
 	emit("communicate", json, room=matchID)
 	
-@socketio.on("connect")
-def handleConnect():
+@socketio.on("connection")
+def handleConnect(socket):
     logger.info("connected")
     pass#TODO participate
 

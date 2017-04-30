@@ -39,14 +39,18 @@
 			}
 		}
 	]
-})
+});
+				console.log("43");
 			});
 			socket.on("communicate", function(json){
+				console.log("44");
 				console.log(json);
+				console.log("45");
 			});
+            socket.on('error', console.error.bind(console));
+            socket.on('message', console.log.bind(console));
 		</script>
 	</head>
 	<body>
-		<ul id="messages"></ul>
 	</body>
 </html>
