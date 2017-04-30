@@ -40,7 +40,7 @@ if __name__ == "__main__":
 	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (1,1,))
 	conn.commit()
 	conn.close()
-    logger.info("started")
+	logger.info("started")
 	socketio.run(app, host=HOST, port=PORT)
 
 def replaceIDs(json, matchID):
