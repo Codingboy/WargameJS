@@ -91,9 +91,9 @@ def handleJSON(json):
 	for message in messages:
 		messageType = message["type"]
 		messageData = message["data"]
-		if (messageType = MessageType.Create):
+		if (messageType == MessageType.Create):
 			replaceIDs(messageData, matchID)
-		if (messageType = MessageType.Update):
+		if (messageType == MessageType.Update):
 			pass
     send(json, json=True, room=matchID)
 	
