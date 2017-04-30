@@ -95,7 +95,7 @@ def handleJSON(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == MessageType.Update):
 			pass
-    send(json, json=True, room=matchID)
+	send(json, json=True, room=matchID)
 	
 @socketio.on("connect")
 def handleConnect():
