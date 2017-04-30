@@ -13,17 +13,16 @@ PROJECTNAME = "WargameJS"
 DBNAME = PROJECTNAME+".sqlite"
 
 logger = logging.getLogger(PROJECTNAME)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 fh = logging.FileHandler(PROJECTNAME+".log")
-fh.setLevel(logging.DEBUG)
+fh.setLevel(logging.INFO)
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
-
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
@@ -114,7 +113,7 @@ def handleJSON(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == MessageType.Update):
 			pass
-	send("communicate", json, room=matchID)
+	emit("communicate", json, room=matchID)
 	
 @socketio.on("connect")
 def handleConnect():
