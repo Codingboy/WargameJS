@@ -114,9 +114,9 @@ def handleJSON(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == MessageType.Update):
 			pass
-	emit("communicate", json, room=matchID)
+	emit("communicate", json, room=None)#//TODO room
 	
-@socketio.on("connection")
+@socketio.on("connect")
 def handleConnect(socket):
     logger.info("connected")
     pass#TODO participate
