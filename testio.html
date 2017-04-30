@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
 	<head>
-		<script src="/socket.io/socket.io.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
 		<script>
 			var socket = io("http://coding42.diphda.uberspace.de:62155/");
 			socket.on("connect", function(){
+				console.log("42");
 				socket.emit("communicate", {
 	"matchID": 1,
 	"senderID": 1,
