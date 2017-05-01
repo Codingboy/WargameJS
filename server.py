@@ -120,6 +120,7 @@ def handleJSON(json):
 def handleConnect():
     logger.info("connected")
     pass#TODO participate
+socketio.on_event('connect', handleConnect)
 
 @socketio.on("disconnect")
 def handleDisconnect():
