@@ -30,6 +30,30 @@ socketio = SocketIO(app)
 PORT = 62155
 HOST = "185.26.156.31"
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/weapon')
+def weapon():
+    return render_template('weapon.html')
+
+@app.route('/unit')
+def unit():
+    return render_template('unit.html')
+
+@app.route('/group')
+def group():
+    return render_template('group.html')
+
+@app.route('/deck')
+def deck():
+    return render_template('deck.html')
+
+@app.route('/match')
+def match():
+    return render_template('match.html')
+
 def replaceIDs(json, matchID):
 	jsonType = type(json)
 	logger.info(jsonType)
@@ -74,10 +98,6 @@ def handleConnect():
 def handleDisconnect():
     logger.info("disconnected")
 
-
-@app.route('/')
-def index():
-    return render_template('testio.html')
 
 if __name__ == "__main__":
 	conn = sqlite3.connect(DBNAME)
