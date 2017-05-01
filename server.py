@@ -28,7 +28,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
 socketio = SocketIO(app)
 PORT = 62155
-HOST = "coding42.diphda.uberspace.de"
+HOST = "185.26.156.31"
 
 if __name__ == "__main__":
 	conn = sqlite3.connect(DBNAME)
