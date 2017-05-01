@@ -54,6 +54,29 @@ def deck():
 def match():
     return render_template('match.html')
 
+def listMatches():
+	res = []
+	conn = sqlite3.connect(DBNAME, isolation_level="EXCLUSIVE")
+	reults = conn.execute("SELECT matchID FROM matches").fetchall()
+	for result in results:
+		res.append(result[0])
+	conn.close()
+	return res
+
+def joinMatch(userId, matchID):
+	conn = sqlite3.connect(DBNAME)
+	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
+	conn.commit()
+	conn.close()
+
+def leaveMatch(userID, matchID):
+	conn = sqlite3.connect(DBNAME)
+	conn.execute("DELETE FROM participates WHERE userID=? AND matchID=?", (userID,matchID,))
+	if (conn.execute("SELECT Count(*) FROM participates WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+		conn.execute("DELETE FROM matches WHERE matchID=?", (matchID,))
+	conn.commit()
+	conn.close()
+
 def replaceIDs(json, matchID):
 	jsonType = type(json)
 	logger.info(jsonType)
