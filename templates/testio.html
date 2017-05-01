@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
 	<head>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
-			var socket = io("http://coding42.diphda.uberspace.de:62155");
+				
+            		var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
 			socket.on("connect", function(){
 				console.log("42");
@@ -13,7 +14,7 @@
 	"messages":
 	[
 		{
-			"type": 0,
+			"type": "create",
 			"data":
 			{
 				"name": "a unit",
@@ -32,7 +33,7 @@
 			}
 		},
 		{
-			"type": 0,
+			"type": "create",
 			"data":
 			{
 				"name": "another unit",
