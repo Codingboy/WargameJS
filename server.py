@@ -4,7 +4,7 @@
 #pip install eventlet
 
 from flask import Flask, render_template
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3
 from enum import Enum
 import logging
@@ -117,7 +117,7 @@ def handleJSON(json):
 	emit("communicate", json, room=None)#//TODO room
 	
 @socketio.on("connect")
-def handleConnect(socket):
+def handleConnect():
     logger.info("connected")
     pass#TODO participate
 
