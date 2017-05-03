@@ -8,6 +8,26 @@
 		<link href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		<link href="static/css/bootstrap.min.css" rel="stylesheet">
 		<title>{% block title %}WargameJS{% endblock title %}</title>
+		<style>
+			html
+			{
+				position: relative;
+				min-height: 100%;
+			}
+			body
+			{
+				padding-top: 7.5%;
+				padding-bottom: 5%;
+				margin-bottom: 60px
+			}
+			.footer
+			{
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				background-color: #f5f5f5;
+			}
+		</style>
 		{% endblock head %}
 	</head>
 	<body>
@@ -38,27 +58,36 @@
 							<li><a href='/matches'>Matches</a></li>
 						</ul>
 						{% if loggedin %}
-							<ul class='nav navbar-right'>
-								<li><a href='/logout'>Logout</a></li>
-							</ul>
+						<ul class='nav navbar-right'>
+							<li><a href='/logout'>Logout</a></li>
+						</ul>
 						{% else %}
-							<ul class='nav navbar-right'>
-								<li><a href='/register'>Register</a></li>
-							</ul>
-							<form class='navbar-form navbar-right' action='/login' method='post'>
-								<div class='form-group'>
-									<input type='text' placeholder='User' class='form-control' name='user'>
-								</div>
-								<div class='form-group'>
-									<input type='password' placeholder='Password' class='form-control' name='password'>
-								</div>
-								<button type='submit' class='btn btn-success'>Login</button>
-							</form>
+						<ul class='nav navbar-right'>
+							<li><a href='/register'>Register</a></li>
+						</ul>
+						<form class='navbar-form navbar-right' action='/login' method='post'>
+							<div class='form-group'>
+								<input type='text' placeholder='User' class='form-control' name='user'>
+							</div>
+							<div class='form-group'>
+								<input type='password' placeholder='Password' class='form-control' name='password'>
+							</div>
+							<button type='submit' class='btn btn-success'>Login</button>
+						</form>
 						{% endif %}
 					</div>
 				</div>
 			</nav>
 			{% endblock navbar %}
+			{% block bodycontent %}
+			{% endblock bodycontent %}
+			{% block footer %}
+			<footer class='footer'>
+				<div class='container'>
+					<span class='text-muted'><a href='/impressum'>Impressum</a></span>
+				</div>
+			</footer>
+			{% endblock footer %}
 			{% block bodyscripts %}
 			<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>
 			<script src='static/js/bootstrap.min.js'></script>

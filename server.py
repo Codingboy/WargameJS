@@ -3,7 +3,7 @@
 #pip install flask-socketio
 #pip install eventlet
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3
 from enum import Enum
@@ -32,11 +32,15 @@ HOST = "185.26.156.31"
 
 @app.route('/base')
 def base():
-    return render_template('base.html')
+    return render_template('base.html', loggedin=(getUserID()!=-1))
 
 @app.route('/child')
 def child():
     return render_template('child.html')
+
+@app.route('/impressum')
+def impressum():
+    return render_template('impressum.html')
 
 @app.route('/')
 def index():
