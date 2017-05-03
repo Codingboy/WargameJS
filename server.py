@@ -30,6 +30,14 @@ socketio = SocketIO(app)
 PORT = 62155
 HOST = "185.26.156.31"
 
+@app.route('/base')
+def base():
+    return render_template('base.html')
+
+@app.route('/child')
+def child():
+    return render_template('child.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -121,6 +129,161 @@ def handleConnect():
 def handleDisconnect():
     logger.info("disconnected")
 
+def getUser():
+	user = "Guest"
+	if ("user" in session):
+		user = session["user"]
+	return user
+
+def getUserID():
+	userID = -1
+	if ("userID" in session):
+		userID = session["userID"]
+	return userID
+
+@app.route("/login", methods=["POST"])
+def login():
+	if request.method == "POST":
+		if ("user" in request.form and "password" in request.form):
+			user = request.form["user"]
+			password = request.form["password"]
+			""""h = hashlib.new("sha256")
+			h.update(request.form["password"].encode("utf-8"))
+			password = h.hexdigest()"""
+			connection = sqlite3.connect(DBNAME)
+			cursor = connection.cursor()
+			if (cursor.execute("SELECT Count(*) FROM users WHERE name=?", (user,)).fetchone()[0] > 0):
+				dbEntry = cursor.execute("SELECT password,userID FROM users WHERE name=?", (user,))
+				row = dbEntry.fetchone()
+				pw = row[0]
+				userID = row[1]
+				connection.close()
+				if (pw == password):
+					session["user"] = user
+					session["userID"] = userID
+					logging.getLogger(PROJECTNAME).info(user+" logged in")
+					return redirect(redirect_url(), code=302)
+				else:
+					logging.getLogger(PROJECTNAME).warning(user+" tried to log in")
+					return redirect(redirect_url(), code=302)
+			else:
+				return redirect(redirect_url(), code=302)
+
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+	logging.getLogger(PROJECTNAME).info(session["user"]+" logged out")
+	session.pop("user", None)
+	session.pop("userID", None)
+	return redirect(redirect_url(), code=302)
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+	if request.method == "POST":
+		if ("user" in request.form and "password" in request.form and "password2" in request.form):
+			user = request.form["user"]
+			password = request.form["password"]
+			password2 = request.form["password2"]
+			connection = sqlite3.connect(DBNAME)
+			cursor = connection.cursor()
+			userCount = cursor.execute("SELECT Count(*) FROM users WHERE user=?", (user,)).fetchone()[0]
+			connection.close()
+			if (userCount == 0 and password == password2 and re.match("^[a-zA-Z0-9]+$", user) is not None):
+				""""h = hashlib.new("sha256")
+				h.update(request.form["password"].encode("utf-8"))
+				password = h.hexdigest()"""
+				connection = sqlite3.connect(DBNAME)
+				cursor = connection.cursor()
+				cursor.execute("INSERT INTO users (name, password) VALUES(?, ?)", (user, password,))
+				connection.commit()
+				connection.close()
+				logging.getLogger(PROJECTNAME).info(user+" registered")
+				session["user"] = user
+				session["userID"] = cursor.execute("SELECT userID FROM users WHERE name=?", (user,)).fetchone()[0]
+				return redirect(request.url_root, code=302)
+			else:
+				logging.getLogger(PROJECTNAME).info(user+" tried to register")
+				return redirect(request.url_root+"register", code=302)
+	html = beginHTML(request)
+	html += "\
+		<div class='container'>\n\
+			<div class='row'>\n\
+				<div class='col-xs-4'></div>\n\
+				<div class='col-xs-4'>\n\
+					<form action='' method='post'>\n\
+						<div class='form-group'>\n\
+							<label for='user'>Benutzer</label>\n\
+							<input type='text' class='form-control' id='user' name='user' placeholder='Benutzer (a-zA-Z0-9)'>\n\
+						</div>\n\
+						<div class='form-group'>\n\
+							<label for='password'>Passwort</label>\n\
+							<input type='password' class='form-control' id='password' name='password' placeholder='Passwort'>\n\
+						</div>\n\
+						<div class='form-group'>\n\
+							<label for='passwordRepeat'>Passwort wiederholen</label>\n\
+							<input type='password' class='form-control' id='passwordRepeat' name='password2' placeholder='Passwort'>\n\
+						</div>\n\
+						<button type='submit' class='btn btn-default'>Registrieren</button>\n\
+					</form>\n\
+				</div>\n\
+				<div class='col-xs-4'></div>\n\
+			</div>\n\
+		</div>\n"
+	html += endHTML(request)
+	return html
+
+def beginHTML(request):
+	html = "\
+<html>\n\
+	<head>\n\
+		<meta charset='utf-8'>\n\
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>\n\
+		<meta name='viewport' content='width=device-width, initial-scale=1'>\n\
+		<link href='"+request.url_root+"static/css/bootstrap.min.css' rel='stylesheet'>\n\
+		<link href='https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap4.min.css' rel='stylesheet'>\n\
+		<style>\n\
+			html\n\
+			{\n\
+				position: relative;\n\
+				min-height: 100%;\n\
+			}\n\
+			body\n\
+			{\n\
+				padding-top: 7.5%;\n\
+				padding-bottom: 5%;\n\
+				margin-bottom: 60px\n\
+			}\n\
+			.footer {\n\
+				position: absolute;\n\
+				bottom: 0;\n\
+				width: 100%;\n\
+				background-color: #f5f5f5;\n\
+			}\n\
+		</style>\n\
+		<title>Tournament</title>\n\
+	</head>\n\
+	<body>\n\
+		<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\n\
+		<script src='"+request.url_root+"static/js/bootstrap.min.js'></script>\n\
+		<script src='https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js'></script>\n\
+		<script src='https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap4.min.js'></script>\n"
+	html += navBar(request)
+	return html
+
+def endHTML(request):
+	html = "\
+		<footer class='footer'>\n\
+			<div class='container'>\n\
+				<span class='text-muted'><a href='"+request.url_root+"impressum'>Impressum</a></span>\n\
+			</div>\n\
+		</footer>\n\
+	</body>\n\
+</html>\n"
+	return html
 
 if __name__ == "__main__":
 	conn = sqlite3.connect(DBNAME)
