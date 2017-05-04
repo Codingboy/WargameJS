@@ -68,21 +68,17 @@ function initDB(callback)
 		alert("DBError");
 	};
 }
-function newDBGroup()
+function DBGroup()
 {
-	return {
-		name: "",
-		units: [],
-		price: 0
-	};
+	this.name = "";
+	this.units = [];
+	this.price = 0;
 }
-function newDBDeck()
+function DBDeck()
 {
-	return {
-		name: "",
-		units: [],
-		groups: []
-	};
+	this.name = "";
+	this.units = [];
+	this.groups = [];
 }
 function listWeapons(callback)
 {
@@ -135,6 +131,24 @@ function listGroups(callback)
 		}
 	};
 }
+function listDecks(callback)
+{
+	let ret = [];
+	var objectStore = coreDB.transaction("decks").objectStore("decks").openCursor().onsuccess = function(event)
+	{
+		var cursor = event.target.result;
+		if (cursor)
+		{
+			ret.push(cursor.value.name);
+			cursor.continue();
+		}
+		else
+		{
+			callback(ret);
+		}
+	};
+}
+
 function Player()
 {
 	this.name = "";
@@ -145,7 +159,11 @@ Player.prototype.isEnemy = function()
 {
 	return this.team != player.team && !this.isNeutral();
 };
-Player.prototype.isNeutral = function()
+Player.prototype.isIndependent = function()
+{
+	return this.team == -1;//TODO
+};
+Player.prototype.isCivil = function()
 {
 	return this.team == -1;
 };
@@ -153,63 +171,63 @@ Player.prototype.isFriend = function()
 {
 	return this.team == player.team;
 };
-function newDBUnit()
+function DBUnit()
 {
-	return {
-		size: 1.0,
-		name: "",
-		type: "Infantry",
-		sound: 10,//hearable within a range in meter
-		speed: 15,//speed
-		optics: 200,//range the daylight optic is working with in meter
-		opticsQuality: 0,//counters enemy camouflage
-		opticsIR: 0,//range the IR optic is working with in meter
-		opticsIRQuality: 0,//counters enemy camouflageIR
-		camouflage: 0.25,//percentage of invisibillity
-		camouflageIR: 0.0,//percentage of IR invisibillity
-		radarAir: 0,//range of airradar
-		radarAirQuality: 0,//counters enemy camouflageRadar
-		radarWeapon: 0,//range of weapon tracking radar
-		camouflageRadar: 0.0,//percentage of radar invisibillity
-		ecm: 0,//range of ecm to suppress radars
-		ecmChance: 0,//successrate of ecm
-		ircmChance: 0,//successrate of ircm
-		flares: 0,//number of carried flares
-		flareChance: 0,//successrate of flares
-		chaffs: 0,//number of carried chaffs
-		chaffChance: 0,//successrate of chaffs
-		smoke: 0,//number of carried smoke
-		smokeChance: 0,//successrate of smoke
-		radio: 2000,//range of radio in meter
-		radioJammer: 0,//range of radioJammer
-		radioJammerChance: 0,//successrate of radioJammer
-		fuel: 0,//size of fueltank in liter
-		lads: 0,//range of lads
-		ladsChance: 0,//successrate of lads
-		mineDetection: 0,//range of the minedetector in meter
-		mineDetectionChance: 0,//successrate of mineDetection
-		transportWeight: 0,//kg that can be transported
-		resupplyFuel: 0,//liters of fuel
-		resupplyAmmo: 0,//kg of ammo
-		resupplyRepair: 0,//kg of repair
-		resupplyMedical: 0,//hp of medical
-		plateCarrier: 1,//unit wears platecarrier
-		armourFront: 0,//armour in mm
-		armourSide: 0,
-		armourBack: 0,
-		armourTop: 0,
-		armourBottom: 0,
-		armourType1: "",//type of primary armour
-		armourType2: "",//type of secondary, outer armour
-		weight: 100,//weight of the unit including weapon
-		fuelConsumption: 0,//fuelconsumption per hour
-		price: 50000,//price of the unit including weapon
-		weapons: [],//weaponnames,
-		stabilisatorQuality: 0.0,//TODO
-		courage: 0.0,//TODO
-		health: 1
-	};
+		size = 1.0;
+		name = "";
+		type = "Infantry";
+		sound = 10;//hearable within a range in meter
+		speed = 15;//speed
+		optics = 200;//range the daylight optic is working with in meter
+		opticsQuality = 0;//counters enemy camouflage
+		opticsIR = 0;//range the IR optic is working with in meter
+		opticsIRQuality = 0;//counters enemy camouflageIR
+		camouflage = 0.25;//percentage of invisibillity
+		camouflageIR = 0.0;//percentage of IR invisibillity
+		radarAir = 0;//range of airradar
+		radarAirQuality = 0;//counters enemy camouflageRadar
+		radarWeapon = 0;//range of weapon tracking radar
+		camouflageRadar = 0.0;//percentage of radar invisibillity
+		ecm = 0;//range of ecm to suppress radars
+		ecmChance = 0;//successrate of ecm
+		ircmChance = 0;//successrate of ircm
+		flares = 0;//number of carried flares
+		flareChance = 0;//successrate of flares
+		chaffs = 0;//number of carried chaffs
+		chaffChance = 0;//successrate of chaffs
+		smoke = 0;//number of carried smoke
+		smokeChance = 0;//successrate of smoke
+		radio = 2000;//range of radio in meter
+		radioJammer = 0;//range of radioJammer
+		radioJammerChance = 0;//successrate of radioJammer
+		fuel = 0;//size of fueltank in liter
+		lads = 0;//range of lads
+		ladsChance = 0;//successrate of lads
+		mineDetection = 0;//range of the minedetector in meter
+		mineDetectionChance = 0;//successrate of mineDetection
+		transportWeight = 0;//kg that can be transported
+		resupplyFuel = 0;//liters of fuel
+		resupplyAmmo = 0;//kg of ammo
+		resupplyRepair = 0;//kg of repair
+		resupplyMedical = 0;//hp of medical
+		plateCarrier = 1;//unit wears platecarrier
+		armourFront = 0;//armour in mm
+		armourSide = 0;
+		armourBack = 0;
+		armourTop = 0;
+		armourBottom = 0;
+		armourType1 = "";//type of primary armour
+		armourType2 = "";//type of secondary, outer armour
+		weight = 100;//weight of the unit including weapon
+		fuelConsumption = 0;//fuelconsumption per hour
+		price = 50000;//price of the unit including weapon
+		weapons = [];//weaponnames,
+		stabilisatorQuality = 0.0;//TODO
+		courage = 0.0;//TODO
+		health = 1;
 }
+
+//TODO move to other file
 function Unit(dbUnit, group)
 {
 	this.dbUnit = dbUnit;
@@ -600,28 +618,6 @@ Weapon.prototype.use = function(myGroup, group, timeAvailable)
 				}
 			}
 		}
-	}
-}
-function setValues(element, min, value, max, step)
-{
-	e = document.getElementById(element);
-	e.min = min;
-	e.max = max;
-	e.value = value;
-	e.step = step;
-}
-function hide(elements)
-{
-	for (let element of elements)
-	{
-		document.getElementById(element).style.display = "none";
-	}
-}
-function show(elements)
-{
-	for (let element of elements)
-	{
-		document.getElementById(element).style.display = "block";
 	}
 }
 Group.prototype.handleDetection = function(group)

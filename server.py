@@ -28,7 +28,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "BlaBlub42"
 socketio = SocketIO(app)
 PORT = 62155
-HOST = "185.26.156.31"
+HOST = "coding42.diphda.uberspace.de"
 
 @app.route('/base')
 def base():
@@ -299,6 +299,6 @@ if __name__ == "__main__":
 	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (1,1,))
 	conn.commit()
 	conn.close()
-	logger.info("started")
+	logger.info("started on "+HOST+":"+str(PORT))
 	socketio.run(app, host=HOST, port=PORT, debug=False)
 

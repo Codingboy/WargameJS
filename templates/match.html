@@ -188,6 +188,25 @@
 					}
 				}
 			}
+			function createGroupLocal(json)
+			{
+
+			}
+			function createGroupGlobal(unitNames, groupNames)
+			{
+				name = "";
+				pos = [0, 0];
+				units = [];
+				json = {
+					type: "create",
+					data: {
+						name: name,
+						pos: pos,
+						id: -1,
+						units: units
+					}
+				};
+			}
 			function showGroups()
 			{
 				reset();
