@@ -100,7 +100,8 @@
 				let lon = latlon[1];
 				if (toBeSpawnedUnits.length+toBeSpawnedGroups.length > 0)
 				{
-					let group = new Group(player, [lat, lon]);
+					createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon])
+					/*let group = new Group(player, [lat, lon]);
 					for (unit of toBeSpawnedUnits)
 					{
 						group.addUnit(unit);
@@ -108,7 +109,7 @@
 					for (g of toBeSpawnedGroups)
 					{
 						group.addGroup(g);
-					}
+					}*/
 					toBeSpawnedUnits = [];
 					toBeSpawnedGroups = [];
 				}
@@ -192,20 +193,39 @@
 			{
 
 			}
-			function createGroupGlobal(unitNames, groupNames)
+			function namesToUnits(unitNames, units, callback)
 			{
-				name = "";
-				pos = [0, 0];
-				units = [];
-				json = {
-					type: "create",
-					data: {
-						name: name,
-						pos: pos,
-						id: -1,
-						units: units
-					}
-				};
+				if (unitNames.length == 0)
+				{
+					callback(units)
+				}
+				else
+				{
+					let unitName = unitNames.shift()
+					let req = db.transaction(["units"]).objectStore("units").get(unitName);
+					req.onsuccess = function(event)
+					{
+						let dbUnit = event.target.result;
+						dbUnit["id"] = -1;
+						units.push(dbUnit);
+						namesToUnits(unitNames, units, callback);
+					};
+				}
+			}
+			function createGroupGlobal(unitNames, groupNames, pos)
+			{
+				units = namesToUnits(unitNames, [], function(units)
+				{
+					json = {
+						type: "create",
+						data: {
+							pos: pos,
+							id: -1,
+							units: units
+						}
+					};
+					//TODO groups, send to server
+				});
 			}
 			function showGroups()
 			{
