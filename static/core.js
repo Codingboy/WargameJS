@@ -228,8 +228,9 @@ function DBUnit()
 }
 
 //TODO move to other file
-function Unit(dbUnit, group)
+function Unit(dbUnit, group, id)
 {
+	this.id = id;
 	this.dbUnit = dbUnit;
 	this.flaresLeft = dbUnit.flares;
 	this.chaffsLeft = dbUnit.chaffs;
@@ -263,8 +264,9 @@ function Unit(dbUnit, group)
 		}.bind(this);
 	}
 }
-function Group(owner, pos)
+function Group(owner, pos, id)
 {
+	this.id = id;
 	this.lastShot = 0;
 	this.olObject = new ol.Feature({
 				geometry: new ol.geom.Point(ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"))

@@ -3,7 +3,6 @@
 	<head>
     		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
-				
             		var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
 			socket.on("connect", function(){
