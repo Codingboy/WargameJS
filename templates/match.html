@@ -47,6 +47,32 @@
 			socket.on("communicate", function(json)
 			{
 				console.log(json);
+				let senderID = json.senderID;
+				let matchID = json.matchID;
+				let messages = json.messages;
+				for (message of messages)
+				{
+					let messageType = message.type;
+					let messageData = message.data;
+					if (messageType == "create")
+					{
+						let id = messageData.id;
+						let pos = messageData.pos;
+						let units = messageData.units;
+						let owner = player;//TODO select by id
+						let group = new Group(owner, pos, id);
+						for (unit of units)
+						{
+							let weapons = [];
+							for (weapon of unit.weapons)
+							{
+								let w = new Weapon(weapon, weapon.id);
+								weapons.push(w);
+							}
+							let u = new Unit(unit, weapons, group, unit.id);
+						}
+					}
+				}
 			});
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
@@ -271,6 +297,7 @@
 			function createGroupLocal(json)
 			{
 				//TODO create group, add units and weapons
+				//function Group(owner, pos, id)
 			}
 			function createGroupGlobal(unitNames, groupNames, pos)
 			{
@@ -281,8 +308,7 @@
 						data: {
 							pos: pos,
 							id: -1,
-							units: units,
-							owner: player.id
+							units: units
 						}
 					};
 					console.log(json);

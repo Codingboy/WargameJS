@@ -31,7 +31,6 @@ function DBWeapon()
 }
 function initDB(callback)
 {
-	console.log("openDB");
 	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 	window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
@@ -39,7 +38,6 @@ function initDB(callback)
 	request.onupgradeneeded = function(event)
 	{
 		coreDB = event.target.result;
-		console.log("coreDB");
 		if (!coreDB.objectStoreNames.contains("units"))
 		{
 			coreDB.createObjectStore("units", {keyPath: "name"});
@@ -60,7 +58,6 @@ function initDB(callback)
 	request.onsuccess = function(event)
 	{
 		coreDB = event.target.result;
-		console.log("coreDB");
 		callback(event);
 	};
 	request.onerror = function(event)
