@@ -56,7 +56,7 @@ Group.prototype.addUnit = function(unit)
 	}
 	else
 	{
-		this.representation.price += dbUnit.price;//TODO other values
+		this.representation.price += unit.dbUnit.price;//TODO other values
 	}
 };
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/

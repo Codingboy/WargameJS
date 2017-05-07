@@ -91,7 +91,6 @@ def leaveMatch(userID, matchID):
 
 def replaceIDs(json, matchID):
 	jsonType = type(json)
-	logger.info(jsonType)
 	if (jsonType is list):
 		for entry in json:
 			replaceIDs(entry, matchID)
