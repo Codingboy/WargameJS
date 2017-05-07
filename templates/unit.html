@@ -504,11 +504,14 @@
 					{
 						let e = document.getElementById(element);
 						let value = e.value;
-						if (e.type != "number")
+						if (value != "")
 						{
-							value = '"'+value+'"';
+							if (e.type != "number")
+							{
+								value = '"'+value+'"';
+							}
+							eval("weapons.push("+value+");");
 						}
-						eval("weapons.push("+value+");");
 					}
 					else
 					{
