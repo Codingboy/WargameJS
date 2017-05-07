@@ -64,19 +64,23 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 	if (this.representation.type == "Infantry")
 	{
 		let version = "10"
-		let standardIdentity = "01";
+		let standardIdentity = "21";
 		if (this.owner.isFriend())
 		{
-			standardIdentity = "03";
+			standardIdentity = "23";
 		}
 		if (this.owner.isEnemy())
 		{
-			standardIdentity = "06";
+			standardIdentity = "26";
 		}
-		if (this.owner.isNeutral())
+		if (this.owner.isIndependent())
 		{
-			standardIdentity = "04";
+			standardIdentity = "24";
 		}
+		/*if (this.owner.isCivil())
+		{
+			standardIdentity = "24";
+		}*/
 		let symbolSet = "10";//TODO missiles, air
 		let status = "0";//TODO 3=damaged, 4=destroyed
 		let hqtfDummy = "0";
