@@ -122,11 +122,12 @@ def handleJSON(json):
 		if (messageType == "update"):
 			pass
 	logger.info(json)
-	emit("communicate", json, room=None)#//TODO room
+	emit("communicate", json, room=1)#//TODO room
 	
 @socketio.on("connect")
 def handleConnect():
     logger.info("connected")
+	join_room(1)
 
 @socketio.on("disconnect")
 def handleDisconnect():
