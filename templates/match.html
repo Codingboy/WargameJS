@@ -59,6 +59,7 @@
 			
 			let allObjects = {};
 			let messages = [];
+			let matchID = 1;//TODO
 			
 			let fps = 10;
 			let timeFactor = 10;
@@ -353,7 +354,7 @@
 				reset();
 			}
 			function updateUI()
-			{
+			{/*
 				//move groups
 				for (let p of allPlayers)
 				{
@@ -511,9 +512,19 @@
 							group.redraw();
 						}
 					}
+				}*/
+				if (messages.length > 0)
+				{
+					let json = {
+						senderID: player.id,
+						matchID: matchID,
+						messages: messages
+					};
+					socket.emit("communicate", json);
 				}
+				messages = [];
 			}
-			//let t = setInterval(updateUI, 1000/fps);
+			let t = setInterval(updateUI, 1000/fps);
 		</script>
 	</body>
 </html>
