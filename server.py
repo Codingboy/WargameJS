@@ -32,39 +32,39 @@ HOST = "coding42.diphda.uberspace.de"
 
 @app.route('/base')
 def base():
-    return render_template('base.html', loggedin=(getUserID()!=-1))
+	return render_template('base.html', loggedin=(getUserID()!=-1))
 
 @app.route('/child')
 def child():
-    return render_template('child.html')
+	return render_template('child.html')
 
 @app.route('/impressum')
 def impressum():
-    return render_template('impressum.html')
+	return render_template('impressum.html')
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+	return render_template('index.html')
 
 @app.route('/weapon')
 def weapon():
-    return render_template('weapon.html')
+	return render_template('weapon.html')
 
 @app.route('/unit')
 def unit():
-    return render_template('unit.html')
+	return render_template('unit.html')
 
 @app.route('/group')
 def group():
-    return render_template('group.html')
+	return render_template('group.html')
 
 @app.route('/deck')
 def deck():
-    return render_template('deck.html')
+	return render_template('deck.html')
 
 @app.route('/match')
 def match():
-    return render_template('match.html')
+	return render_template('match.html')
 
 def listMatches():
 	res = []
@@ -126,12 +126,12 @@ def handleJSON(json):
 	
 @socketio.on("connect")
 def handleConnect():
-    logger.info("connected")
+	logger.info("connected")
 	join_room(1)
 
 @socketio.on("disconnect")
 def handleDisconnect():
-    logger.info("disconnected")
+	logger.info("disconnected")
 
 def getUser():
 	user = "Guest"
@@ -174,9 +174,9 @@ def login():
 				return redirect(redirect_url(), code=302)
 
 def redirect_url(default='index'):
-    return request.args.get('next') or \
-           request.referrer or \
-           url_for(default)
+	return request.args.get('next') or \
+		   request.referrer or \
+		   url_for(default)
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
