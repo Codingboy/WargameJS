@@ -44,6 +44,10 @@
 			let player = new Player();
 			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
+			socket.on("communicate", function(json)
+			{
+				console.log(json);
+			});
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
 			var selectedOpacity = 1.0;
