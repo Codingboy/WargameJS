@@ -36,24 +36,17 @@
 		<script src="static/latlon-spherical.js" type="text/javascript"></script>
 		<script src="static/milsymbol-master/dist/milsymbol.js"></script>
 		<script src="static/core.js"></script>
-    		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+		<script src="static/unit.js"></script>
+		<script src="static/group.js"></script>
+		<script src="static/weapon.js"></script>
+    	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
-            		var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
 			var selectedOpacity = 1.0;
 			var unselectedOpacity = 0.66;
-			let blufor = new Player();
-			blufor.name = "Coding";
-			blufor.team = 1;
-			let opfor = new Player();
-			opfor.team = 2;
-			opfor.name = "duli";
-			let player = blufor;
-			let allPlayers = [];
-			allPlayers.push(blufor);
-			allPlayers.push(opfor);
 			
 			let shift = false;
 			let ctrl = false;
@@ -62,6 +55,9 @@
 			let toBeSpawnedUnits = [];
 			let toBeSpawnedGroups = [];
 			let selectedGroups = [];
+			
+			let allObjects = {};
+			let messages = [];
 			
 			let fps = 10;
 			let timeFactor = 10;
@@ -103,18 +99,7 @@
 				let lon = latlon[1];
 				if (toBeSpawnedUnits.length+toBeSpawnedGroups.length > 0)
 				{
-					createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon])
-					/*let group = new Group(player, [lat, lon]);
-					for (unit of toBeSpawnedUnits)
-					{
-						group.addUnit(unit);
-					}
-					for (g of toBeSpawnedGroups)
-					{
-						group.addGroup(g);
-					}*/
-					toBeSpawnedUnits = [];
-					toBeSpawnedGroups = [];
+					createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon]);
 				}
 				else
 				{
@@ -159,7 +144,69 @@
 					}
 				}
 			});
-			function onClick(e){
+			function unitsFromName(unitNames, callback, units)
+			{
+				if (typeof units == "undefined")
+				{
+					units = [];
+				}
+				let unitName = unitNames.shift();
+				unitFromName(unitName, function(dbUnit)
+				{
+					units.push(dbUnit);
+					if (unitNames.length == 0)
+					{
+						callback(units);
+					}
+					else
+					{
+						unitsFromName(unitNames, callback, units);
+					}
+				});
+			}
+			function unitFromName(unitName, callback)
+			{
+				let req = db.transaction(["units"]).objectStore("units").get(unitName);
+				req.onsuccess = function(event)
+				{
+					let dbUnit = event.target.result;
+					if (dbUnit)
+					{
+						dbUnit.id = -1;
+						for (let i=0; i<dbUnit.weapons.length; i++)
+						{
+							dbUnit.weaponCount = 0;
+							weaponFromName(dbUnit.weapons[i], dbUnit, i, callback);
+						}
+						if (dbUnit.weapons.length == 0)
+						{
+							dbUnit.weapons = [];
+							callback(dbUnit);
+						}
+					}
+				};
+			}
+			function weaponFromName(weaponName, dbUnit, i, callback)
+			{
+				let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
+				req.onsuccess = function(event)
+				{
+					let dbWeapon = event.target.result;
+					if (dbWeapon)
+					{
+						dbWeapon.id = -1;
+						dbUnit.weapons[i] = dbWeapon;
+					}
+					dbUnit.weaponCount += 1;
+					if (dbUnit.weaponCount == dbUnit.weapons.length)
+					{
+						delete dbUnit.weaponCount;
+						callback(dbUnit);
+					}
+				};
+			}
+			function onClick(e)
+			{
 				shift = e.shiftKey;
 				ctrl = e.ctrlKey;
 			}
@@ -192,43 +239,50 @@
 					}
 				}
 			}
+			function Player()
+			{
+				this.name = "";
+				this.team = 1;
+				this.groups = [];
+			}
+			Player.prototype.isEnemy = function()
+			{
+				return this.team != player.team && !this.isNeutral();
+			};
+			Player.prototype.isIndependent = function()
+			{
+				return this.team == -1;//TODO
+			};
+			Player.prototype.isCivil = function()
+			{
+				return this.team == -1;
+			};
+			Player.prototype.isFriend = function()
+			{
+				return this.team == player.team;
+			};
 			function createGroupLocal(json)
 			{
 				//TODO create group, add units and weapons
 			}
-			function namesToUnits(unitNames, units, callback)
-			{
-				if (unitNames.length == 0)
-				{
-					callback(units)
-				}
-				else
-				{
-					let unitName = unitNames.shift()
-					let req = db.transaction(["units"]).objectStore("units").get(unitName);
-					req.onsuccess = function(event)
-					{
-						let dbUnit = event.target.result;
-						dbUnit["id"] = -1;
-						units.push(dbUnit);
-						namesToUnits(unitNames, units, callback);
-					};
-				}
-			}
 			function createGroupGlobal(unitNames, groupNames, pos)
 			{
-				units = namesToUnits(unitNames, [], function(units)
+				unitsFromName(unitNames, function(units)
 				{
 					json = {
 						type: "create",
 						data: {
 							pos: pos,
 							id: -1,
-							units: units
+							units: units,
+							owner: player.id
 						}
 					};
+					console.log(json);
 					//TODO groups
 					messages.push(json);
+					toBeSpawnedUnits = [];
+					toBeSpawnedGroups = [];
 				});
 			}
 			function showGroups()
