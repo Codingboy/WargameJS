@@ -22,5 +22,4 @@ function Unit(dbUnit, weapons, group, id)
 	this.group = group;
 	this.healthLeft = dbUnit.health;
 	allObjects[id] = this;
-	this.group.addUnit(this);
 }

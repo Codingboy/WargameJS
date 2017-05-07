@@ -70,6 +70,9 @@
 								weapons.push(w);
 							}
 							let u = new Unit(unit, weapons, group, unit.id);
+							console.log(u);
+							group.addUnit(u);
+							//TODO add to allObjects
 						}
 					}
 				}
