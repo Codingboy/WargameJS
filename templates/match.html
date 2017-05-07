@@ -41,6 +41,7 @@
 		<script src="static/weapon.js"></script>
     	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
+			let player = new Player();
 			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
 			var visibleEnemyOpacity = 1.0;
@@ -241,6 +242,7 @@
 			}
 			function Player()
 			{
+				this.id = 42;
 				this.name = "";
 				this.team = 1;
 				this.groups = [];
@@ -511,7 +513,7 @@
 					}
 				}
 			}
-			let t = setInterval(updateUI, 1000/fps);
+			//let t = setInterval(updateUI, 1000/fps);
 		</script>
 	</body>
 </html>
