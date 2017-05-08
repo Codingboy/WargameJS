@@ -8,7 +8,7 @@ from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3
 from enum import Enum
 import logging
-//http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1
+#http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1
 PROJECTNAME = "WargameJS"
 DBNAME = PROJECTNAME+".sqlite"
 
