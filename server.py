@@ -81,7 +81,7 @@ def joinMatch(userId, matchID):
 	logger.info("10")
 	joinedMatch = True
 	logger.info("11")
-	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
 		logger.info("12")
 		joinedMatch = False
 		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
@@ -96,7 +96,7 @@ def joinMatch(userId, matchID):
 def leaveMatch(userID, matchID):
 	conn = sqlite3.connect(DBNAME)
 	conn.execute("DELETE FROM participates WHERE userID=? AND matchID=?", (userID,matchID,))
-	if (conn.execute("SELECT Count(*) FROM participates WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+	if (conn.execute("SELECT Count(*) FROM participates WHERE matchID=?", (matchID,)).fetchone() == 0):
 		conn.execute("DELETE FROM matches WHERE matchID=?", (matchID,))
 	conn.commit()
 	conn.close()
