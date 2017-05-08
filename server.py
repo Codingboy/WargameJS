@@ -114,7 +114,8 @@ def replaceIDs(json, matchID):
 				replaceIDs(json[key], matchID)
 
 @socketio.on("communicate")
-def handleJSON(json):
+def handleCommunicate(json):
+	logger.info("communicate")
 	logger.info(json)
 	matchID = json["matchID"]
 	senderID = json["senderID"]
@@ -130,6 +131,7 @@ def handleJSON(json):
 	
 @socketio.on("join")
 def handleJoin(json):
+	logger.info("join")
 	logger.info(json)
 	team = json["team"]
 	matchID = json["matchID"]
@@ -146,24 +148,34 @@ def handleJoin(json):
 	
 @socketio.on("joined")
 def handleJoined(json):
+	logger.info("joined")
 	logger.info(json)
 	matchID = json["matchID"]
 	emit("joined", json, room=matchID)
 	
 @socketio.on("requestUpdate")
 def handleRequestUpdate(json):
+	logger.info("requestUpdate")
 	logger.info(json)
 	playerID = json["playerID"]
 	matchID = json["matchID"]
 	emit("requestUpdate", json, room=matchID)
 	
+@socketio.on("update")
+def handleUpdate(json):
+	logger.info("update")
+	logger.info(json)
+	playerID = json["playerID"]
+	matchID = json["matchID"]
+	emit("requestUpdate", json, room=matchID)#TODO only send to target
+	
 @socketio.on("connect")
 def handleConnect():
-	logger.info("connected")
+	logger.info("connect")
 
 @socketio.on("disconnect")
 def handleDisconnect():
-	logger.info("disconnected")
+	logger.info("disconnect")
 
 def getUser():
 	user = "Guest"

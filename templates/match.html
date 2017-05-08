@@ -54,11 +54,13 @@
 			let requestUpdate = false;
 			socket.on("connect", function()
 			{
+				console.log("connect");
 				let team = gup("team");
 				socket.emit("join", {team: team, matchID: matchID});
 			});
 			socket.on("join", function(json)
 			{
+				console.log("join");
 				console.log(json);
 				player.id = json.id;
 				player.name = json.name;
@@ -69,6 +71,7 @@
 			});
 			socket.on("joined", function(json)
 			{
+				console.log("joined");
 				console.log(json);
 				if (json.id != player.id)
 				{
@@ -89,6 +92,7 @@
 			});
 			socket.on("requestUpdate", function(json)
 			{
+				console.log("requestUpdate");
 				let playerID = json.playerID;
 				if (playerID != player.id)
 				{
@@ -105,6 +109,7 @@
 			});
 			socket.on("update", function(json)
 			{
+				console.log("update");
 				let playerID = json.playerID;
 				if (playerID == player.id)
 				{
@@ -124,6 +129,7 @@
 			});
 			socket.on("communicate", function(json)
 			{
+				console.log("communicate");
 				console.log(json);
 				let senderID = json.senderID;
 				let matchID = json.matchID;
@@ -154,7 +160,6 @@
 								allObjects[weapon.id] = weapon;
 							}
 							allObjects[u.id] = u;
-							console.log(u);
 							group.addUnit(u);
 							allObjects[group.id] = group;
 						}
