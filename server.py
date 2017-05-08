@@ -138,7 +138,7 @@ def handleJoin(json):
 	json["name"] = getUser()
 	join_room(matchID)
 	requestUpdate = joinMatch(userId, matchID)
-	if (requestUpdate)
+	if (requestUpdate):
 	{
 		json["requestUpdate"] = True
 	}
