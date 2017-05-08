@@ -81,6 +81,7 @@ def joinMatch(userId, matchID):
 	logger.info("10")
 	joinedMatch = True
 	logger.info("11")
+	logger.info(matchID)
 	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
 		logger.info("12")
 		joinedMatch = False
