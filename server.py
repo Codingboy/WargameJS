@@ -77,6 +77,8 @@ def listMatches():
 
 def joinMatch(userId, matchID):
 	conn = sqlite3.connect(DBNAME)
+	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
 	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
 	conn.commit()
 	conn.close()
@@ -121,13 +123,28 @@ def handleJSON(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == "update"):
 			pass
-	logger.info(json)
 	emit("communicate", json, room=1)#//TODO room
+	
+@socketio.on("join")
+def handleJoin(json):
+	logger.info(json)
+	team = json["team"]
+	matchID = json["matchID"]
+	userId = getUserID()
+	json["id"] = userId
+	json["name"] = getUser()
+	join_room(matchID)
+	joinMatch(userId, matchID)
+	emit("join", json, room=None)
+	
+@socketio.on("joined")
+def handleJoined(json):
+	matchID = json["matchID"]
+	emit("joined", json, room=matchID)
 	
 @socketio.on("connect")
 def handleConnect():
 	logger.info("connected")
-	join_room(1)
 
 @socketio.on("disconnect")
 def handleDisconnect():
@@ -202,7 +219,7 @@ def register():
 				password = h.hexdigest()"""
 				connection = sqlite3.connect(DBNAME)
 				cursor = connection.cursor()
-				cursor.execute("INSERT INTO users (name, password) VALUES(?, ?)", (user, password,))
+				cursor.execute("INSERT OR REPLACE INTO users (name, password) VALUES(?, ?)", (user, password,))
 				connection.commit()
 				connection.close()
 				logging.getLogger(PROJECTNAME).info(user+" registered")
@@ -293,10 +310,8 @@ if __name__ == "__main__":
 	conn = sqlite3.connect(DBNAME)
 	conn.execute("CREATE TABLE IF NOT EXISTS participates (userID NUMBER, matchID NUMBER, PRIMARY KEY(userID, matchID))")
 	conn.execute("CREATE TABLE IF NOT EXISTS users (userID NUMBER, name TEXT, password TEXT, PRIMARY KEY(userID))")
-	conn.execute("CREATE TABLE IF NOT EXISTS matches (matchID NUMBER, objectID NUMBER, name TEXT, password TEXT, PRIMARY KEY(matchID))")
+	conn.execute("CREATE TABLE IF NOT EXISTS matches (matchID NUMBER, objectID NUMBER, PRIMARY KEY(matchID))")
 	conn.execute("INSERT OR REPLACE INTO users (userID, name, password) VALUES (?, ?, ?)", (1,"Coding","BlaBlub42",))
-	conn.execute("INSERT OR REPLACE INTO matches (matchID, name, password, objectID) VALUES (?, ?, ?, 0)", (1,"Coding's match","",))
-	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (1,1,))
 	conn.commit()
 	conn.close()
 	logger.info("started on "+HOST+":"+str(PORT))

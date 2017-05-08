@@ -41,9 +41,38 @@
 		<script src="static/weapon.js"></script>
     	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
+			let matchID = gup("match");
+			let allPlayers = {};
 			let player = new Player();
 			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
+			socket.on("connect", function()
+			{
+				let team = gup("team");
+				socket.emit("join", {team: team, matchID: matchID});
+			});
+			socket.on("join", function(json)
+			{
+				player.id = json.id;
+				player.name = json.name;
+				player.team = json.team;
+				socket.emit("joined", json);
+			});
+			socket.on("joined", function(json)
+			{
+				if (json.id != player.id)
+				{
+					let p = new Player();
+					p.id = json.id;
+					p.name = json.name;
+					p.team = json.team;
+					allPlayer[p.id] = p;
+				}
+				else
+				{
+					allPlayer[player.id] = player;
+				}
+			});
 			socket.on("communicate", function(json)
 			{
 				console.log(json);
@@ -70,9 +99,15 @@
 								weapons.push(w);
 							}
 							let u = new Unit(unit, weapons, group, unit.id);
+							for (weapon of u.weapons)
+							{
+								weapon.unit = u;
+								allObjects[weapon.id] = weapon;
+							}
+							allObjects[u.id] = u;
 							console.log(u);
 							group.addUnit(u);
-							//TODO add to allObjects
+							allObjects[group.id] = group;
 						}
 						group.redraw();
 					}
@@ -93,7 +128,6 @@
 			
 			let allObjects = {};
 			let messages = [];
-			let matchID = 1;//TODO
 			
 			let fps = 10;
 			let timeFactor = 10;
@@ -280,7 +314,6 @@
 				this.id = 42;
 				this.name = "";
 				this.team = 1;
-				this.groups = [];
 			}
 			Player.prototype.isEnemy = function()
 			{
