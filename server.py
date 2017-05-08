@@ -139,13 +139,9 @@ def handleJoin(json):
 	join_room(matchID)
 	requestUpdate = joinMatch(userId, matchID)
 	if (requestUpdate):
-	{
 		json["requestUpdate"] = True
-	}
 	else
-	{
 		json["requestUpdate"] = False
-	}
 	emit("join", json, room=None)
 	
 @socketio.on("joined")
