@@ -77,11 +77,14 @@ def listMatches():
 
 def joinMatch(userId, matchID):
 	conn = sqlite3.connect(DBNAME)
+	joinedMatch = True
 	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+		joinedMatch = False
 		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
 	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
 	conn.commit()
 	conn.close()
+	return joinedMatch
 
 def leaveMatch(userID, matchID):
 	conn = sqlite3.connect(DBNAME)
@@ -134,7 +137,15 @@ def handleJoin(json):
 	json["id"] = userId
 	json["name"] = getUser()
 	join_room(matchID)
-	joinMatch(userId, matchID)
+	requestUpdate = joinMatch(userId, matchID)
+	if (requestUpdate)
+	{
+		json["requestUpdate"] = True
+	}
+	else
+	{
+		json["requestUpdate"] = False
+	}
 	emit("join", json, room=None)
 	
 @socketio.on("joined")
@@ -142,6 +153,13 @@ def handleJoined(json):
 	logger.info(json)
 	matchID = json["matchID"]
 	emit("joined", json, room=matchID)
+	
+@socketio.on("requestUpdate")
+def handleRequestUpdate(json):
+	logger.info(json)
+	playerID = json["playerID"]
+	matchID = json["matchID"]
+	emit("requestUpdate", json, room=matchID)
 	
 @socketio.on("connect")
 def handleConnect():
@@ -313,6 +331,7 @@ if __name__ == "__main__":
 	conn.execute("CREATE TABLE IF NOT EXISTS users (userID NUMBER, name TEXT, password TEXT, PRIMARY KEY(userID))")
 	conn.execute("CREATE TABLE IF NOT EXISTS matches (matchID NUMBER, objectID NUMBER, PRIMARY KEY(matchID))")
 	conn.execute("INSERT OR REPLACE INTO users (userID, name, password) VALUES (?, ?, ?)", (1,"Coding","BlaBlub42",))
+	conn.execute("INSERT OR REPLACE INTO users (userID, name, password) VALUES (?, ?, ?)", (2,"duli","duli",))
 	conn.commit()
 	conn.close()
 	logger.info("started on "+HOST+":"+str(PORT))

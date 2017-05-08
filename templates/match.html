@@ -43,9 +43,15 @@
 		<script>
 			let matchID = gup("match");
 			let allPlayers = {};
+			let myGroups = {};
+			let allyGroups = {};
+			let hostileGroups = {};
+			let allObjects = {};
+			let messages = [];
 			let player = new Player();
 			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
+			let requestUpdate = false;
 			socket.on("connect", function()
 			{
 				let team = gup("team");
@@ -53,13 +59,17 @@
 			});
 			socket.on("join", function(json)
 			{
+				console.log(json);
 				player.id = json.id;
 				player.name = json.name;
 				player.team = json.team;
+				requestUpdate = json.requestUpdate;
+				delete json.requestUpdate;
 				socket.emit("joined", json);
 			});
 			socket.on("joined", function(json)
 			{
+				console.log(json);
 				if (json.id != player.id)
 				{
 					let p = new Player();
@@ -71,6 +81,45 @@
 				else
 				{
 					allPlayer[player.id] = player;
+					if (requestUpdate)
+					{
+						socket.emit("requestUpdate", {playerID: player.id, matchID: matchID});
+					}
+				}
+			});
+			socket.on("requestUpdate", function(json)
+			{
+				let playerID = json.playerID;
+				if (playerID != player.id)
+				{
+					console.log(json);
+					let user = {};
+					user.id = player.id;
+					user.name = player.name;
+					user.team = player.team;
+					json.player = user;
+					json.groups = [];
+					//TODO myGroups
+					socket.emit("update", json);
+				}
+			});
+			socket.on("update", function(json)
+			{
+				let playerID = json.playerID;
+				if (playerID == player.id)
+				{
+					console.log(json);
+					let user = {};
+					let p = new Player();
+					p.id = json.user.id;
+					p.name = json.user.name;
+					p.team = json.user.team;
+					allPlayer[p.id] = p;
+					for (group of json.groups)
+					{
+					
+					}
+					//TODO myGroups
 				}
 			});
 			socket.on("communicate", function(json)
@@ -125,9 +174,6 @@
 			let toBeSpawnedUnits = [];
 			let toBeSpawnedGroups = [];
 			let selectedGroups = [];
-			
-			let allObjects = {};
-			let messages = [];
 			
 			let fps = 10;
 			let timeFactor = 10;
