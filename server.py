@@ -358,4 +358,4 @@ if __name__ == "__main__":
 	conn.commit()
 	conn.close()
 	logger.info("started on "+HOST+":"+str(PORT))
-	socketio.run(app, host=HOST, port=PORT, debug=False)
+	socketio.run(app, host=HOST, port=PORT, debug=True)
