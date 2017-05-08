@@ -135,16 +135,23 @@ def handleJoin(json):
 	logger.info(json)
 	team = json["team"]
 	matchID = json["matchID"]
+	logger.info("1")
 	userId = getUserID()
+	logger.info("2")
 	json["id"] = userId
 	json["name"] = getUser()
+	logger.info("3")
 	join_room(matchID)
+	logger.info("4")
 	requestUpdate = joinMatch(userId, matchID)
+	logger.info("5")
 	if (requestUpdate):
 		json["requestUpdate"] = True
 	else:
 		json["requestUpdate"] = False
+	logger.info("6")
 	emit("join", json, room=None)
+	logger.info("7")
 	
 @socketio.on("joined")
 def handleJoined(json):
