@@ -8,7 +8,7 @@ from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3
 from enum import Enum
 import logging
-
+//http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1
 PROJECTNAME = "WargameJS"
 DBNAME = PROJECTNAME+".sqlite"
 
@@ -40,31 +40,31 @@ def child():
 
 @app.route('/impressum')
 def impressum():
-	return render_template('impressum.html')
+	return render_template('impressum.html', loggedin=(getUserID()!=-1))
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+	return render_template('index.html', loggedin=(getUserID()!=-1))
 
 @app.route('/weapon')
 def weapon():
-	return render_template('weapon.html')
+	return render_template('weapon.html', loggedin=(getUserID()!=-1))
 
 @app.route('/unit')
 def unit():
-	return render_template('unit.html')
+	return render_template('unit.html', loggedin=(getUserID()!=-1))
 
 @app.route('/group')
 def group():
-	return render_template('group.html')
+	return render_template('group.html', loggedin=(getUserID()!=-1))
 
 @app.route('/deck')
 def deck():
-	return render_template('deck.html')
+	return render_template('deck.html', loggedin=(getUserID()!=-1))
 
 @app.route('/match')
 def match():
-	return render_template('match.html')
+	return render_template('match.html', loggedin=(getUserID()!=-1))
 
 def listMatches():
 	res = []
@@ -139,6 +139,7 @@ def handleJoin(json):
 	
 @socketio.on("joined")
 def handleJoined(json):
+	logger.info(json)
 	matchID = json["matchID"]
 	emit("joined", json, room=matchID)
 	
