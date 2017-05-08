@@ -140,7 +140,7 @@ def handleJoin(json):
 	requestUpdate = joinMatch(userId, matchID)
 	if (requestUpdate):
 		json["requestUpdate"] = True
-	else
+	else:
 		json["requestUpdate"] = False
 	emit("join", json, room=None)
 	
