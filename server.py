@@ -78,7 +78,6 @@ def listMatches():
 def joinMatch(userID, matchID):
 	conn = sqlite3.connect(DBNAME)
 	joinedMatch = True
-	logger.info(conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0])
 	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
 		joinedMatch = False
 		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
