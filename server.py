@@ -75,12 +75,12 @@ def listMatches():
 	conn.close()
 	return res
 
-def joinMatch(userId, matchID):
+def joinMatch(userID, matchID):
 	conn = sqlite3.connect(DBNAME)
 	joinedMatch = True
+	logger.info("11")
 	logger.info(matchID)
 	logger.info(userID)
-	logger.info("11")
 	logger.info(conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0])
 	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
 		logger.info("12")
@@ -143,11 +143,11 @@ def handleJoin(json):
 	logger.info(json)
 	team = json["team"]
 	matchID = json["matchID"]
-	userId = getUserID()
-	json["id"] = userId
+	userID = getUserID()
+	json["id"] = userID
 	json["name"] = getUser()
 	join_room(matchID)
-	requestUpdate = joinMatch(userId, matchID)
+	requestUpdate = joinMatch(userID, matchID)
 	if (requestUpdate):
 		json["requestUpdate"] = True
 	else:
