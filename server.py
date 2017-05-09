@@ -182,7 +182,7 @@ def handleUpdate(json):
 	logger.info(json)
 	playerID = json["playerID"]
 	matchID = json["matchID"]
-	emit("requestUpdate", json, room=matchID)#TODO only send to target
+	emit("update", json, room=matchID)#TODO only send to target
 	
 @socketio.on("connect")
 def handleConnect():
