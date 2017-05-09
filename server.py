@@ -88,7 +88,7 @@ def joinMatch(userId, matchID):
 			joinedMatch = False
 			conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
 			logger.info("13")"""
-		conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
+		#conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
 		logger.info("14")
 		conn.commit()
 		conn.close()
