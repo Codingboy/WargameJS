@@ -79,11 +79,11 @@
 					p.id = json.id;
 					p.name = json.name;
 					p.team = json.team;
-					allPlayer[p.id] = p;
+					allPlayers[p.id] = p;
 				}
 				else
 				{
-					allPlayer[player.id] = player;
+					allPlayers[player.id] = player;
 					if (requestUpdate)
 					{
 						socket.emit("requestUpdate", {playerID: player.id, matchID: matchID});
