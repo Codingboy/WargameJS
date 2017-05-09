@@ -80,13 +80,14 @@ def joinMatch(userId, matchID):
 	joinedMatch = True
 	logger.info("11")
 	logger.info(conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0])
-	"""if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
+	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
 		logger.info("12")
 		joinedMatch = False
 		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
 		logger.info("13")
-	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))"""
-	logger.info("12")
+	logger.info("14")
+	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
+	logger.info("15")
 	conn.commit()
 	conn.close()
 	return joinedMatch
