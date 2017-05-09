@@ -83,11 +83,11 @@ def joinMatch(userId, matchID):
 	logger.info("11")
 	try:
 		logger.info(matchID)
-		if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
+		"""if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
 			logger.info("12")
 			joinedMatch = False
 			conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
-			logger.info("13")
+			logger.info("13")"""
 		conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
 		logger.info("14")
 		conn.commit()
