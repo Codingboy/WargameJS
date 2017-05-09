@@ -76,22 +76,19 @@ def listMatches():
 	return res
 
 def joinMatch(userId, matchID):
-	logger.info("09")
 	conn = sqlite3.connect(DBNAME)
-	logger.info("10")
 	joinedMatch = True
 	logger.info("11")
-	logger.info(matchID)
-	"""if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
+	logger.info(conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0])
+	"""if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone()[0] == 0):
 		logger.info("12")
 		joinedMatch = False
 		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
-		logger.info("13")"""
-	#conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
-	logger.info("14")
+		logger.info("13")
+	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))"""
+	logger.info("12")
 	conn.commit()
 	conn.close()
-	logger.info("15")
 	return joinedMatch
 
 def leaveMatch(userID, matchID):
@@ -143,23 +140,16 @@ def handleJoin(json):
 	logger.info(json)
 	team = json["team"]
 	matchID = json["matchID"]
-	logger.info("1")
 	userId = getUserID()
-	logger.info("2")
 	json["id"] = userId
 	json["name"] = getUser()
-	logger.info("3")
 	join_room(matchID)
-	logger.info("4")
 	requestUpdate = joinMatch(userId, matchID)
-	logger.info("5")
 	if (requestUpdate):
 		json["requestUpdate"] = True
 	else:
 		json["requestUpdate"] = False
-	logger.info("6")
 	emit("join", json, room=None)
-	logger.info("7")
 	
 @socketio.on("joined")
 def handleJoined(json):
@@ -358,4 +348,4 @@ if __name__ == "__main__":
 	conn.commit()
 	conn.close()
 	logger.info("started on "+HOST+":"+str(PORT))
-	socketio.run(app, host=HOST, port=PORT, debug=True)
+	socketio.run(app, host=HOST, port=PORT, debug=False)
