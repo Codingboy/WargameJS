@@ -81,17 +81,20 @@ def joinMatch(userId, matchID):
 	logger.info("10")
 	joinedMatch = True
 	logger.info("11")
-	logger.info(matchID)
-	if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
-		logger.info("12")
-		joinedMatch = False
-		conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
-		logger.info("13")
-	conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
-	logger.info("14")
-	conn.commit()
-	conn.close()
-	logger.info("15")
+	try:
+		logger.info(matchID)
+		if (conn.execute("SELECT Count(*) FROM matches WHERE matchID=?", (matchID,)).fetchone() == 0):
+			logger.info("12")
+			joinedMatch = False
+			conn.execute("INSERT OR REPLACE INTO matches (matchID, objectID) VALUES (?, 0)", (matchID,))
+			logger.info("13")
+		conn.execute("INSERT OR REPLACE INTO participates (matchID, userID) VALUES (?, ?)", (matchID,userID,))
+		logger.info("14")
+		conn.commit()
+		conn.close()
+		logger.info("15")
+	except e:
+		logger.info(e)
 	return joinedMatch
 
 def leaveMatch(userID, matchID):
