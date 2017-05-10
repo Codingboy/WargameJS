@@ -170,7 +170,7 @@
 							group.addUnit(u);
 						}
 						allObjects[group.id] = group;
-						group.redraw();
+						group.needsRedraw = true;
 					}
 				}
 			});
@@ -494,7 +494,7 @@
 								group.waypoints.shift();
 								group.dir = -1;
 								group.setPos(dst);
-								group.redraw();
+								group.needsRedraw = true;
 							}
 							else
 							{
@@ -504,7 +504,7 @@
 								if (Math.round(group.dir) != Math.round(bearing))
 								{
 									group.dir = bearing;
-									group.redraw();
+									group.needsRedraw = true;
 								}
 								group.setPos([destination.lat, destination.lon]);
 							}
@@ -657,12 +657,13 @@
 						symbolSource.removeFeature(enemy.olObject);
 						//TODO delete references in other groups (spots, spottedBy, ...)
 					}
-				}
+				}*/
 				
 				let now = Date.now();
-				for (let p of allPlayers)
+				for (let objectID of Object.keys(allObjects))
 				{
-					for (let group of p.groups)
+					let group = allObjects[objectID];
+					if (group instanceof Group)
 					{
 						if (group.lastShot > 0 && now - group.lastShot > 1000)
 						{
@@ -674,7 +675,7 @@
 							group.redraw();
 						}
 					}
-				}*/
+				}
 				if (messages.length > 0)
 				{
 					let json = {
