@@ -517,6 +517,7 @@
 			}
 			function updateUI()
 			{
+let t0 = performance.now();
 				//move groups
 				for (let objectID of Object.keys(allObjects))
 				{
@@ -710,8 +711,10 @@
 						messages: messages
 					};
 					socket.emit("communicate", json);
+					messages = [];
 				}
-				messages = [];
+let t1 = performance.now();
+console.log(str(t1-t0));
 			}
 			let t = setInterval(updateUI, 1000/fps);
 		</script>
