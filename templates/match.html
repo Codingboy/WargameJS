@@ -143,7 +143,7 @@
 						let pos = messageData.pos;
 						let units = messageData.units;
 						let owner = player;
-						for (let playerID of allPlayers)
+						for (let playerID of Object.keys(allPlayers))
 						{
 							if (allPlayers[playerID].id == senderID)
 							{
