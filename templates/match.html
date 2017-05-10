@@ -221,7 +221,7 @@
 			let symbolLayer = new ol.layer.Vector({
 				source: symbolSource
 			});
-let coordinates = [[8, 50],[9, 51],[11, 52],[8, 50]];
+let coordinates = [[8.1891489, 50.04148632],[8.20914745, 50.04181706],[8.20949078, 50.04958876],[8.19009304, 50.04837623],[8.1891489, 50.04148632]];
 var polygon = new ol.geom.Polygon([coordinates]);
 polygon.transform('EPSG:4326', 'EPSG:3857');
 var feature = new ol.Feature(polygon);
@@ -241,7 +241,7 @@ var sectorLayer = new ol.layer.Vector({
 					symbolLayer
 				],
 				view: new ol.View({
-					center: ol.proj.fromLonLat([106.972534, -6.147714]),//[8.2, 50.05]),
+					center: ol.proj.fromLonLat([8.2, 50.05]),
 					zoom: 15
 				}),
 				interactions: ol.interaction.defaults({
