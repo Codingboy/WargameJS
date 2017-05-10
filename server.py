@@ -166,7 +166,6 @@ def handleJoined(json):
 def handleRequestUpdate(json):
 	logger.info("requestUpdate")
 	logger.info(json)
-	playerID = json["playerID"]
 	matchID = json["matchID"]
 	emit("requestUpdate", json, room=matchID)
 	
@@ -174,7 +173,6 @@ def handleRequestUpdate(json):
 def handleUpdate(json):
 	logger.info("update")
 	logger.info(json)
-	playerID = json["playerID"]
 	matchID = json["matchID"]
 	emit("update", json, room=matchID)#TODO only send to target
 	

@@ -85,15 +85,15 @@
 					allPlayers[player.id] = player;
 					if (requestUpdate)
 					{
-						socket.emit("requestUpdate", {playerID: player.id, matchID: matchID});
+						socket.emit("requestUpdate", {receiverID: player.id, matchID: matchID});
 					}
 				}
 			});
 			socket.on("requestUpdate", function(json)
 			{
 				console.log("requestUpdate");
-				let playerID = json.playerID;
-				if (playerID != player.id)
+				let receiverID = json.receiverID;
+				if (receiverID != player.id)
 				{
 					console.log(json);
 					let user = {};
@@ -109,8 +109,8 @@
 			socket.on("update", function(json)
 			{
 				console.log("update");
-				let playerID = json.playerID;
-				if (playerID == player.id)
+				let receiverID = json.receiverID;
+				if (receiverID == player.id)
 				{
 					console.log(json);
 					let user = {};
@@ -182,6 +182,20 @@
 							}
 						}
 						group.needsRedraw = true;
+					}
+					if (messageType == "addWaypoint")
+					{
+						let id = messageData.id;
+						let waypoint = messageData.waypoint;
+						let group = allObjects[id];
+						group.waypoints.push(waypoint);
+					}
+					if (messageType == "setWaypoint")
+					{
+						let id = messageData.id;
+						let waypoint = messageData.waypoint;
+						let group = allObjects[id];
+						group.waypoints = [waypoint];
 					}
 				}
 			});
@@ -273,11 +287,27 @@
 						{
 							if (shift)
 							{
-								group.waypoints.push(latlon);
+								json = {
+									type: "addWaypoint",
+									data: {
+										id: group.id,
+										waypoint: latlon
+									}
+								};
+								console.log(json);
+								messages.push(json);
 							}
 							else
 							{
-								group.waypoints = [latlon];
+								json = {
+									type: "setWaypoint",
+									data: {
+										id: group.id,
+										waypoint: latlon
+									}
+								};
+								console.log(json);
+								messages.push(json);
 							}
 						}
 					}
