@@ -115,11 +115,11 @@
 					console.log(json);
 					let user = {};
 					let p = new Player();
-					p.id = json.user.id;
-					p.name = json.user.name;
-					p.team = json.user.team;
-					allPlayer[p.id] = p;
-					for (group of json.groups)
+					p.id = json.player.id;
+					p.name = json.player.name;
+					p.team = json.player.team;
+					allPlayers[p.id] = p;
+					for (let group of json.groups)
 					{
 					
 					}
@@ -476,7 +476,7 @@
 			}
 			function updateUI()
 			{
-				for (let objectID of allObjects)
+				for (let objectID of Object.keys(allObjects))
 				{
 					let group = allObjects[objectID];
 					if (group instanceof Group)
