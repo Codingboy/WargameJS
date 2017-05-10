@@ -43,7 +43,6 @@
 		<script>
 			let matchID = parseInt(gup("match"));
 			let allPlayers = {};
-			let myGroups = {};
 			let allyGroups = {};
 			let hostileGroups = {};
 			let allObjects = {};
@@ -143,7 +142,15 @@
 						let id = messageData.id;
 						let pos = messageData.pos;
 						let units = messageData.units;
-						let owner = player;//TODO select by id
+						let owner = player;
+						for (let playerID of allPlayers)
+						{
+							if (allPlayers[playerID].id == senderID)
+							{
+								owner = allPlayers[playerID];
+								break;
+							}
+						}
 						let group = new Group(owner, pos, id);
 						for (unit of units)
 						{
@@ -161,8 +168,8 @@
 							}
 							allObjects[u.id] = u;
 							group.addUnit(u);
-							allObjects[group.id] = group;
 						}
+						allObjects[group.id] = group;
 						group.redraw();
 					}
 				}
@@ -365,6 +372,7 @@
 				this.id = 42;
 				this.name = "";
 				this.team = 1;
+				this.groups = {};
 			}
 			Player.prototype.isEnemy = function()
 			{
@@ -382,11 +390,6 @@
 			{
 				return this.team == player.team;
 			};
-			function createGroupLocal(json)
-			{
-				//TODO create group, add units and weapons
-				//function Group(owner, pos, id)
-			}
 			function createGroupGlobal(unitNames, groupNames, pos)
 			{
 				unitsFromName(unitNames, function(units)
@@ -472,7 +475,48 @@
 				reset();
 			}
 			function updateUI()
-			{/*
+			{
+				for (let objectID of allObjects)
+				{
+					let group = allObjects[objectID];
+					if (group instanceof Group)
+					{
+						if (group.waypoints.length > 0)
+						{
+							let src = group.pos;
+							let dst = group.waypoints[0];
+							let minMoveDistance = group.representation.dbUnit.speed/(3.6*fps);
+							let srcLatLon = new LatLon(src[0], src[1]);
+							let dstLatLon = new LatLon(dst[0], dst[1]);
+							let distance = srcLatLon.distanceTo(dstLatLon);
+							if (distance < minMoveDistance)
+							{
+								group.waypoints.shift();
+								group.dir = -1;
+								group.setPos(dst);
+								group.redraw();
+							}
+							else
+							{
+								let bearing = srcLatLon.finalBearingTo(dstLatLon);
+								let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+								bearing = (360-bearing+90)%360;
+								if (Math.round(group.dir) != Math.round(bearing))
+								{
+									group.dir = bearing;
+									group.redraw();
+								}
+								group.setPos([destination.lat, destination.lon]);
+							}
+							group.moved = true;
+						}
+						else
+						{
+							group.moved = false;
+						}
+					}
+				}
+			/*
 				//move groups
 				for (let p of allPlayers)
 				{

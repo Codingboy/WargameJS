@@ -66,6 +66,15 @@ def deck():
 def match():
 	return render_template('match.html', loggedin=(getUserID()!=-1))
 
+@app.route('/matches')
+def matches():
+	matches = listMatches()
+	matchDict = {}
+	for match in matches:
+		matchDict["name"] = match
+		matchDict["url"] = "/match?deck=deck&team=0&match="+str(match)#TODO
+	return render_template('matches.html', loggedin=(getUserID()!=-1), matches=matchDict)
+
 def listMatches():
 	res = []
 	conn = sqlite3.connect(DBNAME, isolation_level="EXCLUSIVE")

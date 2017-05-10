@@ -28,7 +28,7 @@ function Group(owner, pos, id)
 	this.spottedRadarAirBy = [];
 	this.spottedRadarWeaponBy = [];
 	this.hearedBy = [];
-	this.owner.groups.push(this);
+	this.owner.groups[id] = this;
 	this.olObject.set("group", this);
 	this.suppressed = 0;
 	symbolSource.addFeature(this.olObject);
@@ -40,7 +40,6 @@ function Group(owner, pos, id)
 	{
 		this.opacity = invisibleEnemyOpacity;
 	}
-	allObjects[id] = this;
 }
 Group.prototype.addUnit = function(unit)
 {
