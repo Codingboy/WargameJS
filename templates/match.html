@@ -221,12 +221,6 @@
 			let symbolLayer = new ol.layer.Vector({
 				source: symbolSource
 			});
-			let sectorSource = new ol.source.Vector({
-				features: []
-			});
-			let sectorLayer = new ol.layer.Vector({
-				source: sectorSource
-			});
 let coordinates = [[80, 50],[80, 51],[81, 51],[81, 50],[80, 50]];
 var polygon = new ol.geom.Polygon([coordinates]);
 polygon.transform('EPSG:4326', 'EPSG:3857');
