@@ -376,7 +376,7 @@
 			}
 			Player.prototype.isEnemy = function()
 			{
-				return this.team != player.team && !this.isNeutral();
+				return this.team != player.team && !this.isIndependent() && !this.isCivil();
 			};
 			Player.prototype.isIndependent = function()
 			{
