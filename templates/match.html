@@ -476,6 +476,7 @@
 			}
 			function updateUI()
 			{
+				//move groups
 				for (let objectID of Object.keys(allObjects))
 				{
 					let group = allObjects[objectID];
@@ -516,60 +517,44 @@
 						}
 					}
 				}
-			/*
-				//move groups
-				for (let p of allPlayers)
+				
+				//make spotted enemies visible
+				for (let playerID of Object.keys(allPlayers))
 				{
-					for (let group of p.groups)
+					let p = allPlayers[playerID];
+					if (p.isFriend())
 					{
-						if (group.waypoints.length > 0)
+						for (let groupID of Object.keys(p.groups))
 						{
-							let src = group.pos;
-							let dst = group.waypoints[0];
-							let minMoveDistance = group.representation.dbUnit.speed/(3.6*fps);
-							let srcLatLon = new LatLon(src[0], src[1]);
-							let dstLatLon = new LatLon(dst[0], dst[1]);
-							let distance = srcLatLon.distanceTo(dstLatLon);
-							if (distance < minMoveDistance)
+							let group = p.groups[groupID];
+							if (group.moved)
 							{
-								group.waypoints.shift();
-								group.dir = -1;
-								group.setPos(dst);
-								group.redraw();
+								//recheck all enemies
+								group.spots = [];
+								for (let gID of Object.keys(hostileGroups))
+								{
+									let g = hostileGroups[gID];
+									group.handleDetection(g);
+								}
 							}
 							else
 							{
-								let bearing = srcLatLon.finalBearingTo(dstLatLon);
-								let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
-								bearing = (360-bearing+90)%360;
-								if (Math.round(group.dir) != Math.round(bearing))
+								//recheck all enemies that moved
+								for (let gID of Object.keys(hostileGroups))
 								{
-									group.dir = bearing;
-									group.redraw();
+									let g = hostileGroups[gID];
+									if (g.moved)
+									{
+										group.handleDetection(g);
+									}
 								}
-								group.setPos([destination.lat, destination.lon]);
 							}
-							group.moved = true;
-						}
-						else
-						{
-							group.moved = false;
 						}
 					}
 				}
+			/*
 				
 				//make spotted enemies visible
-				let enemies = [];
-				for (let p of allPlayers)
-				{
-					if (p.isEnemy())
-					{
-						for (let group of p.groups)
-						{
-							enemies.push(group);
-						}
-					}
-				}
 				for (let p of allPlayers)
 				{
 					if (p.isFriend())
