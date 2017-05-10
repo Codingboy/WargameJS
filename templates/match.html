@@ -233,13 +233,26 @@ coordinates.push([80, 51]);
 coordinates.push([81, 51]);
 coordinates.push([81, 50]);
 coordinates.push([80, 50]);
-let olObject = new ol.Feature({
+/*let olObject = new ol.Feature({
 			geometry: new ol.geom.Polygon(coordinates)
 		});
 olObject.getGeometry().transform("EPSG:4326", "EPSG:3857");
 //let position = ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857");
 //olObject.getGeometry().setCoordinates(position);
-sectorSource.addFeature(olObject);
+sectorSource.addFeature(olObject);*/
+
+var feature = new ol.Feature({
+            geometry: new ol.geom.Polygon([coordinates])
+        });
+
+feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+var vectorSource= new ol.source.Vector({
+        features: [feature ]
+    });
+
+ var vectorLayer = new ol.layer.Vector({
+        source: vectorSource
+    });
 			let map = new ol.Map({
 				target: "map",
 				layers: [
@@ -247,7 +260,7 @@ sectorSource.addFeature(olObject);
 						preload: Infinity,
 						source: new ol.source.OSM()
 					}),
-					sectorLayer,
+					vectorLayer,
 					symbolLayer
 				],
 				view: new ol.View({
