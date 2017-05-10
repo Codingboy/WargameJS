@@ -170,6 +170,17 @@
 							group.addUnit(u);
 						}
 						allObjects[group.id] = group;
+						if (owner.id != player.id)
+						{
+							if (owner.isFriend())
+							{
+								allyGroups[group.id] = group;
+							}
+							if (owner.isEnemy())
+							{
+								hostileGroups[group.id] = group;
+							}
+						}
 						group.needsRedraw = true;
 					}
 				}
