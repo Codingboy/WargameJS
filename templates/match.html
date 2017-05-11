@@ -233,7 +233,7 @@ var style = {
 	fillOpacity: 0.2,
 	strokeOpacity: 0.4
 };
-feature.style = style;
+feature.setStyle(style);
 sectorSource.addFeature(feature);
 var sectorLayer = new ol.layer.Vector({
   source: sectorSource
