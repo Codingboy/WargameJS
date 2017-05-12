@@ -26,6 +26,7 @@
 				</div>
 				<div class="form-group" id="selectedBlock">
 				</div>
+				<input type="button" onclick="ready()" value="Ready"/>
 			<form>
 		</div>
 		<div id="map" class="map"></div>
@@ -203,6 +204,31 @@
 						let group = allObjects[id];
 						group.waypoints = [waypoint];
 					}
+					if (messageType == "remove")
+					{
+						let id = messageData.id;
+						let group = allObjects[id];
+						symbolSource.removeFeature(group.olObject);
+						//TODO remove from each other groups variables
+						delete allObjects[id];
+						for (let unit of group.units)
+						{
+							delete allObjects[unit.id];
+							for (let weapon of unit.weapons)
+							{
+								delete allObjects[weapon.id];
+							}
+						}
+						delete group.owner.groups[id];
+						if (group.owner.isFriend())
+						{
+							delete allyGroups[id];
+						}
+						if (group.owner.isEnemy())
+						{
+							delete hostileGroups[id];
+						}
+					}
 				}
 			});
 			var visibleEnemyOpacity = 1.0;
@@ -343,6 +369,11 @@ var sectorLayer = new ol.layer.Vector({
 					}
 				}
 			});
+			function ready()
+			{
+				//TODO network
+				phase = 1;
+			}
 			function unitsFromName(unitNames, callback, units)
 			{
 				if (typeof units == "undefined")
@@ -438,7 +469,14 @@ var sectorLayer = new ol.layer.Vector({
 			}
 			function removeGroup(group)
 			{
-				console.log("42");
+				json = {
+					type: "remove",
+					data: {
+						id: group.id
+					}
+				};
+				console.log(json);
+				messages.push(json);
 			}
 			function init()
 			{
