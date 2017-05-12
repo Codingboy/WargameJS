@@ -276,7 +276,7 @@ var sectorLayer = new ol.layer.Vector({
 				}
 				else
 				{
-					feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
+					map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
 					{
 						console.log(layer);
 						let selected = false;
