@@ -14,7 +14,7 @@
 		</style>
 		<title>BFT</title>
 	</head>
-	<body onclick="onClick(event);">
+	<body onkeydown="onKeyDown(event);" onkeyup="onKeyUp(event);">
 		<div class="container">
 			<form class="form-horizontal">
 				<div class="form-group" id="unitBlock">
@@ -404,8 +404,9 @@ var sectorLayer = new ol.layer.Vector({
 					}
 				};
 			}
-			function onClick(e)
+			function onKeyDown(e)
 			{
+				console.log(e);
 				shift = e.shiftKey;
 				ctrl = e.ctrlKey;
 				if (phase == 0)
@@ -418,6 +419,9 @@ var sectorLayer = new ol.layer.Vector({
 						}
 					}
 				}
+			}
+			function onKeyUp(e)
+			{
 			}
 			function removeGroup(group)
 			{
