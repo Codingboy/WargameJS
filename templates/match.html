@@ -406,9 +406,14 @@ var sectorLayer = new ol.layer.Vector({
 			}
 			function onKeyDown(e)
 			{
-				console.log(e);
-				shift = e.shiftKey;
-				ctrl = e.ctrlKey;
+				if (e.keyCode == 16)
+				{
+					shift = true;
+				}
+				if (e.keyCode == 17)
+				{
+					ctrl = true;
+				}
 				if (phase == 0)
 				{
 					if (e.keyCode == 46)
@@ -422,6 +427,14 @@ var sectorLayer = new ol.layer.Vector({
 			}
 			function onKeyUp(e)
 			{
+				if (e.keyCode == 16)
+				{
+					shift = false;
+				}
+				if (e.keyCode == 17)
+				{
+					ctrl = false;
+				}
 			}
 			function removeGroup(group)
 			{
