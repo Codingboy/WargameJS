@@ -278,6 +278,7 @@ var sectorLayer = new ol.layer.Vector({
 				{
 					map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
 					{
+						console.log(layer);
 						if (layer == symbolLayer || layer == null)
 						{
 							let selected = false;
@@ -332,12 +333,6 @@ var sectorLayer = new ol.layer.Vector({
 								}
 							}
 						}
-					}, layerFilter=function(layer){
-						if (layer == symbolLayer)
-						{
-							return true;
-						}
-						return false;
 					});
 				}
 			});
