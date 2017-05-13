@@ -8,6 +8,8 @@ from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3
 from enum import Enum
 import logging
+import signal
+import sys
 #http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1
 PROJECTNAME = "WargameJS"
 DBNAME = PROJECTNAME+".sqlite"
@@ -29,6 +31,16 @@ app.config["SECRET_KEY"] = "BlaBlub42"
 socketio = SocketIO(app)
 PORT = 62155
 HOST = "coding42.diphda.uberspace.de"
+
+def signalHandler():
+	connection = sqlite3.connect(DBNAME)
+	cursor = connection.cursor()
+	conn.execute("DELETE FROM matches")
+	conn.execute("DELETE FROM participates")
+	connection.commit()
+	connection.close()
+	sys.exit(0)
+signal.signal(signal.SIGINT, signalHandler)
 
 @app.route('/base')
 def base():
