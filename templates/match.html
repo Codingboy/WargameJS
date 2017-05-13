@@ -157,6 +157,34 @@
 					json.groups = [];
 					//TODO myGroups
 					//TODO map
+					socket.emit("update", json);
+				}
+			});
+			socket.on("update", function(json)
+			{
+				console.log("update");
+				let receiverID = json.receiverID;
+				if (receiverID == player.id)
+				{
+					console.log(json);
+					let user = {};
+					let p = new Player();
+					p.id = json.player.id;
+					p.name = json.player.name;
+					p.team = json.player.team;
+					p.ready = json.player.ready;
+					p.phase = json.player.phase;
+					allPlayers[p.id] = p;
+					if (p.phase != 0)
+					{
+						player.phase = p.phase;
+					}
+					for (let group of json.groups)
+					{
+					
+					}
+					//TODO myGroups
+					//TODO map
 					let allyStyle = new ol.style.Style({
 						fill: new ol.style.Fill({
 							color: [0,0,255,0.2]
@@ -203,33 +231,6 @@
 						feature.setStyle(hostileStyle);
 					}
 					spawnSource.addFeature(feature);
-					socket.emit("update", json);
-				}
-			});
-			socket.on("update", function(json)
-			{
-				console.log("update");
-				let receiverID = json.receiverID;
-				if (receiverID == player.id)
-				{
-					console.log(json);
-					let user = {};
-					let p = new Player();
-					p.id = json.player.id;
-					p.name = json.player.name;
-					p.team = json.player.team;
-					p.ready = json.player.ready;
-					p.phase = json.player.phase;
-					allPlayers[p.id] = p;
-					if (p.phase != 0)
-					{
-						player.phase = p.phase;
-					}
-					for (let group of json.groups)
-					{
-					
-					}
-					//TODO myGroups
 				}
 			});
 			socket.on("ready", function(json)
