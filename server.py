@@ -33,12 +33,12 @@ PORT = 62155
 HOST = "coding42.diphda.uberspace.de"
 
 def signalHandler(signal, frame):
-	connection = sqlite3.connect(DBNAME)
-	cursor = connection.cursor()
+	conn = sqlite3.connect(DBNAME)
+	cursor = conn.cursor()
 	conn.execute("DELETE FROM matches")
 	conn.execute("DELETE FROM participates")
-	connection.commit()
-	connection.close()
+	conn.commit()
+	conn.close()
 	sys.exit(0)
 signal.signal(signal.SIGINT, signalHandler)
 
