@@ -56,7 +56,6 @@
 			{
 				console.log("connect");
 				let team = parseInt(gup("team"));
-				console.log(json);
 				socket.emit("join", {team: team, matchID: matchID});
 			});
 			socket.on("join", function(json)
@@ -577,7 +576,7 @@
 				{
 					ctrl = true;
 				}
-				if (phase == 0)
+				if (player.phase == 0)
 				{
 					if (e.keyCode == 46)
 					{
