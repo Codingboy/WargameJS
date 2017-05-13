@@ -32,7 +32,7 @@ socketio = SocketIO(app)
 PORT = 62155
 HOST = "coding42.diphda.uberspace.de"
 
-def signalHandler():
+def signalHandler(signal, frame):
 	connection = sqlite3.connect(DBNAME)
 	cursor = connection.cursor()
 	conn.execute("DELETE FROM matches")
