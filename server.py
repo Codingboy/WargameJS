@@ -176,6 +176,13 @@ def handleUpdate(json):
 	matchID = json["matchID"]
 	emit("update", json, room=matchID)#TODO only send to target
 	
+@socketio.on("ready")
+def handleReady(json):
+	logger.info("ready")
+	logger.info(json)
+	matchID = json["matchID"]
+	emit("ready", json, room=matchID)
+	
 @socketio.on("connect")
 def handleConnect():
 	logger.info("connect")

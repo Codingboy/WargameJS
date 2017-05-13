@@ -42,7 +42,6 @@
 		<script src="static/weapon.js"></script>
     	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
-			let phase = 0;
 			let matchID = parseInt(gup("match"));
 			let allPlayers = {};
 			let allyGroups = {};
@@ -57,6 +56,7 @@
 			{
 				console.log("connect");
 				let team = parseInt(gup("team"));
+				console.log(json);
 				socket.emit("join", {team: team, matchID: matchID});
 			});
 			socket.on("join", function(json)
@@ -89,6 +89,56 @@
 					{
 						socket.emit("requestUpdate", {receiverID: player.id, matchID: matchID});
 					}
+					else
+					{
+						//TODO map
+						let allyStyle = new ol.style.Style({
+							fill: new ol.style.Fill({
+								color: [0,0,255,0.2]
+							}),
+							stroke: new 	ol.style.Stroke({
+								color: [0,0,255,0.4],
+								width: 5
+							})
+						});
+						let hostileStyle = new ol.style.Style({
+							fill: new ol.style.Fill({
+								color: [255,0,0,0.2]
+							}),
+							stroke: new 	ol.style.Stroke({
+								color: [255,0,0,0.4],
+								width: 5
+							})
+						});
+						let coordinates = [[8.1891489, 50.04148632],[8.20914745, 50.04181706],[8.20949078, 50.04958876],[8.19009304, 50.04837623],[8.1891489, 50.04148632]];
+						let polygon = new ol.geom.Polygon([coordinates]);
+						polygon.transform('EPSG:4326', 'EPSG:3857');
+						let feature = new ol.Feature(polygon);
+						feature.set("team", 0);
+						if (player.team == 0)
+						{
+							feature.setStyle(allyStyle);
+						}
+						else
+						{
+							feature.setStyle(hostileStyle);
+						}
+						spawnSource.addFeature(feature);
+						coordinates = [[8.293347, 50.129548],[8.31017, 50.130593],[8.309827, 50.13857],[8.293519, 50.13923],[8.293347, 50.129548]];
+						polygon = new ol.geom.Polygon([coordinates]);
+						polygon.transform('EPSG:4326', 'EPSG:3857');
+						feature = new ol.Feature(polygon);
+						feature.set("team", 1);
+						if (player.team == 1)
+						{
+							feature.setStyle(allyStyle);
+						}
+						else
+						{
+							feature.setStyle(hostileStyle);
+						}
+						spawnSource.addFeature(feature);
+					}
 				}
 			});
 			socket.on("requestUpdate", function(json)
@@ -102,10 +152,58 @@
 					user.id = player.id;
 					user.name = player.name;
 					user.team = player.team;
+					user.phase = player.phase;
+					user.ready = player.ready;
 					json.player = user;
 					json.groups = [];
-					json.phase = phase;
 					//TODO myGroups
+					//TODO map
+					let allyStyle = new ol.style.Style({
+						fill: new ol.style.Fill({
+							color: [0,0,255,0.2]
+						}),
+						stroke: new 	ol.style.Stroke({
+							color: [0,0,255,0.4],
+							width: 5
+						})
+					});
+					let hostileStyle = new ol.style.Style({
+						fill: new ol.style.Fill({
+							color: [255,0,0,0.2]
+						}),
+						stroke: new 	ol.style.Stroke({
+							color: [255,0,0,0.4],
+							width: 5
+						})
+					});
+					let coordinates = [[8.1891489, 50.04148632],[8.20914745, 50.04181706],[8.20949078, 50.04958876],[8.19009304, 50.04837623],[8.1891489, 50.04148632]];
+					let polygon = new ol.geom.Polygon([coordinates]);
+					polygon.transform('EPSG:4326', 'EPSG:3857');
+					let feature = new ol.Feature(polygon);
+					feature.set("team", 0);
+					if (player.team == 0)
+					{
+						feature.setStyle(allyStyle);
+					}
+					else
+					{
+						feature.setStyle(hostileStyle);
+					}
+					spawnSource.addFeature(feature);
+					coordinates = [[8.293347, 50.129548],[8.31017, 50.130593],[8.309827, 50.13857],[8.293519, 50.13923],[8.293347, 50.129548]];
+					polygon = new ol.geom.Polygon([coordinates]);
+					polygon.transform('EPSG:4326', 'EPSG:3857');
+					feature = new ol.Feature(polygon);
+					feature.set("team", 1);
+					if (player.team == 1)
+					{
+						feature.setStyle(allyStyle);
+					}
+					else
+					{
+						feature.setStyle(hostileStyle);
+					}
+					spawnSource.addFeature(feature);
 					socket.emit("update", json);
 				}
 			});
@@ -121,16 +219,41 @@
 					p.id = json.player.id;
 					p.name = json.player.name;
 					p.team = json.player.team;
+					p.ready = json.player.ready;
+					p.phase = json.player.phase;
 					allPlayers[p.id] = p;
+					if (p.phase != 0)
+					{
+						player.phase = p.phase;
+					}
 					for (let group of json.groups)
 					{
 					
 					}
-					if (json.phase > phase)
-					{
-						phase = json.phase;
-					}
 					//TODO myGroups
+				}
+			});
+			socket.on("ready", function(json)
+			{
+				console.log("update");
+				let senderID = json.player;
+				allPlayers[senderID].ready = json.ready;
+				let notReady = 0;
+				for (let playerID of Object.keys(allPlayers))
+				{
+					if (!allPlayers[playerID].ready)
+					{
+						notReady += 1;
+						break;
+					}
+				}
+				if (notReady == 0)
+				{
+					for (let playerID of Object.keys(allPlayers))
+					{
+						allPlayers[playerID].phase = 1;
+						//TODO remove ready button
+					}
 				}
 			});
 			socket.on("communicate", function(json)
@@ -253,25 +376,10 @@
 			let symbolLayer = new ol.layer.Vector({
 				source: symbolSource
 			});
-let coordinates = [[8.1891489, 50.04148632],[8.20914745, 50.04181706],[8.20949078, 50.04958876],[8.19009304, 50.04837623],[8.1891489, 50.04148632]];
-var polygon = new ol.geom.Polygon([coordinates]);
-polygon.transform('EPSG:4326', 'EPSG:3857');
-var feature = new ol.Feature(polygon);
-var sectorSource = new ol.source.Vector();
-let style = new ol.style.Style({
-	fill: new ol.style.Fill({
-		color: [0,255,0,0.2]
-	}),
-	stroke: new 	ol.style.Stroke({
-		color: [0,255,0,0.4],
-		width: 5
-	})
-});
-feature.setStyle(style);
-sectorSource.addFeature(feature);
-var sectorLayer = new ol.layer.Vector({
-  source: sectorSource
-});
+			let spawnSource = new ol.source.Vector();
+			let spawnLayer = new ol.layer.Vector({
+				source: spawnSource
+			});
 			let map = new ol.Map({
 				target: "map",
 				layers: [
@@ -279,7 +387,7 @@ var sectorLayer = new ol.layer.Vector({
 						preload: Infinity,
 						source: new ol.source.OSM()
 					}),
-					sectorLayer,
+					spawnLayer,
 					symbolLayer
 				],
 				view: new ol.View({
@@ -304,7 +412,25 @@ var sectorLayer = new ol.layer.Vector({
 				let lon = latlon[1];
 				if (toBeSpawnedUnits.length+toBeSpawnedGroups.length > 0)
 				{
-					createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon]);
+					if (player.phase == 0)
+					{
+						let feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer)
+						{
+							if (layer == spawnLayer)
+							{
+								return feature;
+							}
+							return null;
+						});
+						if (feature)
+						{
+							team = feature.get("team");
+							if (player.team == team)
+							{
+								createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon]);
+							}
+						}
+					}
 				}
 				else
 				{
@@ -337,7 +463,7 @@ var sectorLayer = new ol.layer.Vector({
 						group.opacity = selectedOpacity;
 						group.needsRedraw = true;
 					}
-					if (!selected && phase > 0)
+					if (!selected && player.phase > 0)
 					{
 						for (group of selectedGroups)
 						{
@@ -371,8 +497,14 @@ var sectorLayer = new ol.layer.Vector({
 			});
 			function ready()
 			{
-				//TODO network
-				phase = 1;
+				player.ready = true;
+				json = {
+					player: player.id,
+					ready: true,
+					matchID: matchID
+				}
+				console.log(json);
+				socket.emit("ready", json);
 			}
 			function unitsFromName(unitNames, callback, units)
 			{
@@ -508,6 +640,8 @@ var sectorLayer = new ol.layer.Vector({
 				this.name = "";
 				this.team = 1;
 				this.groups = {};
+				this.ready = false;
+				this.phase = 0;
 			}
 			Player.prototype.isEnemy = function()
 			{
