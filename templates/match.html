@@ -26,6 +26,28 @@
 				</div>
 				<div class="form-group" id="selectedBlock">
 				</div>
+				<script>
+					function ready()
+					{
+						player.ready = !player.ready;//TODO change ready button text
+						let element = document.getElementById("ready");
+						if (player.ready)
+						{
+							element.value = "Not Ready";
+						}
+						else
+						{
+							element.value = "Ready";
+						}
+						json = {
+							player: player.id,
+							ready: player.ready,
+							matchID: matchID
+						}
+						console.log(json);
+						socket.emit("ready", json);
+					}
+				</script>
 				<input type="button" onclick="ready()" value="Ready" id="ready"/>
 			<form>
 		</div>
@@ -469,26 +491,6 @@
 					feature.setStyle(sectorStyle);
 					spawnSource.addFeature(feature);
 				}
-			}
-			function ready()
-			{
-				player.ready = !player.ready;//TODO change ready button text
-				let element = document.getElementById("ready");
-				if (player.ready)
-				{
-					element.value = "Not Ready";
-				}
-				else
-				{
-					element.value = "Ready";
-				}
-				json = {
-					player: player.id,
-					ready: player.ready,
-					matchID: matchID
-				}
-				console.log(json);
-				socket.emit("ready", json);
 			}
 			function unitsFromName(unitNames, callback, units)
 			{
