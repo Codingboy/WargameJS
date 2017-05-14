@@ -1,7 +1,7 @@
 function gup(name, url)
 {
 	if (!url) url = location.href;
-	url = replaceURL(url);
+	url = decodeURIComponent(url);
 	console.log(url);
 	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	var regexS = "[\\?&]"+name+"=([^&#]*)";
