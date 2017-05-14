@@ -131,6 +131,7 @@
 					user.team = player.team;
 					user.phase = player.phase;
 					user.ready = player.ready;
+					user.deck = player.deck;
 					json.player = user;
 					json.groups = [];
 					//TODO myGroups
@@ -153,6 +154,7 @@
 					p.team = json.player.team;
 					p.ready = json.player.ready;
 					p.phase = json.player.phase;
+					p.deck = json.player.deck;
 					allPlayers[p.id] = p;
 					if (p.phase != 0)
 					{
