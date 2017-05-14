@@ -11,7 +11,7 @@ from enum import Enum
 import logging
 import signal
 import sys
-#http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1
+
 PROJECTNAME = "WargameJS"
 DBNAME = PROJECTNAME+".sqlite"
 
@@ -373,5 +373,7 @@ if __name__ == "__main__":
 	conn.execute("INSERT OR REPLACE INTO users (userID, name, password) VALUES (?, ?, ?)", (2,"duli","duli",))
 	conn.commit()
 	conn.close()
+	logger.info("http://explorer.milsymb.net/#/explore/")
 	logger.info("started on "+HOST+":"+str(PORT))
+	logger.info("http://coding42.diphda.uberspace.de:62155/match?deck=deck&team=0&match=1&map={\"spawns\":[{\"team\":0,\"points\":[[8.1891489,50.04148632],[8.20914745,50.04181706],[8.20949078,50.04958876],[8.19009304,50.04837623],[8.1891489,50.04148632]]},{\"team\":1,\"points\":[[8.293347,50.129548],[8.31017,50.130593],[8.309827,50.13857],[8.293519,50.13923],[8.293347,50.129548]]}],\"sectors\":[{\"points\":[[8.236678,50.077551],[8.245175,50.077964],[8.24363,50.086336],[8.236077,50.083114],[8.236678,50.077551]]}]}")
 	socketio.run(app, host=HOST, port=PORT, debug=False)
