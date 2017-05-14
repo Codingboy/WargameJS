@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.4
 
+#pip install flask
 #pip install flask-socketio
 #pip install eventlet
 
@@ -77,6 +78,10 @@ def deck():
 @app.route('/match')
 def match():
 	return render_template('match.html', loggedin=(getUserID()!=-1))
+
+@app.route("/favicon.ico")
+def favicon():
+	return redirect("/static/favicon.ico", code=302)
 
 @app.route('/matches')
 def matches():
