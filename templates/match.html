@@ -14,7 +14,7 @@
 		</style>
 		<title>BFT</title>
 	</head>
-	<body onkeydown="onKeyDown(event);" onkeyup="onKeyUp(event);">
+	<body onkeydown="handleKeyDown(event);" onkeyup="handleKeyUp(event);">
 		<div class="container">
 			<form class="form-horizontal">
 				<div class="form-group" id="unitBlock">
@@ -553,7 +553,7 @@
 					}
 				};
 			}
-			function onKeyDown(e)
+			function handleKeyDown(e)
 			{
 				if (e.keyCode == 16)
 				{
@@ -574,7 +574,7 @@
 					}
 				}
 			}
-			function onKeyUp(e)
+			function handleKeyUp(e)
 			{
 				if (e.keyCode == 16)
 				{
