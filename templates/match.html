@@ -27,9 +27,9 @@
 				<div class="form-group" id="selectedBlock">
 				</div>
 				<script>
-					function ready()
+					function readyPlayer()
 					{
-						player.ready = !player.ready;//TODO change ready button text
+						player.ready = !player.ready;
 						let element = document.getElementById("ready");
 						if (player.ready)
 						{
@@ -48,7 +48,7 @@
 						socket.emit("ready", json);
 					}
 				</script>
-				<input type="button" onclick="ready()" value="Ready" id="ready"/>
+				<input type="button" onclick="readyPlayer()" value="Ready" id="ready"/>
 			<form>
 		</div>
 		<div id="map" class="map"></div>
