@@ -90,6 +90,7 @@
 				player.team = json.team;
 				requestUpdate = json.requestUpdate;
 				delete json.requestUpdate;
+				loadDeck(gup("deck"));
 				socket.emit("joined", json);
 			});
 			socket.on("joined", function(json)
@@ -432,6 +433,21 @@
 					}
 				}
 			});
+			function loadDeck(deckName)
+			{
+				let req = db.transaction(["decks"]).objectStore("decks").get(deckName);
+				req.onsuccess = function(event)
+				{
+					let dbDeck = event.target.result;
+					if (dbDeck)
+					{
+						unitsFromName(dbDeck.units, function(units)
+						{
+							console.log(units);
+						}, []);
+					}
+				}
+			}
 			function loadMap(json)
 			{
 				mapJSON = json;
