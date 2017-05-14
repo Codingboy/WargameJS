@@ -449,6 +449,7 @@
 							json.name = player.name;
 							json.team = player.team;
 							json.deck = player.deck;
+							json.matchID = matchID;
 							socket.emit("joined", json);
 						}, []);
 					}
