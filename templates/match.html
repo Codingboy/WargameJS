@@ -103,6 +103,7 @@
 					p.id = json.id;
 					p.name = json.name;
 					p.team = json.team;
+					p.deck = json.deck;
 					allPlayers[p.id] = p;
 				}
 				else
@@ -443,7 +444,13 @@
 					{
 						unitsFromName(dbDeck.units, function(units)
 						{
-							console.log(units);
+							let json = {};
+							player.deck = units;
+							json.id = player.id;
+							json.name = player.name;
+							json.team = player.team;
+							json.deck = player.deck;
+							socket.emit("joined", json);
 						}, []);
 					}
 				}
@@ -645,6 +652,7 @@
 				this.ready = false;
 				this.phase = 0;
 				this.map = {};
+				this.deck = [];
 			}
 			Player.prototype.isEnemy = function()
 			{
