@@ -1,14 +1,25 @@
 function gup(name, url)
 {
 	if (!url) url = location.href;
-	url = url.replace("/%22/g", '"');
-	url = url.replace("/%27/g", "'");
+	url = replaceURL(url);
 	console.log(url);
 	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	var regexS = "[\\?&]"+name+"=([^&#]*)";
 	var regex = new RegExp(regexS);
 	var results = regex.exec(url);
 	return results == null ? null : results[1];
+}
+function replaceURL(url)
+{
+	while (str.indexOf("%22") != -1)
+	{
+		url = url.replace("/%22/g", '"');
+	}
+	while (str.indexOf("%27") != -1)
+	{
+		url = url.replace("/%27/g", "'");
+	}
+	return url;
 }
 function DBWeapon()
 {
