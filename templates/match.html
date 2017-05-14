@@ -91,7 +91,6 @@
 				requestUpdate = json.requestUpdate;
 				delete json.requestUpdate;
 				loadDeck(gup("deck"));
-				socket.emit("joined", json);
 			});
 			socket.on("joined", function(json)
 			{
