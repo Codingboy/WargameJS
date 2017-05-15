@@ -729,20 +729,6 @@
 						addUnit(dbUnit, i);
 					}
 				}
-				let name = gup("deck");
-				let req = db.transaction(["decks"]).objectStore("decks").get(name);
-				req.onsuccess = function(event)
-				{
-					if (req.result)
-					{
-						let deck = req.result;
-						for (let unit of deck.units)
-						{
-							//TODO filter infantry
-							addUnit(unit);
-						}
-					}
-				};
 			}
 			function addUnit(unit, i)
 			{
@@ -750,11 +736,11 @@
 				let button = document.createElement("input");
 				button.dataset.index = i;
 				button.type = "button";
-				button.value = unit;
+				button.value = unit.name;
 				button.onclick = function()
 				{
 					let unit = this.value;
-					toBeSpawnedUnits.push(button.dataset.index);
+					toBeSpawnedUnits.push(parseInt(button.dataset.index));
 				};
 				units.appendChild(button);
 			}
