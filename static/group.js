@@ -51,7 +51,7 @@ Group.prototype.addUnit = function(unit)
 	this.needsRedraw = true;
 	if (!this.representation)
 	{
-		this.representation = unit.dbUnit;
+		this.representation = JSON.parse(JSON.stringify(unit.dbUnit));
 	}
 	else
 	{
