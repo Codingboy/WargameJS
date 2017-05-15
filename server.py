@@ -126,13 +126,16 @@ def replaceIDs(json, matchID):
 		for entry in json:
 			replaceIDs(entry, matchID)
 	elif (jsonType is dict):
+		ids = 1
+		if ("ids" in json):
+			ids = json["ids"]
 		for key in json:
 			if (key == "id"):
 				if (json[key] == -1):
 					conn = sqlite3.connect(DBNAME, isolation_level="EXCLUSIVE")
 					objectID = conn.execute("SELECT objectID FROM matches WHERE matchID=?", (matchID,)).fetchone()[0]
 					json[key] = objectID
-					objectID += 1
+					objectID += ids
 					conn.execute("UPDATE OR REPLACE matches SET objectID=? WHERE matchID=?", (objectID,matchID,))
 					conn.commit()
 					conn.close()

@@ -136,7 +136,6 @@
 					json.groups = [];
 					//TODO myGroups
 					json.map = mapJSON;
-					//TODO deck
 					socket.emit("update", json);
 				}
 			});
@@ -166,7 +165,6 @@
 					
 					}
 					//TODO myGroups
-					//TODO deck
 					if (json.map != {})
 					{
 						loadMap(json.map);
@@ -222,15 +220,18 @@
 							}
 						}
 						let group = new Group(owner, pos, id);
-						for (unit of units)
+						for (let jsonUnit of units)
 						{
+							let unitID = jsonUnit.id;
+							let deckID = jsonUnit.deckID;//TODO asd
+							let dbUnit = owner.deck[deckID];
 							let weapons = [];
-							for (weapon of unit.weapons)
+							for (weapon of dbUnit.weapons)
 							{
-								let w = new Weapon(weapon, weapon.id);
+								let w = new Weapon(weapon, unitID+weapons.length+1);
 								weapons.push(w);
 							}
-							let u = new Unit(unit, weapons, group, unit.id);
+							let u = new Unit(dbUnit, weapons, group, unitID);
 							for (weapon of u.weapons)
 							{
 								weapon.unit = u;
@@ -674,25 +675,34 @@
 			};
 			function createGroupGlobal(unitNames, groupNames, pos)
 			{
-				unitsFromName(unitNames, function(units)
+				let units = [];
+				for (let unitIndex of toBeSpawnedUnits)
 				{
-					json = {
-						type: "create",
-						data: {
-							pos: pos,
-							id: -1,
-							units: units//TODO send deck initially and here only the ids
-						}
-					};
-					console.log(json);
-					//TODO groups
-					messages.push(json);
-					toBeSpawnedUnits = [];
-					toBeSpawnedGroups = [];
-				});
+					let unit = player.deck[unitIndex];
+					unit = JSON.parse(JSON.stringify(unit));
+					let jsonUnit = {
+						id: -1,
+						ids: unit.weapons.length+1,
+						deckID: unitIndex
+					};//TODO asd
+					units.push(jsonUnit);
+				}
+				json = {
+					type: "create",
+					data: {
+						pos: pos,
+						id: -1,
+						units: units
+					}
+				};
+				//TODO groups
+				console.log(json);
+				messages.push(json);
+				toBeSpawnedUnits = [];
+				toBeSpawnedGroups = [];
 			}
 			function showGroups()
-			{
+			{//TODO
 				reset();
 				let name = gup("deck");
 				let req = db.transaction(["decks"]).objectStore("decks").get(name);
@@ -711,6 +721,14 @@
 			function showInfantry()
 			{
 				reset();
+				for (let i=0; i<player.deck.length; i++)
+				{
+					let dbUnit = player.deck[i];
+					if (dbUnit.type == "Infantry")
+					{
+						addUnit(dbUnit, i);
+					}
+				}
 				let name = gup("deck");
 				let req = db.transaction(["decks"]).objectStore("decks").get(name);
 				req.onsuccess = function(event)
@@ -726,21 +744,22 @@
 					}
 				};
 			}
-			function addUnit(unit)
+			function addUnit(unit, i)
 			{
 				let units = document.getElementById("buttonsBlock");
 				let button = document.createElement("input");
+				button.dataset.index = i;
 				button.type = "button";
 				button.value = unit;
 				button.onclick = function()
 				{
 					let unit = this.value;
-					toBeSpawnedUnits.push(unit);
+					toBeSpawnedUnits.push(button.dataset.index);
 				};
 				units.appendChild(button);
 			}
 			function addGroup(group)
-			{
+			{//TODO
 				let groups = document.getElementById("buttonsBlock");
 				let button = document.createElement("input");
 				button.type = "button";
