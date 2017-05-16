@@ -430,11 +430,9 @@
 						}
 						return null;
 					});
-					let selected = false;
 					if (feature)
 					{
-						group = feature.get("group");
-						selected = true;
+						let group = feature.get("group");
 						if (shift)
 						{
 							selectedGroups.push(group);
@@ -453,7 +451,12 @@
 					}
 					else
 					{
-							selectedGroups = [];
+						for (let group of selectedGroups)
+						{
+							group.opacity = unselectedOpacity;
+							group.needsRedraw = true;
+						}
+						selectedGroups = [];
 					}
 				}
 			});
