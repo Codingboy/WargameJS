@@ -357,6 +357,11 @@
 					new ol.control.ScaleLine()
 				])
 			});
+			map.getViewport().addEventListener('contextmenu', function (evt)
+			{
+				evt.preventDefault();
+				console.info(evt);
+			});
 			map.on("singleclick", function(evt){
 				let latlon = ol.proj.transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
 				let lat = latlon[0];
