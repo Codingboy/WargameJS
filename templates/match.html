@@ -360,8 +360,8 @@
 			map.getViewport().addEventListener("contextmenu", function (evt)
 			{
 				evt.preventDefault();
-				console.log(getEventCoordinate(evt));
-				let latlon = ol.proj.transform(getEventCoordinate(evt), "EPSG:3857", "EPSG:4326");
+				console.log(map.getEventCoordinate(evt));
+				let latlon = ol.proj.transform(map.getEventCoordinate(evt), "EPSG:3857", "EPSG:4326");
 				console.log(evt);
 			});
 			map.on("singleclick", function(evt){
