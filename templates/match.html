@@ -104,6 +104,7 @@
 					p.name = json.name;
 					p.team = json.team;
 					p.deck = json.deck;
+					p.money = json.money;
 					allPlayers[p.id] = p;
 				}
 				else
@@ -260,7 +261,7 @@
 						owner.money -= group.representation.price;
 						if (owner == player)
 						{
-							document.getElementById("money").innerHTML = owner.money;
+							showMoney();
 						}
 					}
 					if (messageType == "addWaypoint")
@@ -462,6 +463,7 @@
 							json.team = player.team;
 							json.deck = player.deck;
 							json.matchID = matchID;
+							json.money = player.money;
 							socket.emit("joined", json);
 						}, []);
 					}
@@ -665,7 +667,17 @@
 				this.phase = 0;
 				this.map = {};
 				this.deck = [];
-				this.money = 1000;
+				this.money = 1000000;
+			}
+			function showMoney()
+			{
+				let moneySpend = 0;
+				for (let unitID of toBeSpawnedUnits)
+				{
+					let dbUnit = player.deck[unitID];
+					moneySpend += dbUnit.price;
+				}
+				document.getElementById("money").innerHTML = player.money-moneySpend;
 			}
 			Player.prototype.isEnemy = function()
 			{
@@ -973,8 +985,8 @@ let t0 = performance.now();
 				{
 					let p = allPlayers[playerID];
 					p.money += 1;
-					document.getElementById("money").innerHTML = p.money;
 				}
+				showMoney();
 let t1 = performance.now();
 if (t1-t0 > 50)
 {
