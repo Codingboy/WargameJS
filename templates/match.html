@@ -257,8 +257,11 @@
 							}
 						}
 						group.needsRedraw = true;
-						owner.money -= group.representation.prize;
-						document.getElementById("money").innerHTML = owner.money;
+						owner.money -= group.representation.price;
+						if (owner == player)
+						{
+							document.getElementById("money").innerHTML = owner.money;
+						}
 					}
 					if (messageType == "addWaypoint")
 					{
