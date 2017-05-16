@@ -18,6 +18,7 @@
 		<div class="container">
 			<form class="form-horizontal">
 				<div class="form-group" id="unitBlock">
+					<span id=money></span>
 					<input type="button" onclick="showGroups()" value="Groups"/>
 					<input type="button" onclick="showInfantry()" value="Infantry"/>
 					<input type="button" onclick="abortBuy()" value="Abort"/>
@@ -132,6 +133,7 @@
 					user.phase = player.phase;
 					user.ready = player.ready;
 					user.deck = player.deck;
+					user.money = player.money;
 					json.player = user;
 					json.groups = [];
 					//TODO myGroups
@@ -154,6 +156,7 @@
 					p.ready = json.player.ready;
 					p.phase = json.player.phase;
 					p.deck = json.player.deck;
+					p.money = json.player.money;
 					allPlayers[p.id] = p;
 					if (p.phase != 0)
 					{
@@ -254,6 +257,8 @@
 							}
 						}
 						group.needsRedraw = true;
+						owner.money -= group.representation.prize;
+						document.getElementById("money").innerHTML = owner.money;
 					}
 					if (messageType == "addWaypoint")
 					{
@@ -657,6 +662,7 @@
 				this.phase = 0;
 				this.map = {};
 				this.deck = [];
+				this.money = 1000;
 			}
 			Player.prototype.isEnemy = function()
 			{
@@ -959,6 +965,12 @@ let t0 = performance.now();
 					};
 					socket.emit("communicate", json);
 					messages = [];
+				}
+				for (let playerID of Object.keys(allPlayers))
+				{
+					let p = allPlayers[playerID];
+					p.money += 1;
+					document.getElementById("money").innerHTML = p.money;
 				}
 let t1 = performance.now();
 if (t1-t0 > 50)
