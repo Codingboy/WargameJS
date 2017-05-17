@@ -439,7 +439,7 @@
 				}
 			};
 
-			let buildingsSource = new ol.source.Vector({
+			/*let buildingsSource = new ol.source.Vector({
 				format: new ol.format.OSMXML(),
 				loader: function(extent, resolution, projection) {
 					let epsg4326Extent =
@@ -459,15 +459,31 @@
 ");"+
 "(._;>;);"+
 "out;"
-					/*query = '(node(' +
-							epsg4326Extent[1] + ',' + epsg4326Extent[0] + ',' +
-							epsg4326Extent[3] + ',' + epsg4326Extent[2] +
-							');rel(bn)->.foo;way(bn);node(w)->.foo;rel(bw););out meta;';*/
 					console.log(query);
 					client.send(query);
 				},
 				strategy: ol.loadingstrategy.bbox
+			});*/
+			
+			let buildingsSource = new ol.source.Vector();
+			let client = new XMLHttpRequest();
+			client.open("POST", "https://overpass-api.de/api/interpreter");
+			client.addEventListener("load", function() {
+				let features = new ol.format.OSMXML().readFeatures(client.responseText,
+				{
+					featureProjection: map.getView().getProjection()
+				});
+				buildingsSource.addFeatures(features);
 			});
+			let query = ""+
+"("+
+"way[\"building\"](50.04348238560431,8.18401403427124,50.05651672937799,8.215985965728759);"+
+"rel[\"building\"](50.04348238560431,8.18401403427124,50.05651672937799,8.215985965728759);"+
+");"+
+"(._;>;);"+
+"out;"
+			console.log(query);
+			client.send(query);
 
 			let buildingsLayer = new ol.layer.Vector({
 				source: buildingsSource,
