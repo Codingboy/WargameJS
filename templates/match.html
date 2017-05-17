@@ -1009,7 +1009,7 @@ let t0 = performance.now();
 					socket.emit("communicate", json);
 					messages = [];
 				}
-				if (lastMoneyTick + mapJSON.moneyTick < now)//TODO move settings to server database and share on join
+				if (lastMoneyTick + mapJSON.moneyTick*1000 < now)//TODO move settings to server database and share on join
 				{
 					let n = Math.floor((now-lastMoneyTick)/(1000*mapJSON.moneyTick));
 					let money = mapJSON.moneyPerTick*n;
