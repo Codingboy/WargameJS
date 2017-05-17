@@ -501,7 +501,8 @@
 				],
 				view: new ol.View({
 					center: ol.proj.fromLonLat([8.2, 50.05]),
-					zoom: 15
+					//center: ol.proj.fromLonLat([8.19972, 50.04342]),
+					zoom: 16
 				}),
 				interactions: ol.interaction.defaults({
 					doubleClickZoom: false,
@@ -713,6 +714,7 @@
 					feature.setStyle(sectorStyle);
 					sectorSource.addFeature(feature);
 				}
+				map.setCenter(new OpenLayers.LonLat((json.bb[0]+json.bb[2])/2, (json.bb[1]+json.bb[3])/2).transform("EPSG:4326", "EPSG:3857"), 16);
 				let client = new XMLHttpRequest();
 				client.open("POST", "https://overpass-api.de/api/interpreter");
 				client.addEventListener("load", function() {
