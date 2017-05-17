@@ -332,6 +332,161 @@
 			let spawnLayer = new ol.layer.Vector({
 				source: spawnSource
 			});
+			let styles = {
+				'landuse': {
+					'forest': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 255, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 255, 0, 0.5)'
+						})
+					}),
+					'farmland|meadow|orchard|plant_nursery|vineyard': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 128, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 128, 0, 0.5)'
+						})
+					}),
+					'commercial|cemetery|construction|depot|allotments|farmyard|port|quarry|residential|retail|industrial|greenhouse_horticulture|garages': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 0, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(255, 0, 0, 0.5)'
+						})
+					})
+				},
+				'natural': {
+					'tree': new ol.style.Style({
+						image: new ol.style.Circle({
+							radius: 2,
+							fill: new ol.style.Fill({
+								color: 'rgba(140, 208, 95, 1.0)'
+							}),
+							stroke: null
+						})
+					}),
+					'wood|tree_row': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 255, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 255, 0, 0.5)'
+						})
+					}),
+					'water|bay': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 255, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 255, 0.5)'
+						})
+					})
+				},
+				'waterway': {
+					'stream|drain|ditch': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 128, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 128, 0.5)'
+						})
+					}),
+					'canal|river|fairway': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(0, 0, 255, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 0, 255, 0.5)'
+						})
+					})
+				},
+				'highway': {
+					'track': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 255, 255, 1.0)',
+							width: 2
+						})
+					}),
+					'motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|living_street|pedestrian|bus_guideway|escape|raceway||||||': new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 255, 255, 1.0)',
+							width: 3
+						})
+					})
+				},
+				'building': {
+					'.*': new ol.style.Style({
+						zIndex: 100,
+						stroke: new ol.style.Stroke({
+							color: 'rgba(255, 0, 0, 1.0)',
+							width: 1
+						}),
+						fill: new ol.style.Fill({
+							color: 'rgba(255, 0, 0, 0.5)'
+						})
+					})
+				}
+			};
+
+			let buildingsSource = new ol.source.Vector({
+				format: new ol.format.OSMXML(),
+				loader: function(extent, resolution, projection) {
+					let epsg4326Extent =
+							ol.proj.transformExtent(extent, projection, 'EPSG:4326');
+					let client = new XMLHttpRequest();
+					client.open('POST', 'https://overpass-api.de/api/interpreter');
+					client.addEventListener('load', function() {
+						let features = new ol.format.OSMXML().readFeatures(client.responseText, {
+							featureProjection: map.getView().getProjection()
+						});
+						buildingsSource.addFeatures(features);
+					});
+					let query = "[out:json][timeout:25];"+
+"("+
+"way[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
+"relation[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
+");"+
+"out body;"+
+">;"+
+"out skel qt;"
+					query = '(node(' +
+							epsg4326Extent[1] + ',' + epsg4326Extent[0] + ',' +
+							epsg4326Extent[3] + ',' + epsg4326Extent[2] +
+							');rel(bn)->.foo;way(bn);node(w)->.foo;rel(bw););out meta;';
+					console.log(query);
+					client.send(query);
+				},
+				strategy: ol.loadingstrategy.bbox
+			});
+
+			let buildingsLayer = new ol.layer.Vector({
+				source: buildingsSource,
+				style: function(feature) {
+					for (let key in styles) {
+						let value = feature.get(key);
+						if (value !== undefined) {
+							for (let regexp in styles[key]) {
+								if (new RegExp(regexp).test(value)) {
+									return styles[key][regexp];
+								}
+							}
+						}
+					}
+					return null;
+				}
+			});
+
 			let map = new ol.Map({
 				target: "map",
 				layers: [
@@ -340,7 +495,8 @@
 						source: new ol.source.OSM()
 					}),
 					spawnLayer,
-					symbolLayer
+					symbolLayer,
+					buildingsLayer
 				],
 				view: new ol.View({
 					center: ol.proj.fromLonLat([8.2, 50.05]),
