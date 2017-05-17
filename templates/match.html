@@ -714,7 +714,7 @@
 					feature.setStyle(sectorStyle);
 					sectorSource.addFeature(feature);
 				}
-				map.getView().setCenter(ol.proj.transform([(json.bb[0]+json.bb[2])/2, (json.bb[1]+json.bb[3])/2], "EPSG:4326", "EPSG:3857"));
+				map.getView().setCenter(ol.proj.transform([(json.bb[1]+json.bb[3])/2, (json.bb[0]+json.bb[2])/2], "EPSG:4326", "EPSG:3857"));
 				map.getView().setZoom(16);
 				let client = new XMLHttpRequest();
 				client.open("POST", "https://overpass-api.de/api/interpreter");
