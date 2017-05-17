@@ -460,10 +460,10 @@
 "out body;"+
 ">;"+
 "out skel qt;"
-					query = '(node(' +
+					/*query = '(node(' +
 							epsg4326Extent[1] + ',' + epsg4326Extent[0] + ',' +
 							epsg4326Extent[3] + ',' + epsg4326Extent[2] +
-							');rel(bn)->.foo;way(bn);node(w)->.foo;rel(bw););out meta;';
+							');rel(bn)->.foo;way(bn);node(w)->.foo;rel(bw););out meta;';*/
 					console.log(query);
 					client.send(query);
 				},
