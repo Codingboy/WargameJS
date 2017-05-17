@@ -1011,7 +1011,7 @@ let t0 = performance.now();
 				}
 				if (lastMoneyTick + mapJSON.moneyTick < now)//TODO move settings to server database and share on join
 				{
-					let n = Math.floor((now-lastMoneyTick)/mapJSON.moneyTick);
+					let n = Math.floor((now-lastMoneyTick)/(1000*mapJSON.moneyTick));
 					let money = mapJSON.moneyPerTick*n;
 					lastMoneyTick = lastMoneyTick + mapJSON.moneyTick*n;
 					for (let playerID of Object.keys(allPlayers))
