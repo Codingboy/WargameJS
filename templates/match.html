@@ -1017,12 +1017,12 @@ let t0 = performance.now();
 					for (let playerID of Object.keys(allPlayers))
 					{
 						let p = allPlayers[playerID];
-						let debt = 0;
+						let inerestCost = 0;
 						if (p.money < 0)
 						{
-							debt = -p.money;
+							inerestCost = p.money*n*mapJSON.interest;
 						}
-						p.money += money*factor;
+						p.money += money+inerestCost;
 					}
 					showMoney();
 				}
