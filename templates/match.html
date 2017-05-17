@@ -455,11 +455,10 @@
 					let query = ""+
 "("+
 "way[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
-"relation[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
+"rel[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
 ");"+
-"out body;"+
-">;"+
-"out skel qt;"
+"(._;>;);"+
+"out;"
 					/*query = '(node(' +
 							epsg4326Extent[1] + ',' + epsg4326Extent[0] + ',' +
 							epsg4326Extent[3] + ',' + epsg4326Extent[2] +
