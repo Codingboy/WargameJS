@@ -705,7 +705,7 @@
 					let dbUnit = player.deck[unitID];
 					moneySpend += dbUnit.price;
 				}
-				document.getElementById("money").innerHTML = player.money-moneySpend;
+				document.getElementById("money").innerHTML = Math.floor(player.money-moneySpend);
 			}
 			Player.prototype.isEnemy = function()
 			{
@@ -791,6 +791,7 @@
 				{
 					let unit = this.value;
 					toBeSpawnedUnits.push(parseInt(button.dataset.index));
+					showMoney();
 				};
 				units.appendChild(button);
 			}
