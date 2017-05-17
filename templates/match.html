@@ -309,6 +309,7 @@
 			var invisibleEnemyOpacity = 0.1;
 			var selectedOpacity = 1.0;
 			var unselectedOpacity = 0.66;
+			let lastMoneyTick = Date.now();
 			
 			let shift = false;
 			let ctrl = false;
@@ -412,12 +413,25 @@
 						});
 						if (feature)
 						{
-							team = feature.get("team");
+							let team = feature.get("team");
 							if (player.team == team)
 							{
-								createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon]);
+								let moneySpend = 0;
+								for (let unitID of toBeSpawnedUnits)
+								{
+									let dbUnit = player.deck[unitID];
+									moneySpend += dbUnit.price;
+								}
+								if (player.money-moneySpend > mapJSON.minMoney)
+								{
+									createGroupGlobal(toBeSpawnedUnits, toBeSpawnedGroups, [lat, lon]);
+								}
 							}
 						}
+					}
+					else
+					{
+						//TODO spawn in area and move
 					}
 				}
 				else
@@ -995,12 +1009,23 @@ let t0 = performance.now();
 					socket.emit("communicate", json);
 					messages = [];
 				}
-				for (let playerID of Object.keys(allPlayers))
+				if (lastMoneyTick + mapJSON.moneyTick < now)//TODO move settings to server database and share on join
 				{
-					let p = allPlayers[playerID];
-					p.money += 1;
+					let n = Math.floor((now-lastMoneyTick)/mapJSON.moneyTick);
+					let money = mapJSON.moneyPerTick*n;
+					lastMoneyTick = lastMoneyTick + mapJSON.moneyTick*n;
+					for (let playerID of Object.keys(allPlayers))
+					{
+						let p = allPlayers[playerID];
+						let debt = 0;
+						if (p.money < 0)
+						{
+							debt = -p.money;
+						}
+						p.money += money*factor;
+					}
+					showMoney();
 				}
-				showMoney();
 let t1 = performance.now();
 if (t1-t0 > 50)
 {
