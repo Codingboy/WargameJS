@@ -282,6 +282,7 @@
 					{
 						let id = messageData.id;
 						let group = allObjects[id];
+						group.owner.money += group.representation.price;
 						symbolSource.removeFeature(group.olObject);
 						//TODO remove from each other groups variables
 						delete allObjects[id];
@@ -1188,22 +1189,25 @@ let t0 = performance.now();
 					socket.emit("communicate", json);
 					messages = [];
 				}
-				if (lastMoneyTick + mapJSON.moneyTick*1000 < now)//TODO move settings to server database and share on join
+				if (player.phase > 0)
 				{
-					let n = Math.floor((now-lastMoneyTick)/(1000*mapJSON.moneyTick));
-					let money = mapJSON.moneyPerTick*n;
-					lastMoneyTick = lastMoneyTick + 1000*mapJSON.moneyTick*n;
-					for (let playerID of Object.keys(allPlayers))
+					if (lastMoneyTick + mapJSON.moneyTick*1000 < now)//TODO move settings to server database and share on join
 					{
-						let p = allPlayers[playerID];
-						let inerestCost = 0;
-						if (p.money < 0)
+						let n = Math.floor((now-lastMoneyTick)/(1000*mapJSON.moneyTick));
+						let money = mapJSON.moneyPerTick*n;
+						lastMoneyTick = lastMoneyTick + 1000*mapJSON.moneyTick*n;
+						for (let playerID of Object.keys(allPlayers))
 						{
-							inerestCost = p.money*n*mapJSON.interest;
+							let p = allPlayers[playerID];
+							let inerestCost = 0;
+							if (p.money < 0)
+							{
+								inerestCost = p.money*n*mapJSON.interest;
+							}
+							p.money += money+inerestCost;
 						}
-						p.money += money+inerestCost;
+						showMoney();
 					}
-					showMoney();
 				}
 let t1 = performance.now();
 if (t1-t0 > 50)
