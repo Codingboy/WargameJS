@@ -87,37 +87,57 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		if (this.representation.type == "Infantry")
 		{
 			let count = this.units.length;
-			if (count <= 2)
+			if (count <= 1)
 			{
 				amplifier = "11";
 			}
-			else if (count <= 4)
+			else if (count <= 2)
 			{
 				amplifier = "12";
 			}
-			else if (count <= 8)
+			else if (count <= 4)
 			{
 				amplifier = "13";
 			}
-			else if (count <= 16)
+			else if (count <= 6)
 			{
 				amplifier = "14";
 			}
-			else if (count <= 32)
+			else if (count <= 9)
 			{
 				amplifier = "15";
 			}
-			else if (count <= 64)
+			else if (count <= 14)
 			{
 				amplifier = "16";
 			}
-			else if (count <= 128)
+			else if (count <= 21)
 			{
 				amplifier = "17";
 			}
-			else if (count <= 256)
+			else if (count <= 32)
 			{
 				amplifier = "18";
+			}
+			else if (count <= 48)
+			{
+				amplifier = "21";
+			}
+			else if (count <= 72)
+			{
+				amplifier = "22";
+			}
+			else if (count <= 108)
+			{
+				amplifier = "23";
+			}
+			else if (count <= 162)
+			{
+				amplifier = "24";
+			}
+			else// if (count <= 243)
+			{
+				amplifier = "25";
 			}
 		}
 		else

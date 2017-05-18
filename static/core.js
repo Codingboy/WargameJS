@@ -152,6 +152,7 @@ function DBUnit()
 	size = 1.0;
 	name = "";
 	type = "Infantry";
+	c2 = 0;
 	sound = 10;//hearable within a range in meter
 	speed = 15;//speed
 	optics = 200;//range the daylight optic is working with in meter

@@ -202,6 +202,10 @@
 					<label for="courage">Courage</label>
 					<input type="number" name="courage" id="courage" onchange="recalc()"/><br/>
 				</div>
+				<div class="form-group" id="c2Block">
+					<label for="c2">C2</label>
+					<input type="number" name="c2" id="c2" onchange="recalc()"/><br/>
+				</div>
 				<div class="form-group" id="weapon1Block">
 					<label for="weapon1">weapon1</label>
 					<select name="weapon1" id="weapon1" onchange="recalc()">
@@ -271,8 +275,8 @@
 		<script src="static/ui.js"></script>
 		<script>
 			var db;
-			let allBlocks = ["weapon1Block","weapon2Block","weapon3Block","weapon4Block","weapon5Block","fuelConsumptionBlock","courageBlock","stabilisatorQualityBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock"];
-			let allValues = ["health","size","weapon1","weapon2","weapon3","weapon4","weapon5","courage","stabilisatorQuality","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
+			let allBlocks = ["c2Block","weapon1Block","weapon2Block","weapon3Block","weapon4Block","weapon5Block","fuelConsumptionBlock","courageBlock","stabilisatorQualityBlock","stabilisatorBlock","opticsQualityBlock","opticsIRQualityBlock","radarAirQualityBlock","armourType2Block","armourType1Block","armourBottomBlock","armourTopBlock","armourBackBlock","armourSideBlock","armourFrontBlock","plateCarrierBlock","resupplyMedicalBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","mineDetectionChanceBlock","mineDetectionBlock","ladsChanceBlock","ladsBlock","fuelBlock","radioJammerChanceBlock","radioJammerBlock","radioBlock","smokeChanceBlock","smokeBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","radarWeaponBlock","radarAirBlock","soundBlock","camouflageIRBlock","camouflageBlock","opticsIRBlock","opticsBlock","typeBlock"];
+			let allValues = ["c2","health","size","weapon1","weapon2","weapon3","weapon4","weapon5","courage","stabilisatorQuality","stabilisator","opticsQuality","opticsIRQuality","radarAirQuality","fuelConsumption","price","speed","weight","armourType2","armourType1","armourBottom","armourTop","armourBack","armourSide","armourFront","plateCarrier","resupplyMedical","resupplyRepair","resupplyAmmo","resupplyFuel","transportWeight","mineDetectionChance","mineDetection","ladsChance","lads","fuel","radioJammerChance","radioJammer","radio","smokeChance","smoke","chaffChance","chaffs","flareChance","flares","ircmChance","ecmChance","ecm","camouflageRadar","radarWeapon","radarAir","sound","camouflageIR","camouflage","opticsIR","optics","type","name"];
 			function init()
 			{
 				hideAll();
@@ -304,8 +308,8 @@
 						};
 					}
 				});
+				recalc();
 			}
-			init();
 			function setArmourType1()
 			{
 				recalc();
@@ -326,7 +330,7 @@
 				if (type == "Infantry")
 				{
 					hideAll();
-					show(["weapon1Block","courageBlock","plateCarrierBlock","resupplyMedicalBlock","mineDetectionChanceBlock","mineDetectionBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
+					show(["c2Block","weapon1Block","courageBlock","plateCarrierBlock","resupplyMedicalBlock","mineDetectionChanceBlock","mineDetectionBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
 					document.getElementById("sound").value = "10";
 					document.getElementById("opticsIR").value = "0";
 					document.getElementById("opticsIRQuality").value = "0";
@@ -378,6 +382,7 @@
 					setValues("resupplyMedical", "0", "0", "10", "1");
 					setValues("plateCarrier", "0", "1", "1", "1");
 					setValues("courage", "0", "0", "0.75", "0.01");
+					setValues("c2", "0", "0", "1", "1");
 					
 					listWeapons(function(weapons)
 					{
@@ -414,6 +419,7 @@
 					let resupplyMedical = document.getElementById("resupplyMedical").value;
 					let plateCarrier = document.getElementById("plateCarrier").value;
 					let courage = document.getElementById("courage").value;
+					let c2 = document.getElementById("c2").value;
 					let weaponName = document.getElementById("weapon1").value;
 					if (weaponName && weaponName != "")
 					{
@@ -428,6 +434,10 @@
 							{
 								let weapon = req.result;
 								let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000  +  weapon.price;
+								if (c2 == 1)
+								{
+									price *= 10;
+								}
 								let bodyweight = 90;
 								let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10  +  weapon.weight;
 								let speed = 15*(bodyweight/weight);
@@ -442,6 +452,10 @@
 					else
 					{
 						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
+						if (c2 == 1)
+						{
+							price *= 10;
+						}
 						let bodyweight = 90;
 						let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  mineDetection/20  +  resupplyMedical*1  +  plateCarrier*10;
 						let speed = 15*(bodyweight/weight);
@@ -617,5 +631,6 @@
 					};
 				}
 			}
+			init();
 		</script>
 {% endblock bodyscripts %}

@@ -65,6 +65,8 @@
 		<script src="static/weapon.js"></script>
     	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 		<script>
+			let allyC2 = 0;
+			let hostileC2 = 0;
 			let matchID = parseInt(gup("match"));
 			let allPlayers = {};
 			let allyGroups = {};
@@ -169,7 +171,7 @@
 					{
 					
 					}
-					//TODO myGroups
+					//TODO myGroups, c2
 					if (json.map != {})
 					{
 						loadMap(json.map);
@@ -246,6 +248,17 @@
 							}
 							allObjects[u.id] = u;
 							group.addUnit(u);
+							if (u.dbUnit.c2 == 1)
+							{
+								if (u.owner.isFriend())
+								{
+									allyC2 += 1;
+								}
+								if (u.owner.isEnemy())
+								{
+									hostileC2 += 1;
+								}
+							}
 						}
 						allObjects[group.id] = group;
 						if (owner.id != player.id)
@@ -295,7 +308,20 @@
 							{
 								delete allObjects[weapon.id];
 							}
+							if (unit.dbUnit.c2 == 1)
+							{
+								if (unit.owner.isFriend())
+								{
+									allyC2 -= 1;
+								}
+								if (unit.owner.isEnemy())
+								{
+									hostileC2 -= 1;
+								}
+							}
 						}
+						delete allyGroups[id];
+						delete hostileGroups[id];
 						delete group.owner.groups[id];
 						if (group.owner.isFriend())
 						{
@@ -445,32 +471,6 @@
 					})
 				}
 			};
-
-			/*let buildingsSource = new ol.source.Vector({
-				format: new ol.format.OSMXML(),
-				loader: function(extent, resolution, projection) {
-					let epsg4326Extent =
-							ol.proj.transformExtent(extent, projection, 'EPSG:4326');
-					let client = new XMLHttpRequest();
-					client.open('POST', 'https://overpass-api.de/api/interpreter');
-					client.addEventListener('load', function() {
-						let features = new ol.format.OSMXML().readFeatures(client.responseText, {
-							featureProjection: map.getView().getProjection()
-						});
-						buildingsSource.addFeatures(features);
-					});
-					let query = ""+
-"("+
-"way[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
-"rel[\"building\"]("+epsg4326Extent[1]+","+epsg4326Extent[0]+","+epsg4326Extent[3]+","+epsg4326Extent[2]+");"+
-");"+
-"(._;>;);"+
-"out;"
-					console.log(query);
-					client.send(query);
-				},
-				strategy: ol.loadingstrategy.bbox
-			});*/
 			
 			let buildingsSource = new ol.source.Vector();
 			let buildingsLayer = new ol.layer.Vector({
@@ -1211,6 +1211,14 @@ let t0 = performance.now();
 						}
 						showMoney();
 					}
+					if (hostileC2 == 0)
+					{
+						endMatch(true);
+					}
+					if (allyC2 == 0)
+					{
+						endMatch(false);
+					}
 				}
 let t1 = performance.now();
 if (t1-t0 > 50)
@@ -1219,6 +1227,10 @@ if (t1-t0 > 50)
 }
 			}
 			let t = setInterval(updateUI, 1000/fps);
+			function endMatch(win)
+			{
+			
+			}
 		</script>
 	</body>
 </html>
