@@ -184,6 +184,10 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		}
 		let entitySuptype = "00";
 		let modifier1 = "00";
+		if (this.representation.c2 == 1)
+		{
+			modifier1 = "10";
+		}
 		let modifier2 = "00";
 		let altitude = "";
 		if (this.altitude != 0)
