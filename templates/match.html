@@ -163,6 +163,7 @@
 					{
 						player.phase = p.phase;
 						document.getElementById("ready").style.display = "none";
+						lastMoneyTick = Date.now();
 					}
 					for (let group of json.groups)
 					{
@@ -195,6 +196,7 @@
 					{
 						allPlayers[playerID].phase = 1;
 						document.getElementById("ready").style.display = "none";
+						lastMoneyTick = Date.now();
 					}
 				}
 			});
@@ -863,6 +865,7 @@
 						let group = groupsElement.removeChild(groupsElement.childNodes[i]);
 					}
 				}
+				showMoney();
 			}
 			function Player()
 			{
