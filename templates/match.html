@@ -250,11 +250,11 @@
 							group.addUnit(u);
 							if (u.dbUnit.c2 == 1)
 							{
-								if (u.owner.isFriend())
+								if (group.owner.isFriend())
 								{
 									allyC2 += 1;
 								}
-								if (u.owner.isEnemy())
+								if (group.owner.isEnemy())
 								{
 									hostileC2 += 1;
 								}
@@ -310,11 +310,11 @@
 							}
 							if (unit.dbUnit.c2 == 1)
 							{
-								if (unit.owner.isFriend())
+								if (group.owner.isFriend())
 								{
 									allyC2 -= 1;
 								}
-								if (unit.owner.isEnemy())
+								if (group.owner.isEnemy())
 								{
 									hostileC2 -= 1;
 								}
