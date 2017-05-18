@@ -206,7 +206,9 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		{
 			staffComments = "Fighting";
 		}
-		return new ms.Symbol(version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2,{size:30,colorMode:"Light",staffComments:staffComments,commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.price),headquartersElement:this.owner.name,type:type});
+		let num = version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2;
+		console.log(num);
+		return new ms.Symbol(num,{size:30,colorMode:"Light",staffComments:staffComments,commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.price),headquartersElement:this.owner.name,type:type});
 	}
 };
 Group.prototype.redraw = function()
