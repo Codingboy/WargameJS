@@ -234,9 +234,8 @@
 						for (let jsonUnit of units)
 						{
 							let unitID = jsonUnit.id;
-							let deckID = jsonUnit.deckID;//TODO asd
+							let deckID = jsonUnit.deckID;
 							let dbUnit = owner.deck[deckID];
-							console.log(dbUnit);
 							let weapons = [];
 							for (weapon of dbUnit.weapons)
 							{
@@ -681,6 +680,7 @@
 			}
 			function loadMap(json)
 			{
+				showMoney();
 				mapJSON = json;
 				let allyStyle = new ol.style.Style({
 					fill: new ol.style.Fill({
@@ -952,7 +952,7 @@
 						id: -1,
 						ids: unit.weapons.length+1,
 						deckID: unitIndex
-					};//TODO asd
+					};
 					units.push(jsonUnit);
 				}
 				json = {
@@ -1038,69 +1038,72 @@ let t0 = performance.now();
 				lastMoneyTick = lastMoneyTick + 1000*mapJSON.moneyTick*n;
 				
 				//move groups
-				for (let objectID of Object.keys(allObjects))
+				if (player.phase > 0)
 				{
-					let group = allObjects[objectID];
-					if (group instanceof Group)
+					for (let objectID of Object.keys(allObjects))
 					{
-						if (group.waypoints.length > 0)
+						let group = allObjects[objectID];
+						if (group instanceof Group)
 						{
-							let src = group.pos;
-							let dst = group.waypoints[0];
-							let minMoveDistance = group.representation.speed/(3.6*fps);
-							let srcLatLon = new LatLon(src[0], src[1]);
-							let dstLatLon = new LatLon(dst[0], dst[1]);
-							let distance = srcLatLon.distanceTo(dstLatLon);
-							if (distance < minMoveDistance)
+							if (group.waypoints.length > 0)
 							{
-								group.waypoints.shift();
-								group.dir = -1;
-								group.setPos(dst);
-								group.needsRedraw = true;
+								let src = group.pos;
+								let dst = group.waypoints[0];
+								let minMoveDistance = group.representation.speed/(3.6*fps);
+								let srcLatLon = new LatLon(src[0], src[1]);
+								let dstLatLon = new LatLon(dst[0], dst[1]);
+								let distance = srcLatLon.distanceTo(dstLatLon);
+								if (distance < minMoveDistance)
+								{
+									group.waypoints.shift();
+									group.dir = -1;
+									group.setPos(dst);
+									group.needsRedraw = true;
+								}
+								else
+								{
+									let bearing = srcLatLon.finalBearingTo(dstLatLon);
+									let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+									bearing = (360-bearing+90)%360;
+									if (Math.round(group.dir) != Math.round(bearing))
+									{
+										group.dir = bearing;
+										group.needsRedraw = true;
+									}
+									group.setPos([destination.lat, destination.lon]);
+								}
+								group.moved = true;
 							}
 							else
 							{
-								let bearing = srcLatLon.finalBearingTo(dstLatLon);
-								let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
-								bearing = (360-bearing+90)%360;
-								if (Math.round(group.dir) != Math.round(bearing))
-								{
-									group.dir = bearing;
-									group.needsRedraw = true;
-								}
-								group.setPos([destination.lat, destination.lon]);
+								group.moved = false;
 							}
-							group.moved = true;
-						}
-						else
-						{
-							group.moved = false;
-						}
-						if (n > 0)
-						{
-							let feature = map.forEachFeatureAtPixel(map.getPixelFromCoordinate(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857")), function (feature, layer)
+							if (n > 0)
 							{
-								if (layer == sectorLayer)
+								let feature = map.forEachFeatureAtPixel(map.getPixelFromCoordinate(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857")), function (feature, layer)
 								{
-									return feature;
-								}
-								return null;
-							});
-							if (feature)
-							{
-								for (let playerID of Object.keys(allPlayers))
-								{
-									let p = allPlayers[playerID];
-									if (p.team == group.owner.team)
+									if (layer == sectorLayer)
 									{
-										p.conquestPoints -= 1;
+										return feature;
+									}
+									return null;
+								});
+								if (feature)
+								{
+									for (let playerID of Object.keys(allPlayers))
+									{
+										let p = allPlayers[playerID];
+										if (p.team == group.owner.team)
+										{
+											p.conquestPoints -= group.units.length;
+										}
 									}
 								}
 							}
 						}
 					}
+					document.getElementById("conquestPoints").innerHTML = Math.round(player.conquestPoints);
 				}
-				document.getElementById("conquestPoints").innerHTML = Math.round(player.conquestPoints);
 				
 				//make spotted enemies visible
 				for (let playerID of Object.keys(allPlayers))
@@ -1279,6 +1282,22 @@ let t0 = performance.now();
 					{
 						endMatch(false);
 					}
+					if (player.conquestPoints <= 0)
+					{
+						endMatch(true);
+					}
+					for (let playerID of Object.keys(allPlayers))
+					{
+						let p = allPlayers[playerID];
+						if (p.isEnemy())
+						{
+							if (p.conquestPoints <= 0)
+							{
+								endMatch(false);
+							}
+							break;
+						}
+					}
 				}
 let t1 = performance.now();
 if (t1-t0 > 50)
@@ -1286,10 +1305,19 @@ if (t1-t0 > 50)
 	console.log(t1-t0);
 }
 			}
-			let t = setInterval(updateUI, 1000/fps);
+			let intervalID = setInterval(updateUI, 1000/fps);
 			function endMatch(win)
 			{
-			
+				if (win)
+				{
+					console.log("You won!");
+				}
+				else
+				{
+					console.log("You lost!");
+				}
+				clearInterval(intervalID);
+				//TODO show results
 			}
 		</script>
 	</body>
