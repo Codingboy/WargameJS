@@ -1305,6 +1305,38 @@ let t0 = performance.now();
 						}
 					}
 				}
+				for (let objectID of Object.keys(allyGroups))
+				{
+					let group = allyGroups[objectID];
+					if (group instanceof Group)
+					{
+						if (group.lastShot > 0 && now - group.lastShot > 1000)
+						{
+							group.lastShot = 0;
+							group.needsRedraw = true;
+						}
+						if (group.needsRedraw)
+						{
+							group.redraw();
+						}
+					}
+				}
+				for (let objectID of Object.keys(hostileGroups))
+				{
+					let group = hostileGroups[objectID];
+					if (group instanceof Group)
+					{
+						if (group.lastShot > 0 && now - group.lastShot > 1000)
+						{
+							group.lastShot = 0;
+							group.needsRedraw = true;
+						}
+						if (group.needsRedraw)
+						{
+							group.redraw();
+						}
+					}
+				}
 				if (messages.length > 0)
 				{
 					let json = {
