@@ -61,7 +61,7 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 	let distance = srcLatLon.distanceTo(dstLatLon);
 	let hits = 0;
 	myGroup.lastShot = Date.now();
-	mygroup.needsRedraw = true;
+	myGroup.needsRedraw = true;
 	for (let i=0; i<shots; i++)
 	{
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
