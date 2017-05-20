@@ -327,16 +327,36 @@
 						unit.healthLeft -= damage;
 						if (unit.healthLeft <= 0)
 						{
+							if (unit.dbUnit.c2 == 1)
+							{
+								if (unit.group.owner.isFriend())
+								{
+									let index = allyC2.indexOf(unit);
+									if (index > -1)
+									{
+										allyC2.splice(index, 1);
+									}
+								}
+								if (unit.group.owner.isEnemy())
+								{
+									let index = hostileC2.indexOf(unit);
+									if (index > -1)
+									{
+										hostileC2.splice(index, 1);
+									}
+								}
+							}
 							let index = unit.group.units.indexOf(unit);
 							if (index > -1)
 							{
 								unit.group.units.splice(index, 1);
-								group.updateRepresentation();
+								unit.group.updateRepresentation();
 							}
 							//TODO remove all references
 							if (unit.group.units.length == 0)
 							{
 								//TODO remove group
+								killGroup(unit.group.id);
 							}
 						}
 					}
@@ -375,8 +395,6 @@
 								}
 							}
 						}
-						delete allyGroups[id];
-						delete hostileGroups[id];
 						delete group.owner.groups[id];
 						if (group.owner.isFriend())
 						{
@@ -390,6 +408,44 @@
 					}
 				}
 			});
+			function killGroup(groupID)
+			{
+				let group = allObjects[groupID];
+				symbolSource.removeFeature(group.olObject);
+				//TODO remove from each other groups variables
+				for (let unit of group.units)
+				{
+					if (unit.dbUnit.c2 == 1)
+					{
+						if (group.owner.isFriend())
+						{
+							let index = allyC2.indexOf(unit);
+							if (index > -1)
+							{
+								allyC2.splice(index, 1);
+							}
+						}
+						if (group.owner.isEnemy())
+						{
+							let index = hostileC2.indexOf(unit);
+							if (index > -1)
+							{
+								hostileC2.splice(index, 1);
+							}
+						}
+					}
+				}
+				delete group.owner.groups[groupID];
+				if (group.owner.isFriend())
+				{
+					delete allyGroups[groupID];
+				}
+				if (group.owner.isEnemy())
+				{
+					delete hostileGroups[groupID];
+				}
+				showMoney();
+			}
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
 			var selectedOpacity = 1.0;
@@ -940,6 +996,7 @@
 					if (groupsElement.childNodes[i])
 					{
 						let group = groupsElement.removeChild(groupsElement.childNodes[i]);
+						i--;
 					}
 				}
 				showMoney();
@@ -1082,7 +1139,7 @@ let t0 = performance.now();
 				//move groups
 				if (player.phase > 0)
 				{
-					for (let objectID of Object.keys(allObjects))
+					for (let objectID of Object.keys(allObjects))//TODO do for own groups, allyGroups and hostileGroups
 					{
 						let group = allObjects[objectID];
 						if (group instanceof Group)
