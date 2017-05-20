@@ -581,34 +581,31 @@
 				let latlon = ol.proj.transform(map.getEventCoordinate(evt), "EPSG:3857", "EPSG:4326");
 				let lat = latlon[0];
 				let lon = latlon[1];
-				if (player.phase > 0)
+				for (group of selectedGroups)
 				{
-					for (group of selectedGroups)
+					if (shift)
 					{
-						if (shift)
-						{
-							let json = {
-								type: "addWaypoint",
-								data: {
-									id: group.id,
-									waypoint: latlon
-								}
-							};
-							console.log(json);
-							messages.push(json);
-						}
-						else
-						{
-							let json = {
-								type: "setWaypoint",
-								data: {
-									id: group.id,
-									waypoint: latlon
-								}
-							};
-							console.log(json);
-							messages.push(json);
-						}
+						let json = {
+							type: "addWaypoint",
+							data: {
+								id: group.id,
+								waypoint: latlon
+							}
+						};
+						console.log(json);
+						messages.push(json);
+					}
+					else
+					{
+						let json = {
+							type: "setWaypoint",
+							data: {
+								id: group.id,
+								waypoint: latlon
+							}
+						};
+						console.log(json);
+						messages.push(json);
 					}
 				}
 			});
