@@ -274,7 +274,7 @@
 								hostileGroups[group.id] = group;
 							}
 						}
-						group.needsRedraw = true;
+						group.updateRepresentation();
 						owner.money -= group.representation.price;
 						if (owner == player)
 						{
@@ -294,6 +294,28 @@
 						let waypoint = messageData.waypoint;
 						let group = allObjects[id];
 						group.waypoints = [waypoint];
+					}
+					if (messageType == "dealDamage")
+					{
+						let unitID = messageData.unitID;
+						let weaponID = messageData.weaponID;//TODO statistic
+						let damage = messageData.damage;
+						let unit = allObjects[unitID];
+						unit.healthLeft -= damage;
+						if (unit.healthLeft <= 0)
+						{
+							let index = unit.group.units.indexOf(unit);
+							if (index > -1)
+							{
+								unit.group.units.splice(index, 1);
+								group.updateRepresentation();
+							}
+							//TODO remove all references
+							if (unit.group.units.length == 0)
+							{
+								//TODO remove group
+							}
+						}
 					}
 					if (messageType == "remove")
 					{
@@ -1231,11 +1253,27 @@ let t0 = performance.now();
 					}
 				}*/
 				
-				for (let objectID of Object.keys(allObjects))
+				for (let objectID of Object.keys(player.groups))
 				{
-					let group = allObjects[objectID];
+					let group = player.groups[objectID];
 					if (group instanceof Group)
 					{
+						for (let target of group.spots)//TODO list allTargets, select target
+						{
+							let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
+							let dstLatLon = new LatLon(target.pos[0], target.pos[1]);
+							let distance = srcLatLon.distanceTo(dstLatLon);
+							for (let unit of group.units)
+							{
+								for (let weapon of unit.weapons)
+								{
+									if (distance < weapon.dbWeapon.range)
+									{
+										weapon.use(group, target, 1000/fps);
+									}
+								}
+							}
+						}
 						if (group.lastShot > 0 && now - group.lastShot > 1000)
 						{
 							group.lastShot = 0;

@@ -41,6 +41,11 @@ function Group(owner, pos, id)
 		this.opacity = invisibleEnemyOpacity;
 	}
 }
+Group.prototype.updateRepresentation = function()
+{
+	this.needsRedraw = true;
+	//TODO
+}
 Group.prototype.addUnit = function(unit)
 {
 	this.units.push(unit);

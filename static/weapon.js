@@ -10,6 +10,7 @@ function Weapon(dbWeapon, id)
 }
 Weapon.prototype.dealDamage = function(group, hits)
 {
+	//TODO minimize traffic for fast firing on large groups
 	for (let i=0; i<hits; i++)
 	{
 		let index = Math.floor(Math.random() * group.units.length);
@@ -39,12 +40,22 @@ Weapon.prototype.dealDamage = function(group, hits)
 			}
 		}
 		damage *= damageFactor;
-		unit.healthLeft -= damage;
+		let json = {
+			type: "dealDamage",
+			data: {
+				unitID: unit.id,
+				weaponID: this.id,
+				damage: damage
+			}
+		};
+		console.log(json);
+		messages.push(json);
 	}
 }
 Weapon.prototype.shoot = function(myGroup, group, shots)
 {
 	//TODO rockets
+//TODO broadcast weapon state
 	let srcLatLon = new LatLon(myGroup.pos[0], myGroup.pos[1]);
 	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
 	let distance = srcLatLon.distanceTo(dstLatLon);
@@ -56,8 +67,8 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
 		let area = radius*radius*Math.PI*(0.5+(1-group.suppressed)*0.5);
-		console.log(rnd+" "+area+" "+group.representation.dbUnit.size);
-		if (area <= group.representation.dbUnit.size)//TODO use cover, not moving
+		console.log(rnd+" "+area+" "+group.representation.size);
+		if (area <= group.representation.size)//TODO use cover, not moving
 		{
 			hits += 1;
 		}
@@ -69,6 +80,7 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 }
 Weapon.prototype.use = function(myGroup, group, timeAvailable)
 {//TODO block on guided weapons
+//TODO broadcast weapon state
 	if (this.unusedTime > 0)
 	{
 		timeAvailable += this.unusedTime;
