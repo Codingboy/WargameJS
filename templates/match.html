@@ -862,7 +862,12 @@
 					buildingsSource.addFeatures(features);
 					for (let feature of features)
 					{
-						console.log(feature.getGeometry().getExtent());
+						let extent1 = feature.getGeometry().getExtent();
+						let pos1 = ol.proj.transform([extent1[0], extent1[1]], "EPSG:3857", "EPSG:4326");
+						let extent2 = feature.getGeometry().getExtent();
+						let pos2 = ol.proj.transform([extent2[0], extent2[1]], "EPSG:3857", "EPSG:4326");
+						let pos = [(pos1[0]+pos2[0])/2, (pos1[1]+pos2[1])/2];
+						console.log(pos);
 					}
 				});
 				let query = ""+
