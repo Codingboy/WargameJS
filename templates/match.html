@@ -860,6 +860,10 @@
 						featureProjection: map.getView().getProjection()
 					});
 					buildingsSource.addFeatures(features);
+					for (let feature of features)
+					{
+						console.log(feature.getGeometry().getExtent());
+					}
 				});
 				let query = ""+
 "("+
@@ -1421,10 +1425,10 @@ let t0 = performance.now();
 						}
 						showMoney();
 					}
-					/*if (hostileC2.length == 0)
+					if (hostileC2.length == 0)
 					{
 						endMatch(true);
-					}*/
+					}
 					if (allyC2.length == 0)
 					{
 						endMatch(false);
@@ -1433,7 +1437,7 @@ let t0 = performance.now();
 					{
 						endMatch(true);
 					}
-					/*for (let playerID of Object.keys(allPlayers))
+					for (let playerID of Object.keys(allPlayers))
 					{
 						let p = allPlayers[playerID];
 						if (p.isEnemy())
@@ -1444,7 +1448,7 @@ let t0 = performance.now();
 							}
 							break;
 						}
-					}*/
+					}
 				}
 let t1 = performance.now();
 if (t1-t0 > 50)
