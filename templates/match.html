@@ -868,7 +868,7 @@
 						let pos2 = ol.proj.transform([extent2[0], extent2[1]], "EPSG:3857", "EPSG:4326");
 						let pos = [(pos1[0]+pos2[0])/2, (pos1[1]+pos2[1])/2];
 						let factor = 100;
-						pos = [Match.floor(pos[0]*factor)/factor, Match.floor(pos[1]*factor)/factor];
+						pos = [Math.floor(pos[0]*factor)/factor, Math.floor(pos[1]*factor)/factor];
 						console.log(pos);
 					}
 				});
