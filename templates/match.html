@@ -99,6 +99,7 @@
 			let messages = [];
 			let player = new Player();
 			let mapJSON = {};
+			let buildings = {};
 			var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 			socket.open();
 			let requestUpdate = false;
@@ -870,6 +871,19 @@
 						let factor = 100;
 						pos = [Math.floor(pos[0]*factor)/factor, Math.floor(pos[1]*factor)/factor];
 						console.log(pos);
+						let x = {};
+						if (pos[0] in buildings)
+						{
+							x = buildings[pos[0]];
+						}
+						let y = [];
+						if (pos[1] in x)
+						{
+							y = x[pos[1]];
+						}
+						y.append(feature);
+						x[pos[1]] = y;
+						buildings[pos[0]] = x;
 					}
 				});
 				let query = ""+
