@@ -238,6 +238,58 @@ Group.prototype.setPos = function(pos)
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
 	this.olObject.getGeometry().setCoordinates(position);
 }
+Group.prototype.hasLOS(group, distance)
+{
+	let factor = 100;
+	let pos = [Math.round(factor*this.pos[0])/factor, Math.round(factor*this.pos[1])/factor];
+	let grids = [];
+	let distantPoint = new LatLon(this.pos[0], this.pos[1]).destinationPoint(distance, 0);
+	let gridDiff = distantPoint.lat - pos[0];//TODO check correct values
+	let n = Math.round(gridDiff*factor);
+	for (let x=-n; x<=n; x++)
+	{
+		let coordX = pos[0]+float(x)/factor;
+		for (let y=-n; y<=n; y++)
+		{
+			let coordY = pos[1]+float(y)/factor;
+			if (Math.sqrt(Math.pow(pos[0]-coordX,2)+Math.pow(pos[1]-coordY,2)) <= gridDiff)
+			{
+				grids.append([coordX, coordY]);
+			}
+		}
+	}
+	
+	let coords = [];
+	coords.append(ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857"));
+	coords.append(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857"));
+	let line = new ol.Feature({
+				geometry: new ol.geom.LineString(coords)
+			});
+					/*let polygon = new ol.geom.Polygon([points]);
+					polygon.transform("EPSG:4326", "EPSG:3857");*/
+	for (let grid of grids)
+	{
+		if (grid[0] in buildings)
+		{
+			let buildingsX = buildings[grid[0]];
+			if (grid[1] in buildingsX)
+			{
+				let buildingsY = buildingsX[grid[1]];
+				for (let feature of buildingsY)
+				{
+					//TODO ignore src and dst buildings
+					let intersects = turf.intersect(feature, line);
+					if (intersects == undefined)
+					{
+						return false;
+					}
+				}
+			}
+		}
+	}
+	//TODO for each building in grids check if intersects line
+	return true;//TODO
+}
 Group.prototype.handleDetection = function(group)
 {
 	let srcLatLon = new LatLon(this.pos[0], this.pos[1]);
@@ -247,12 +299,33 @@ Group.prototype.handleDetection = function(group)
 	let optics = this.representation.optics*(1-camouflage);
 	if (optics >= distance)
 	{
-		this.spots.push(group);
-		group.spottedBy.push(this);
-		if (group.spottedBy.length == 1)
+		if (this.hasLOS(group, distance))
 		{
-			group.opacity = visibleEnemyOpacity;
-			group.needsRedraw = true;
+			this.spots.push(group);
+			group.spottedBy.push(this);
+			if (group.spottedBy.length == 1)
+			{
+				group.opacity = visibleEnemyOpacity;
+				group.needsRedraw = true;
+			}
+		}
+		else
+		{
+			let index = group.spottedBy.indexOf(this);
+			if (index > -1)
+			{
+				group.spottedBy.splice(index, 1);
+				if (group.spottedBy.length == 0)
+				{
+					group.opacity = invisibleEnemyOpacity;
+					group.needsRedraw = true;
+				}
+			}
+			index = this.spots.indexOf(group);
+			if (index > -1)
+			{
+				this.spots.splice(index, 1);
+			}
 		}
 	}
 	else
