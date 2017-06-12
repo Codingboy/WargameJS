@@ -248,10 +248,10 @@ Group.prototype.hasLOS = function(group, distance)
 	let n = Math.round(gridDiff*factor);
 	for (let x=-n; x<=n; x++)
 	{
-		let coordX = pos[0]+float(x)/factor;
+		let coordX = pos[0]+parseFloat(x)/factor;
 		for (let y=-n; y<=n; y++)
 		{
-			let coordY = pos[1]+float(y)/factor;
+			let coordY = pos[1]+parseFloat(y)/factor;
 			if (Math.sqrt(Math.pow(pos[0]-coordX,2)+Math.pow(pos[1]-coordY,2)) <= gridDiff)
 			{
 				grids.append([coordX, coordY]);
