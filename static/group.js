@@ -279,7 +279,7 @@ Group.prototype.hasLOS(group, distance)
 				{
 					//TODO ignore src and dst buildings
 					let intersects = turf.intersect(feature, line);
-					if (intersects == undefined)
+					if (typeof intersects !== "undefined")
 					{
 						return false;
 					}
