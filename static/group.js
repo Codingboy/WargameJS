@@ -238,7 +238,7 @@ Group.prototype.setPos = function(pos)
 	let position = ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857");
 	this.olObject.getGeometry().setCoordinates(position);
 }
-Group.prototype.hasLOS(group, distance)
+Group.prototype.hasLOS = function(group, distance)
 {
 	let factor = 100;
 	let pos = [Math.round(factor*this.pos[0])/factor, Math.round(factor*this.pos[1])/factor];
