@@ -278,6 +278,8 @@ Group.prototype.hasLOS = function(group, distance)
 				for (let feature of buildingsY)
 				{
 					//TODO ignore src and dst buildings
+					console.log(feature);
+					console.log(line);
 					let intersects = turf.intersect(feature, line);
 					if (typeof intersects !== "undefined")
 					{
