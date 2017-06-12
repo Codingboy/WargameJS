@@ -287,7 +287,6 @@ Group.prototype.hasLOS(group, distance)
 			}
 		}
 	}
-	//TODO for each building in grids check if intersects line
 	return true;//TODO
 }
 Group.prototype.handleDetection = function(group)
