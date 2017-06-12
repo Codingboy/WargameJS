@@ -254,14 +254,14 @@ Group.prototype.hasLOS = function(group, distance)
 			let coordY = pos[1]+parseFloat(y)/factor;
 			if (Math.sqrt(Math.pow(pos[0]-coordX,2)+Math.pow(pos[1]-coordY,2)) <= gridDiff)
 			{
-				grids.append([coordX, coordY]);
+				grids.push([coordX, coordY]);
 			}
 		}
 	}
 	
 	let coords = [];
-	coords.append(ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857"));
-	coords.append(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857"));
+	coords.push(ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857"));
+	coords.push(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857"));
 	let line = new ol.Feature({
 				geometry: new ol.geom.LineString(coords)
 			});
