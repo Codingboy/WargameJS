@@ -260,8 +260,8 @@ Group.prototype.hasLOS = function(group, distance)
 	}
 	
 	let coords = [];
-	coords.push(ol.proj.transform(this.pos, "EPSG:4326", "EPSG:3857"));
-	coords.push(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857"));
+	coords.push(this.pos);
+	coords.push(group.pos);
 	let line = {
 		"type": "Feature",
 		"properties": {},
@@ -283,6 +283,7 @@ Group.prototype.hasLOS = function(group, distance)
 				{
 					//TODO ignore src and dst buildings
 					let intersects = turf.lineIntersect(feature.get("polygon"), line);
+					console.log(intersects);
 					//TODO result
 				}
 			}
