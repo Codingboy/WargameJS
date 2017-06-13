@@ -286,7 +286,7 @@ Group.prototype.hasLOS = function(group, distance)
 					console.log(intersects);
 					if (typeof intersects !== "undefined")
 					{
-						return false;
+						//return false;
 					}
 				}
 			}
