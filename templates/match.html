@@ -865,8 +865,11 @@
 					for (let feature of features)
 					{
 						let coords = feature.getGeometry().getCoordinates();
-						console.log(coords);
-						if (coords.length < 4)
+						if (!Array.isArray(coords[0]))
+						{
+							continue;
+						}
+						if (coords[0].length < 4)
 						{
 							continue;
 						}
