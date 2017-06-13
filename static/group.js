@@ -275,7 +275,7 @@ Group.prototype.hasLOS = function(group, distance)
 				for (let feature of buildingsY)
 				{
 					//TODO ignore src and dst buildings
-					let intersects = turf.intersect(feature, line);
+					let intersects = turf.intersect(feature.get("polygon"), line);
 					if (typeof intersects !== "undefined")
 					{
 						return false;
