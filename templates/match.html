@@ -868,7 +868,7 @@
 						let convertedCoords = [];
 						for (let coord of coords)
 						{
-							let coord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
+							coord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
 							convertedCoords.push(coord);
 						}
 						convertedCoords.push(convertedCoords[0]);
