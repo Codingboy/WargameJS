@@ -864,6 +864,8 @@
 					buildingsSource.addFeatures(features);
 					for (let feature of features)
 					{
+						console.log(typeof feature.getGeometry());
+						break;
 						let coords = feature.getGeometry().getCoordinates();
 						console.log(coords);
 						let convertedCoords = [];
