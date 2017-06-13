@@ -865,13 +865,16 @@
 					for (let feature of features)
 					{
 						let coords = feature.getGeometry().getCoordinates();
+						console.log(coords);
 						let convertedCoords = [];
 						for (let coord of coords)
 						{
-							coord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
-							convertedCoords.push(coord);
+							let convertedCoord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
+							convertedCoords.push(convertedCoord);
+							console.log(convertedCoord);
 						}
 						convertedCoords.push(convertedCoords[0]);
+						console.log(convertedCoords);
 						let polygon = turf.polygon([convertedCoords]);
 						feature.set("polygon", polygon);
 						let extent1 = feature.getGeometry().getExtent();
