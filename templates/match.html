@@ -872,7 +872,7 @@
 							convertedCoords.push(coord);
 						}
 						convertedCoords.push(convertedCoords[0]);
-						let polygon = turf.polygon([coords]);
+						let polygon = turf.polygon([convertedCoords]);
 						feature.set("polygon", polygon);
 						let extent1 = feature.getGeometry().getExtent();
 						let pos1 = ol.proj.transform([extent1[0], extent1[1]], "EPSG:3857", "EPSG:4326");
