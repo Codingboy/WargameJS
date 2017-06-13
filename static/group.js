@@ -244,6 +244,8 @@ Group.prototype.hasLOS = function(group, distance)
 	let pos = [Math.round(factor*this.pos[0])/factor, Math.round(factor*this.pos[1])/factor];
 	let grids = [];
 	let distantPoint = new LatLon(this.pos[0], this.pos[1]).destinationPoint(distance, 0);
+	console.log(distantPoint.lat);
+	console.log(pos[0]);
 	let gridDiff = distantPoint.lat - pos[0];//TODO check correct values
 	let n = Math.round(gridDiff*factor);
 	for (let x=-n; x<=n; x++)
