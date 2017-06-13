@@ -868,7 +868,7 @@
 						{
 							continue;
 						}
-						if (coords[0].length < 4)
+						if (coords[0].length < 4)//TODO 3?
 						{
 							continue;
 						}
@@ -878,6 +878,7 @@
 							let convertedCoord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
 							convertedCoords.push(convertedCoord);
 						}
+						console.log(convertedCoords);
 						convertedCoords.push(convertedCoords[0]);
 						let polygon = turf.polygon([convertedCoords]);
 						feature.set("polygon", polygon);
