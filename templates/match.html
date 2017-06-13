@@ -864,6 +864,7 @@
 					buildingsSource.addFeatures(features);
 					for (let feature of features)
 					{
+						console.log(feature.getGeometry().getCoordinates());
 						let extent1 = feature.getGeometry().getExtent();
 						let pos1 = ol.proj.transform([extent1[0], extent1[1]], "EPSG:3857", "EPSG:4326");
 						let extent2 = feature.getGeometry().getExtent();
