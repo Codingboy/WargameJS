@@ -254,7 +254,6 @@ Group.prototype.hasLOS = function(group, distance)
 			let coordY = pos[1]+parseFloat(y)/factor;
 			if (Math.sqrt(Math.pow(pos[0]-coordX,2)+Math.pow(pos[1]-coordY,2)) <= gridDiff)
 			{
-				console.log([coordX, coordY]);
 				grids.push([coordX, coordY]);
 			}
 		}
@@ -277,9 +276,11 @@ Group.prototype.hasLOS = function(group, distance)
 	{
 		if (grid[0] in buildings)
 		{
+			console.log("yes");
 			let buildingsX = buildings[grid[0]];
 			if (grid[1] in buildingsX)
 			{
+				console.log("and yes");
 				let buildingsY = buildingsX[grid[1]];
 				for (let feature of buildingsY)
 				{
