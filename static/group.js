@@ -270,6 +270,7 @@ Group.prototype.hasLOS = function(group, distance)
 			"coordinates": [coords]
 		}
 	};
+	console.log(coords);
 	for (let grid of grids)
 	{
 		if (grid[0] in buildings)
@@ -278,16 +279,11 @@ Group.prototype.hasLOS = function(group, distance)
 			if (grid[1] in buildingsX)
 			{
 				let buildingsY = buildingsX[grid[1]];
-				console.log(buildingsY.length);
 				for (let feature of buildingsY)
 				{
 					//TODO ignore src and dst buildings
 					let intersects = turf.lineIntersect(feature.get("polygon"), line);
-					console.log(intersects);
-					if (typeof intersects !== "undefined")
-					{
-						//return false;
-					}
+					//TODO result
 				}
 			}
 		}

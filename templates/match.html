@@ -878,7 +878,6 @@
 							let convertedCoord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
 							convertedCoords.push(convertedCoord);
 						}
-						console.log(convertedCoords);
 						let polygon = turf.polygon([convertedCoords]);
 						feature.set("polygon", polygon);
 						let extent1 = feature.getGeometry().getExtent();
