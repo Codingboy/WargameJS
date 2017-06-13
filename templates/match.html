@@ -864,7 +864,11 @@
 					buildingsSource.addFeatures(features);
 					for (let feature of features)
 					{
-						let coords = feature.getStyle().getGeometry().getCoordinates();
+						let coords = feature.getGeometry().getCoordinates();
+						if (coords.length < 4)
+						{
+							continue;
+						}
 						console.log(coords);
 						let convertedCoords = [];
 						for (let coord of coords)
