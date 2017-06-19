@@ -263,16 +263,7 @@ Group.prototype.hasLOS = function(group, distance)
 	let coords = [];
 	coords.push(this.pos);
 	coords.push(group.pos);
-	/*let line = {
-		"type": "Feature",
-		"properties": {},
-		"geometry": {
-			"type": "LineString",
-			"coordinates": [coords]
-		}
-	};*/
 	let line = turf.lineString(coords);
-	console.log(coords);
 	for (let grid of grids)
 	{
 		if (grid[0] in buildings)
@@ -287,8 +278,6 @@ Group.prototype.hasLOS = function(group, distance)
 					let intersects = turf.lineIntersect(polygon, line);
 					if (intersects.features.length > 0)
 					{
-						//TODO ignore src and dst buildings
-						console.log(intersects);
 						if (!turf.inside(this.pos, polygon) && !turf.inside(group.pos, polygon))
 						{
 							return false;
@@ -298,7 +287,7 @@ Group.prototype.hasLOS = function(group, distance)
 			}
 		}
 	}
-	return true;//TODO
+	return true;
 }
 Group.prototype.handleDetection = function(group)
 {

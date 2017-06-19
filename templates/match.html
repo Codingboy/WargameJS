@@ -305,7 +305,7 @@
 							showMoney();
 						}
 					}
-					if (messageType == "shoot")
+					else if (messageType == "shoot")
 					{
 						if (senderID != player.id)
 						{
@@ -319,31 +319,31 @@
 							shooter.needsRedraw = true;
 						}
 					}
-					if (messageType == "reload")
+					else if (messageType == "reload")
 					{
 						if (senderID != player.id)
 						{
 							let id = messageData.id;
 							let weapon = allObjects[id];
-							weapon.bulletsLeft = weapon.dbWeapon.magazineSize;
+							weapon.bulletsLeft += weapon.dbWeapon.magazineSize;
 							weapon.magazinesLeft -= 1;
 						}
 					}
-					if (messageType == "addWaypoint")
+					else if (messageType == "addWaypoint")
 					{
 						let id = messageData.id;
 						let waypoint = messageData.waypoint;
 						let group = allObjects[id];
 						group.waypoints.push(waypoint);
 					}
-					if (messageType == "setWaypoint")
+					else if (messageType == "setWaypoint")
 					{
 						let id = messageData.id;
 						let waypoint = messageData.waypoint;
 						let group = allObjects[id];
 						group.waypoints = [waypoint];
 					}
-					if (messageType == "dealDamage")
+					else if (messageType == "dealDamage")
 					{
 						let unitID = messageData.unitID;
 						let weaponID = messageData.weaponID;//TODO statistic
@@ -384,7 +384,7 @@
 							}
 						}
 					}
-					if (messageType == "remove")
+					else if (messageType == "remove")
 					{
 						let id = messageData.id;
 						let group = allObjects[id];
@@ -438,6 +438,7 @@
 								if (index > -1)
 								{
 									group.spots.splice(index, 1);
+									console.log("------ REMOVED GROUP ----------------")
 								}
 							}
 						}
@@ -1359,97 +1360,6 @@ let t0 = performance.now();
 						}
 					}
 				}
-			/*
-				
-				//make spotted enemies visible
-				for (let p of allPlayers)
-				{
-					if (p.isFriend())
-					{
-						for (let group of p.groups)
-						{
-							if (group.moved)
-							{
-								//recheck all enemies
-								group.spots = [];
-								for (let g of enemies)
-								{
-									group.handleDetection(g);
-								}
-							}
-							else
-							{
-								//recheck all enemies that moved
-								for (let g of enemies)
-								{
-									if (g.moved)
-									{
-										group.handleDetection(g);
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				for (let p of allPlayers)
-				{
-					if (p.isFriend())
-					{
-						for (let group of p.groups)
-						{
-							for (let target of group.spots)//TODO list allTargets, select target
-							{
-								let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
-								let dstLatLon = new LatLon(target.pos[0], target.pos[1]);
-								let distance = srcLatLon.distanceTo(dstLatLon);
-								for (let unit of group.units)
-								{
-									for (let weapon of unit.weapons)
-									{
-										if (distance < weapon.dbWeapon.range)
-										{
-											weapon.use(group, target, 1000/fps);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				//remove dead units
-				for (let enemy of enemies)
-				{
-					for (let unit of enemy.units)
-					{
-						if (unit.healthLeft < 0)
-						{
-							let index = enemy.units.indexOf(unit);
-							if (index > -1)
-							{
-								enemy.units.splice(index, 1);
-								enemy.needsRedraw = true;
-							}
-						}
-					}
-					if (enemy.units.length == 0)
-					{
-						let index = enemies.indexOf(enemy);
-						if (index > -1)
-						{
-							enemies.splice(index, 1);
-						}
-						let owner = enemy.owner;
-						index = owner.groups.indexOf(enemy);
-						if (index > -1)
-						{
-							owner.groups.splice(index, 1);
-						}
-						symbolSource.removeFeature(enemy.olObject);
-						//TODO delete references in other groups (spots, spottedBy, ...)
-					}
-				}*/
 				
 				for (let objectID of Object.keys(player.groups))
 				{

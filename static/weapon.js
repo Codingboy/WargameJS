@@ -11,6 +11,11 @@ function Weapon(dbWeapon, id)
 Weapon.prototype.dealDamage = function(group, hits)
 {
 	//TODO minimize traffic for fast firing on large groups
+	let buildingModificator = 1.0;
+	if (group.building)
+	{
+		buildingModificator = 0.5;
+	}
 	for (let i=0; i<hits; i++)
 	{
 		let index = Math.floor(Math.random() * group.units.length);
@@ -39,7 +44,7 @@ Weapon.prototype.dealDamage = function(group, hits)
 				damageFactor = 0.5;
 			}
 		}
-		damage *= damageFactor;
+		damage *= damageFactor*buildingModificator;
 		let json = {
 			type: "dealDamage",
 			data: {
