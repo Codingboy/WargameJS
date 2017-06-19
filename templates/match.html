@@ -444,14 +444,14 @@
 						}
 					}
 				}
-				delete group.owner.groups[id];
+				delete group.owner.groups[groupID];
 				if (group.owner.isFriend())
 				{
-					delete allyGroups[id];
+					delete allyGroups[groupID];
 				}
 				if (group.owner.isEnemy())
 				{
-					delete hostileGroups[id];
+					delete hostileGroups[groupID];
 				}
 			}
 			function removeUnitReferences(unitID)
