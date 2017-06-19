@@ -305,6 +305,30 @@
 							showMoney();
 						}
 					}
+					if (messageType == "shoot")
+					{
+						if (senderID != player.id)
+						{
+							let id = messageData.id;
+							let count = messageData.count;
+							let shooterID = messageData.shooter;
+							let weapon = allObjects[id];
+							let shooter = allObjects[shooterID];
+							weapon.bulletsLeft -= count;
+							shooter.lastShot = Date.now();
+							shooter.needsRedraw = true;
+						}
+					}
+					if (messageType == "reload")
+					{
+						if (senderID != player.id)
+						{
+							let id = messageData.id;
+							let weapon = allObjects[id];
+							weapon.bulletsLeft = weapon.dbWeapon.magazineSize;
+							weapon.magazinesLeft -= 1;
+						}
+					}
 					if (messageType == "addWaypoint")
 					{
 						let id = messageData.id;
@@ -353,10 +377,9 @@
 								unit.group.units.splice(index, 1);
 								unit.group.updateRepresentation();
 							}
-							//TODO remove all references
+							removeUnitReferences(unitID);
 							if (unit.group.units.length == 0)
 							{
-								//TODO remove group
 								killGroup(unit.group.id);
 							}
 						}
@@ -367,7 +390,7 @@
 						let group = allObjects[id];
 						group.owner.money += group.representation.price;
 						symbolSource.removeFeature(group.olObject);
-						//TODO remove from each other groups variables
+						removeGroupReferences(id);
 						delete allObjects[id];
 						for (let unit of group.units)
 						{
@@ -396,24 +419,48 @@
 								}
 							}
 						}
-						delete group.owner.groups[id];
-						if (group.owner.isFriend())
-						{
-							delete allyGroups[id];
-						}
-						if (group.owner.isEnemy())
-						{
-							delete hostileGroups[id];
-						}
 						showMoney();
 					}
 				}
 			});
+			function removeGroupReferences(groupID)
+			{
+				for (let objectID of Object.keys(allObjects))
+				{
+					let group = allObjects[objectID];
+					if (group instanceof Group)
+					{
+						for (let g of group.spots)//TODO other variables
+						{
+							if (g.id == groupID)
+							{
+								let index = group.spots.indexOf(g);
+								if (index > -1)
+								{
+									group.spots.splice(index, 1);
+								}
+							}
+						}
+					}
+				}
+				delete group.owner.groups[id];
+				if (group.owner.isFriend())
+				{
+					delete allyGroups[id];
+				}
+				if (group.owner.isEnemy())
+				{
+					delete hostileGroups[id];
+				}
+			}
+			function removeUnitReferences(unitID)
+			{
+				//TODO
+			}
 			function killGroup(groupID)
 			{
 				let group = allObjects[groupID];
 				symbolSource.removeFeature(group.olObject);
-				//TODO remove from each other groups variables
 				for (let unit of group.units)
 				{
 					if (unit.dbUnit.c2 == 1)
@@ -436,16 +483,7 @@
 						}
 					}
 				}
-				delete group.owner.groups[groupID];
-				if (group.owner.isFriend())
-				{
-					delete allyGroups[groupID];
-				}
-				if (group.owner.isEnemy())
-				{
-					delete hostileGroups[groupID];
-				}
-				showMoney();
+				removeGroupReferences(groupID);
 			}
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
@@ -1468,7 +1506,7 @@ let t0 = performance.now();
 					{
 						if (group.lastShot > 0 && now - group.lastShot > 1000)
 						{
-							group.lastShot = 0;
+							group.lastShot = 0;//TODO needs to be broadcasted
 							group.needsRedraw = true;
 						}
 						if (group.needsRedraw)

@@ -55,7 +55,16 @@ Weapon.prototype.dealDamage = function(group, hits)
 Weapon.prototype.shoot = function(myGroup, group, shots)
 {
 	//TODO rockets
-//TODO broadcast weapon state
+	let json = {
+		type: "shoot",
+		data: {
+			id: this.id,
+			count: shots,
+			shooter: myGroup.id
+		}
+	};
+	console.log(json);
+	messages.push(json);
 	let srcLatLon = new LatLon(myGroup.pos[0], myGroup.pos[1]);
 	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
 	let distance = srcLatLon.distanceTo(dstLatLon);
@@ -80,7 +89,6 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 }
 Weapon.prototype.use = function(myGroup, group, timeAvailable)
 {//TODO block on guided weapons
-//TODO broadcast weapon state
 	if (this.unusedTime > 0)
 	{
 		timeAvailable += this.unusedTime;
@@ -103,6 +111,14 @@ Weapon.prototype.use = function(myGroup, group, timeAvailable)
 					this.reloadTimeLeft = 0;
 					this.bulletsLeft = this.dbWeapon.magazineSize;
 					this.magazinesLeft -= 1;
+					let json = {
+						type: "reload",
+						data: {
+							id: this.id
+						}
+					};
+					console.log(json);
+					messages.push(json);
 					this.use(myGroup, group, timeAvailable);
 				}
 			}
