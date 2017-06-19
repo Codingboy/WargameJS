@@ -460,7 +460,6 @@
 			function killGroup(groupID)
 			{
 				let group = allObjects[groupID];
-				symbolSource.removeFeature(group.olObject);
 				for (let unit of group.units)
 				{
 					if (unit.dbUnit.c2 == 1)
@@ -484,6 +483,7 @@
 					}
 				}
 				removeGroupReferences(groupID);
+				//symbolSource.removeFeature(group.olObject);
 			}
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
