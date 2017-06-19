@@ -31,6 +31,7 @@ function Group(owner, pos, id)
 	this.owner.groups[id] = this;
 	this.olObject.set("group", this);
 	this.suppressed = 0;
+	this.building = null;
 	symbolSource.addFeature(this.olObject);
 	if (this.owner.isFriend())
 	{
@@ -282,12 +283,16 @@ Group.prototype.hasLOS = function(group, distance)
 				let buildingsY = buildingsX[grid[1]];
 				for (let feature of buildingsY)
 				{
-					let intersects = turf.lineIntersect(feature.get("polygon"), line);
-					console.log(intersects);
+					let polygon = feature.get("polygon");
+					let intersects = turf.lineIntersect(polygon, line);
 					if (intersects.features.length > 0)
 					{
 						//TODO ignore src and dst buildings
-						return false;
+						console.log(intersects);
+						if (!turf.inside(this.pos, polygon) && !turf.inside(group.pos, polygon))
+						{
+							return false;
+						}
 					}
 				}
 			}
@@ -301,7 +306,12 @@ Group.prototype.handleDetection = function(group)
 	let dstLatLon = new LatLon(group.pos[0], group.pos[1]);
 	let distance = srcLatLon.distanceTo(dstLatLon);
 	let camouflage = group.representation.camouflage*(1-this.representation.opticsQuality);
-	let optics = this.representation.optics*(1-camouflage);
+	let optics = this.representation.optics;
+	if (group.building)
+	{
+		optics = optics * 0.5;
+	}
+	let optics = optics*(1-camouflage);
 	if (optics >= distance)
 	{
 		if (this.hasLOS(group, distance))

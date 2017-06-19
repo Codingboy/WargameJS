@@ -1223,10 +1223,42 @@ let t0 = performance.now();
 									group.setPos([destination.lat, destination.lon]);
 								}
 								group.moved = true;
+								let factor = 100;
+								let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
+								if (pos[0] in buildings)
+								{
+									let buildingsX = buildings[pos[0]];
+									if (pos[1] in buildingsX)
+									{
+										let buildingsY = buildingsX[pos[1]];
+										let intersected = false;
+										for (let feature of buildingsY)
+										{
+											if (turf.inside(group.pos, feature.get("polygon")))
+											{
+												group.building = feature.get("polygon");
+												intersected = true;
+											}
+										}
+										if (!intersected)
+										{
+											group.building = null;
+										}
+									}
+									else
+									{
+										group.building = null;
+									}
+								}
+								else
+								{
+									group.building = null;
+								}
 							}
 							else
 							{
 								group.moved = false;
+								group.building = null;
 							}
 							if (n > 0)
 							{
