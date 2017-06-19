@@ -311,7 +311,7 @@ Group.prototype.handleDetection = function(group)
 	{
 		optics = optics * 0.5;
 	}
-	let optics = optics*(1-camouflage);
+	optics = optics*(1-camouflage);
 	if (optics >= distance)
 	{
 		if (this.hasLOS(group, distance))
