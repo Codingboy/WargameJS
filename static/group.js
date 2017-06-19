@@ -262,14 +262,15 @@ Group.prototype.hasLOS = function(group, distance)
 	let coords = [];
 	coords.push(this.pos);
 	coords.push(group.pos);
-	let line = {
+	/*let line = {
 		"type": "Feature",
 		"properties": {},
 		"geometry": {
 			"type": "LineString",
 			"coordinates": [coords]
 		}
-	};
+	};*/
+	let line = turf.lineString(coords);
 	console.log(coords);
 	for (let grid of grids)
 	{
