@@ -443,6 +443,7 @@
 						}
 					}
 				}
+				let group = allObjects[groupID];
 				delete group.owner.groups[groupID];
 				if (group.owner.isFriend())
 				{
@@ -460,28 +461,6 @@
 			function killGroup(groupID)
 			{
 				let group = allObjects[groupID];
-				for (let unit of group.units)
-				{
-					if (unit.dbUnit.c2 == 1)
-					{
-						if (group.owner.isFriend())
-						{
-							let index = allyC2.indexOf(unit);
-							if (index > -1)
-							{
-								allyC2.splice(index, 1);
-							}
-						}
-						if (group.owner.isEnemy())
-						{
-							let index = hostileC2.indexOf(unit);
-							if (index > -1)
-							{
-								hostileC2.splice(index, 1);
-							}
-						}
-					}
-				}
 				removeGroupReferences(groupID);
 				symbolSource.removeFeature(group.olObject);
 			}
