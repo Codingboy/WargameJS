@@ -282,10 +282,13 @@ Group.prototype.hasLOS = function(group, distance)
 				let buildingsY = buildingsX[grid[1]];
 				for (let feature of buildingsY)
 				{
-					//TODO ignore src and dst buildings
 					let intersects = turf.lineIntersect(feature.get("polygon"), line);
 					console.log(intersects);
-					//TODO result
+					if (intersects.features.length > 0)
+					{
+						//TODO ignore src and dst buildings
+						return false;
+					}
 				}
 			}
 		}
