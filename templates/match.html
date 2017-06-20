@@ -462,7 +462,7 @@
 			{
 				let group = allObjects[groupID];
 				removeGroupReferences(groupID);
-				symbolSource.removeFeature(group.olObject);
+				symbolSource.removeFeature(group.olObject);//TODO FIXME throws error
 			}
 			var visibleEnemyOpacity = 1.0;
 			var invisibleEnemyOpacity = 0.1;
