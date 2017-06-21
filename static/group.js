@@ -44,7 +44,6 @@ function Group(owner, pos, id)
 }
 Group.prototype.updateRepresentation = function()
 {
-	this.needsRedraw = true;
 	/*TODO other values
 	opticsIR = 0;//range the IR optic is working with in meter
 	opticsIRQuality = 0;//counters enemy camouflageIR
@@ -91,6 +90,7 @@ Group.prototype.updateRepresentation = function()
 	health = 1;*/
 	this.representation = new DBUnit();
 	this.representation.size = 0;
+	this.representation.type = "";
 	this.representation.c2 = 0;
 	this.representation.sound = 0;
 	this.representation.speed = Number.MAX_SAFE_INTEGER;
@@ -105,39 +105,43 @@ Group.prototype.updateRepresentation = function()
 		{
 			this.representation.name = dbUnit.name;
 		}
-		if (unit.size > this.representation.size)
+		if (this.representation.type == "")
 		{
-			this.representation.size = unit.size;
+			this.representation.type = dbUnit.type;
 		}
-		this.representation.type = unit.type;
-		if (unit.c2 > this.representation.c2)
+		if (dbUnit.size > this.representation.size)
 		{
-			this.representation.c2 = unit.c2;
+			this.representation.size = dbUnit.size;
 		}
-		if (unit.sound > this.representation.sound)
+		if (dbUnit.c2 > this.representation.c2)
 		{
-			this.representation.sound = unit.sound;
+			this.representation.c2 = dbUnit.c2;
 		}
-		
-		if (unit.speed < this.representation.speed)
+		if (dbUnit.sound > this.representation.sound)
 		{
-			this.representation.speed = unit.speed;
-		}
-		if (unit.optics > this.representation.optics)
-		{
-			this.representation.optics = unit.optics;
-		}
-		if (unit.opticsQuality > this.representation.opticsQuality)//TODO needs to be same unit as optic
-		{
-			this.representation.opticsQuality = unit.opticsQuality;
+			this.representation.sound = dbUnit.sound;
 		}
 		
-		if (unit.camouflage < this.representation.camouflage)
+		if (dbUnit.speed < this.representation.speed)
 		{
-			this.representation.camouflage = unit.camouflage;
+			this.representation.speed = dbUnit.speed;
 		}
-		this.representation.price += unit.price;
+		if (dbUnit.optics > this.representation.optics)
+		{
+			this.representation.optics = dbUnit.optics;
+		}
+		if (dbUnit.opticsQuality > this.representation.opticsQuality)//TODO needs to be same dbUnit as optic
+		{
+			this.representation.opticsQuality = dbUnit.opticsQuality;
+		}
+		
+		if (dbUnit.camouflage < this.representation.camouflage)
+		{
+			this.representation.camouflage = dbUnit.camouflage;
+		}
+		this.representation.price += dbUnit.price;
 	}
+	this.needsRedraw = true;
 }
 Group.prototype.addUnit = function(unit)
 {
@@ -150,155 +154,152 @@ Group.prototype.addUnit = function(unit)
 };
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 {
+	let version = "10"
+	let standardIdentity = "21";
+	if (this.owner.isFriend())
+	{
+		standardIdentity = "23";
+	}
+	if (this.owner.isEnemy())
+	{
+		standardIdentity = "26";
+	}
+	if (this.owner.isIndependent())
+	{
+		standardIdentity = "24";
+	}
+	/*if (this.owner.isCivil())
+	{
+		standardIdentity = "24";
+	}*/
+	let symbolSet = "10";//TODO missiles, air
+	let status = "0";//TODO 3=damaged, 4=destroyed
+	let hqtfDummy = "0";
+	let amplifier = "11";
 	if (this.representation.type == "Infantry")
 	{
-		let version = "10"
-		let standardIdentity = "21";
-		if (this.owner.isFriend())
+		let count = this.units.length;
+		if (count <= 1)
 		{
-			standardIdentity = "23";
+			amplifier = "11";
 		}
-		if (this.owner.isEnemy())
+		else if (count <= 2)
 		{
-			standardIdentity = "26";
+			amplifier = "12";
 		}
-		if (this.owner.isIndependent())
+		else if (count <= 4)
 		{
-			standardIdentity = "24";
+			amplifier = "13";
 		}
-		/*if (this.owner.isCivil())
+		else if (count <= 6)
 		{
-			standardIdentity = "24";
-		}*/
-		let symbolSet = "10";//TODO missiles, air
-		let status = "0";//TODO 3=damaged, 4=destroyed
-		let hqtfDummy = "0";
-		let amplifier = "11";
-		if (this.representation.type == "Infantry")
-		{
-			let count = this.units.length;
-			if (count <= 1)
-			{
-				amplifier = "11";
-			}
-			else if (count <= 2)
-			{
-				amplifier = "12";
-			}
-			else if (count <= 4)
-			{
-				amplifier = "13";
-			}
-			else if (count <= 6)
-			{
-				amplifier = "14";
-			}
-			else if (count <= 9)
-			{
-				amplifier = "15";
-			}
-			else if (count <= 14)
-			{
-				amplifier = "16";
-			}
-			else if (count <= 21)
-			{
-				amplifier = "17";
-			}
-			else if (count <= 32)
-			{
-				amplifier = "18";
-			}
-			else if (count <= 48)
-			{
-				amplifier = "21";
-			}
-			else if (count <= 72)
-			{
-				amplifier = "22";
-			}
-			else if (count <= 108)
-			{
-				amplifier = "23";
-			}
-			else if (count <= 162)
-			{
-				amplifier = "24";
-			}
-			else// if (count <= 243)
-			{
-				amplifier = "25";
-			}
+			amplifier = "14";
 		}
-		else
+		else if (count <= 9)
 		{
-			let count = this.units.length;
-			if (count == 1)
-			{
-				amplifier = "11";
-			}
-			else if (count == 2)
-			{
-				amplifier = "12";
-			}
-			else if (count == 3)
-			{
-				amplifier = "13";
-			}
-			else if (count == 4)
-			{
-				amplifier = "14";
-			}
-			else if (count == 5)
-			{
-				amplifier = "15";
-			}
-			else if (count == 6)
-			{
-				amplifier = "16";
-			}
-			else if (count == 7)
-			{
-				amplifier = "17";
-			}
-			else if (count == 8)
-			{
-				amplifier = "18";
-			}
+			amplifier = "15";
 		}
-		let entity = "12";
-		let entityType = "11";
-		if (this.representation.type == "Infantry")
+		else if (count <= 14)
 		{
-			entityType = "11";
+			amplifier = "16";
 		}
-		let entitySuptype = "00";
-		let modifier1 = "00";
-		if (this.representation.c2 == 1)
+		else if (count <= 21)
 		{
-			modifier1 = "10";
+			amplifier = "17";
 		}
-		let modifier2 = "00";
-		let altitude = "";
-		if (this.altitude != 0)
+		else if (count <= 32)
 		{
-			altitude = ""+this.altitude;
+			amplifier = "18";
 		}
-		let type = "";//TODO set to transported units name
-		let direction = undefined;
-		if (this.dir != -1)
+		else if (count <= 48)
 		{
-			direction = this.dir;
+			amplifier = "21";
 		}
-		let commonIdentifier = this.name;
-		let staffComments = "";
-		if (Date.now() - this.lastShot <= 1000)
+		else if (count <= 72)
 		{
-			staffComments = "Fighting";
+			amplifier = "22";
 		}
-		let num = version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2;
-		return new ms.Symbol(num,{size:30,colorMode:"Light",staffComments:staffComments,commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.price),headquartersElement:this.owner.name,type:type});
+		else if (count <= 108)
+		{
+			amplifier = "23";
+		}
+		else if (count <= 162)
+		{
+			amplifier = "24";
+		}
+		else// if (count <= 243)
+		{
+			amplifier = "25";
+		}
 	}
+	else
+	{
+		let count = this.units.length;
+		if (count == 1)
+		{
+			amplifier = "11";
+		}
+		else if (count == 2)
+		{
+			amplifier = "12";
+		}
+		else if (count == 3)
+		{
+			amplifier = "13";
+		}
+		else if (count == 4)
+		{
+			amplifier = "14";
+		}
+		else if (count == 5)
+		{
+			amplifier = "15";
+		}
+		else if (count == 6)
+		{
+			amplifier = "16";
+		}
+		else if (count == 7)
+		{
+			amplifier = "17";
+		}
+		else if (count == 8)
+		{
+			amplifier = "18";
+		}
+	}
+	let entity = "12";
+	let entityType = "11";
+	if (this.representation.type == "Infantry")
+	{
+		entityType = "11";
+	}
+	let entitySuptype = "00";
+	let modifier1 = "00";
+	if (this.representation.c2 == 1)
+	{
+		modifier1 = "10";
+	}
+	let modifier2 = "00";
+	let altitude = "";
+	if (this.altitude != 0)
+	{
+		altitude = ""+this.altitude;
+	}
+	let type = "";//TODO set to transported units name
+	let direction = undefined;
+	if (this.dir != -1)
+	{
+		direction = this.dir;
+	}
+	let commonIdentifier = this.name;
+	let staffComments = "";
+	if (Date.now() - this.lastShot <= 1000)
+	{
+		staffComments = "Fighting";
+	}
+	let num = version+standardIdentity+symbolSet+status+hqtfDummy+amplifier+entity+entityType+entitySuptype+modifier1+modifier2;
+	return new ms.Symbol(num,{size:30,colorMode:"Light",staffComments:staffComments,commonIdentifier:commonIdentifier,altitudeDepth:altitude,direction:direction,speed:""+(Math.round(this.representation.speed*10)/10),combatEffectiveness:""+Math.round(this.representation.price),headquartersElement:this.owner.name,type:type});
 };
 Group.prototype.redraw = function()
 {
