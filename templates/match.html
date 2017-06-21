@@ -1002,13 +1002,20 @@
 			}
 			function handleKeyDown(e)
 			{
-				if (e.keyCode == 16)
+				if (e.keyCode == 16)//shift
 				{
 					shift = true;
 				}
-				if (e.keyCode == 17)
+				if (e.keyCode == 17)//ctrl
 				{
 					ctrl = true;
+				}
+				if (e.keyCode == 72)//h
+				{
+					for (let group of selectedGroups)
+					{
+						group.shootIfPossible = !group.shootIfPossible;
+					}
 				}
 				if (player.phase == 0)
 				{
@@ -1345,18 +1352,21 @@ let t0 = performance.now();
 					let group = player.groups[objectID];
 					if (group instanceof Group)
 					{
-						for (let target of group.spots)//TODO list allTargets, select target
+						if (group.shootIfPossible)
 						{
-							let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
-							let dstLatLon = new LatLon(target.pos[0], target.pos[1]);
-							let distance = srcLatLon.distanceTo(dstLatLon);
-							for (let unit of group.units)
+							for (let target of group.spots)//TODO list allTargets, select target
 							{
-								for (let weapon of unit.weapons)
+								let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
+								let dstLatLon = new LatLon(target.pos[0], target.pos[1]);
+								let distance = srcLatLon.distanceTo(dstLatLon);
+								for (let unit of group.units)
 								{
-									if (distance < weapon.dbWeapon.range)
+									for (let weapon of unit.weapons)
 									{
-										weapon.use(group, target, 1000/fps);
+										if (distance < weapon.dbWeapon.range)
+										{
+											weapon.use(group, target, 1000/fps);
+										}
 									}
 								}
 							}
