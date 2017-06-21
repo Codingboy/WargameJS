@@ -41,7 +41,7 @@ function Group(owner, pos, id)
 	{
 		this.opacity = invisibleEnemyOpacity;
 	}
-	this.shootIfPossible = True;
+	this.shootIfPossible = true;
 }
 Group.prototype.updateRepresentation = function()
 {
