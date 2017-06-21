@@ -1339,11 +1339,13 @@ let t0 = performance.now();
 					}
 				}
 				
+				//fight
 				for (let objectID of Object.keys(player.groups))
 				{
 					let group = player.groups[objectID];
 					if (group instanceof Group)
 					{
+						console.log(group.spots);
 						for (let target of group.spots)//TODO list allTargets, select target
 						{
 							let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
@@ -1394,7 +1396,7 @@ let t0 = performance.now();
 					{
 						if (group.lastShot > 0 && now - group.lastShot > 1000)
 						{
-							group.lastShot = 0;//TODO needs to be broadcasted
+							group.lastShot = 0;
 							group.needsRedraw = true;
 						}
 						if (group.needsRedraw)
