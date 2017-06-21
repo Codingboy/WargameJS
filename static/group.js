@@ -45,7 +45,99 @@ function Group(owner, pos, id)
 Group.prototype.updateRepresentation = function()
 {
 	this.needsRedraw = true;
-	//TODO
+	/*TODO other values
+	opticsIR = 0;//range the IR optic is working with in meter
+	opticsIRQuality = 0;//counters enemy camouflageIR
+	camouflageIR = 0.0;//percentage of IR invisibillity
+	radarAir = 0;//range of airradar
+	radarAirQuality = 0;//counters enemy camouflageRadar
+	radarWeapon = 0;//range of weapon tracking radar
+	camouflageRadar = 0.0;//percentage of radar invisibillity
+	ecm = 0;//range of ecm to suppress radars
+	ecmChance = 0;//successrate of ecm
+	ircmChance = 0;//successrate of ircm
+	flares = 0;//number of carried flares
+	flareChance = 0;//successrate of flares
+	chaffs = 0;//number of carried chaffs
+	chaffChance = 0;//successrate of chaffs
+	smoke = 0;//number of carried smoke
+	smokeChance = 0;//successrate of smoke
+	radio = 2000;//range of radio in meter
+	radioJammer = 0;//range of radioJammer
+	radioJammerChance = 0;//successrate of radioJammer
+	fuel = 0;//size of fueltank in liter
+	lads = 0;//range of lads
+	ladsChance = 0;//successrate of lads
+	mineDetection = 0;//range of the minedetector in meter
+	mineDetectionChance = 0;//successrate of mineDetection
+	transportWeight = 0;//kg that can be transported
+	resupplyFuel = 0;//liters of fuel
+	resupplyAmmo = 0;//kg of ammo
+	resupplyRepair = 0;//kg of repair
+	resupplyMedical = 0;//hp of medical
+	plateCarrier = 1;//unit wears platecarrier
+	armourFront = 0;//armour in mm
+	armourSide = 0;
+	armourBack = 0;
+	armourTop = 0;
+	armourBottom = 0;
+	armourType1 = "";//type of primary armour
+	armourType2 = "";//type of secondary, outer armour
+	weight = 100;//weight of the unit including weapon
+	fuelConsumption = 0;//fuelconsumption per hour
+	weapons = [];//weaponnames,
+	stabilisatorQuality = 0.0;//TODO
+	courage = 0.0;//TODO
+	health = 1;*/
+	this.representation = new DBUnit();
+	this.representation.size = 0;
+	this.representation.c2 = 0;
+	this.representation.sound = 0;
+	this.representation.speed = Number.MAX_SAFE_INTEGER;
+	this.representation.optics = 0;
+	this.representation.opticsQuality = 0;
+	this.representation.camouflage = 1;
+	this.representation.price = 0;
+	for (let unit of this.units)
+	{
+		let dbUnit = unit.dbUnit;
+		if (this.representation.name == "")
+		{
+			this.representation.name = dbUnit.name;
+		}
+		if (unit.size > this.representation.size)
+		{
+			this.representation.size = unit.size;
+		}
+		this.representation.type = unit.type;
+		if (unit.c2 > this.representation.c2)
+		{
+			this.representation.c2 = unit.c2;
+		}
+		if (unit.sound > this.representation.sound)
+		{
+			this.representation.sound = unit.sound;
+		}
+		
+		if (unit.speed < this.representation.speed)
+		{
+			this.representation.speed = unit.speed;
+		}
+		if (unit.optics > this.representation.optics)
+		{
+			this.representation.optics = unit.optics;
+		}
+		if (unit.opticsQuality > this.representation.opticsQuality)//TODO needs to be same unit as optic
+		{
+			this.representation.opticsQuality = unit.opticsQuality;
+		}
+		
+		if (unit.camouflage < this.representation.camouflage)
+		{
+			this.representation.camouflage = unit.camouflage;
+		}
+		this.representation.price += unit.price;
+	}
 }
 Group.prototype.addUnit = function(unit)
 {
@@ -54,15 +146,7 @@ Group.prototype.addUnit = function(unit)
 	{
 		this.name = unit.dbUnit.name;
 	}
-	this.needsRedraw = true;
-	if (!this.representation)
-	{
-		this.representation = JSON.parse(JSON.stringify(unit.dbUnit));
-	}
-	else
-	{
-		this.representation.price += unit.dbUnit.price;//TODO other values
-	}
+	this.updateRepresentation();
 };
 Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 {
