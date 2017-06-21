@@ -1345,7 +1345,6 @@ let t0 = performance.now();
 					let group = player.groups[objectID];
 					if (group instanceof Group)
 					{
-						console.log(group.spots);
 						for (let target of group.spots)//TODO list allTargets, select target
 						{
 							let srcLatLon = new LatLon(group.pos[0], group.pos[1]);
