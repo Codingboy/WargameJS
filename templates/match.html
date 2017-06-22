@@ -343,6 +343,19 @@
 						let group = allObjects[id];
 						group.waypoints = [waypoint];
 					}
+					else if (messageType == "suppress")
+					{
+						let targetGroupID = messageData.targetGroupID;
+						let weaponID = messageData.weaponID;//TODO statistic
+						let suppression = messageData.suppression;
+						let targetGroup = allObjects[targetGroupID];
+						suppression += targetGroup.suppressed;
+						if (suppression > 1)
+						{
+							suppression = 1;
+						}
+						targetGroup.suppressed = suppression;
+					}
 					else if (messageType == "dealDamage")
 					{
 						let unitID = messageData.unitID;
@@ -1380,6 +1393,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
+						group.suppressed *= 0.99;
 					}
 				}
 				for (let objectID of Object.keys(allyGroups))
@@ -1396,6 +1410,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
+						group.suppressed *= 0.99;
 					}
 				}
 				for (let objectID of Object.keys(hostileGroups))
@@ -1412,6 +1427,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
+						group.suppressed *= 0.99;
 					}
 				}
 				if (messages.length > 0)

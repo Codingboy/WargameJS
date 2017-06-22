@@ -11,11 +11,6 @@ function Weapon(dbWeapon, id)
 Weapon.prototype.dealDamage = function(group, hits)
 {
 	//TODO minimize traffic for fast firing on large groups
-	let buildingModificator = 1.0;
-	if (group.building)
-	{
-		buildingModificator = 0.5;
-	}
 	for (let i=0; i<hits; i++)
 	{
 		let index = Math.floor(Math.random() * group.units.length);
@@ -44,7 +39,7 @@ Weapon.prototype.dealDamage = function(group, hits)
 				damageFactor = 0.5;
 			}
 		}
-		damage *= damageFactor*buildingModificator;
+		damage *= damageFactor;
 		let json = {
 			type: "dealDamage",
 			data: {
@@ -76,17 +71,45 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 	let hits = 0;
 	myGroup.lastShot = Date.now();
 	myGroup.needsRedraw = true;
+	let suppression = 0;
 	for (let i=0; i<shots; i++)
 	{
-		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed));
+		let movingModificator = 1.0;
+		if (group.moved)
+		{
+			movingModificator = 2.0;//TODO use stabilisator
+		}
+		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed)*movingModificator);
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
-		let area = radius*radius*Math.PI*(0.5+(1-group.suppressed)*0.5);
-		console.log(rnd+" "+area+" "+group.representation.size);
-		if (area <= group.representation.size)//TODO use cover, not moving
+		let area = radius*radius*Math.PI;
+		let buildingModificator = 1.0;
+		if (group.building)
+		{
+			buildingModificator = 0.5;
+		}
+		let targetSize = group.representation.size*buildingModificator;
+		if (area <= targetSize)
 		{
 			hits += 1;
 		}
+		if (area <= 2*targetSize)//TODO adjust targetsize for suppression
+		{
+			suppression += (1-(area/2*targetSize))*this.dbWeapon.damage*0.1;//TODO adjust
+		}
 	};
+	if (suppression > 0)
+	{
+		let json = {
+			type: "suppress",
+			data: {
+				targetGroupID: group.id,
+				weaponID: this.id,
+				suppression: suppression
+			}
+		};
+		console.log(json);
+		messages.push(json);
+	}
 	if (hits > 0)
 	{
 		this.dealDamage(group, hits);

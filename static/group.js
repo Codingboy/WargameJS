@@ -110,10 +110,6 @@ Group.prototype.updateRepresentation = function()
 		{
 			this.representation.type = dbUnit.type;
 		}
-		if (dbUnit.size > this.representation.size)
-		{
-			this.representation.size = dbUnit.size;
-		}
 		if (dbUnit.c2 > this.representation.c2)
 		{
 			this.representation.c2 = dbUnit.c2;
@@ -122,7 +118,6 @@ Group.prototype.updateRepresentation = function()
 		{
 			this.representation.sound = dbUnit.sound;
 		}
-		
 		if (dbUnit.speed < this.representation.speed)
 		{
 			this.representation.speed = dbUnit.speed;
@@ -135,12 +130,12 @@ Group.prototype.updateRepresentation = function()
 		{
 			this.representation.opticsQuality = dbUnit.opticsQuality;
 		}
-		
 		if (dbUnit.camouflage < this.representation.camouflage)
 		{
 			this.representation.camouflage = dbUnit.camouflage;
 		}
 		this.representation.price += dbUnit.price;
+		this.representation.size += dbUnit.size;
 	}
 	this.needsRedraw = true;
 }
