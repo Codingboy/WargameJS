@@ -92,9 +92,9 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		{
 			hits += 1;
 		}
-		if (area <= 2*targetSize)//TODO adjust targetsize for suppression
+		if (area <= 5*targetSize)//TODO adjust targetsize for suppression
 		{
-			suppression += (1-(area/2*targetSize))*this.dbWeapon.damage*0.1;//TODO adjust
+			suppression += (1-(area/5*targetSize))*this.dbWeapon.damage*0.1;//TODO adjust
 		}
 	};
 	if (suppression > 0)
