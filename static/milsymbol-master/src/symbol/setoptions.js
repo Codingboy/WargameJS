@@ -28,11 +28,30 @@ module.exports = function(options) {
     if (!ms._symbolParts.hasOwnProperty(i)) continue;
     var m = ms._symbolParts[i].call(this);
     if (!m.pre) continue;
-    if (m.pre.length) this.drawInstructions.unshift(m.pre);
-    if (m.post.length) this.drawInstructions.push(m.post);
+    if (m.pre.length > 0) {
+      while (m.pre.length == 1) {
+        m.pre = m.pre[0];
+      }
+      if (m.pre.length != 0) {
+        this.drawInstructions = [].concat(m.pre, this.drawInstructions);
+      }
+    }
+    if (m.post.length > 0) {
+      while (m.post.length == 1) {
+        m.post = m.post[0];
+      }
+      if (m.post.length != 0) {
+        this.drawInstructions = this.drawInstructions.concat(m.post);
+      }
+    }
     if (m.bbox) this.bbox.merge(m.bbox);
   }
-
+  if (ms._debug) {
+    //This is a debug function we can turn on to see if symbol parts are missing
+    if (JSON.stringify(this.drawInstructions).indexOf("null") != -1) {
+      console.warn("Error in: " + this.SIDC);
+    }
+  }
   this.baseWidth =
     this.bbox.width() +
     Number(this.strokeWidth * 2) +

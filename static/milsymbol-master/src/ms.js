@@ -50,7 +50,7 @@ var ms = new function() {
   this._symbolParts = [];
 
   this.autoSVG = false;
-  this.version = "1.1.0";
+  this.version = "1.2.1";
 
   if (typeof console === "object") {
     console.info(
@@ -201,7 +201,7 @@ ms.setSymbolParts = function(parts) {
   return ms;
 };
 ms.setStandard = require("./ms/setstandard.js");
-
+/*
 // For backward compability
 ms.addMarkerParts = function(part) {
   console.warn(
@@ -290,5 +290,5 @@ ms.setMarkerParts = function(parts) {
   ms.setSymbolParts(parts);
   return ms;
 };
-
+*/
 module.exports = ms;

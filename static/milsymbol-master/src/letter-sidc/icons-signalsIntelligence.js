@@ -1,4 +1,5 @@
-//var ms = require("../ms.js");
+var ms = require("../ms.js");
+ms.addIconParts(require("../iconparts/signals-intelligence.js"));
 
 module.exports = function signalsIntelligence(sId, bbox, icn, _STD2525) {
   //Adds support for 2525C Signals Intelligence
@@ -438,7 +439,7 @@ module.exports = function signalsIntelligence(sId, bbox, icn, _STD2525) {
   sId["I-U-SRE---"] = [
     icn["SI.IC.RADAR"],
     icn["SI.M1.ECHO"],
-    icn["SI.M2.WHISKY"]
+    icn["SI.M2.WHISKEY"]
   ];
   sId["I-U-SRM---"] = [
     icn["SI.IC.RADAR"],

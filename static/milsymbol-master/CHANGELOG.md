@@ -1,6 +1,24 @@
 # Change Log
 
-## Master branch
+## 1.2.1 12 JUN 2017
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Altitude/Depth was sometimes not labeled on 2525D symbols
+
+- Typo in Changelog
+
+### Security
+
+## 1.2.0 11 JUN 2017
 
 ### Added
 
@@ -18,9 +36,15 @@
 
 ### Removed
 
+- Removed all methods that was deprecated in milsymbol 1.0.0
+
 ### Fixed
 
 - The quantiy field would be cut if the content was wider than the symbol, this is now fixed so that the symbol size adopts to to width of the quantity field.
+
+- Fixed Land Unit M1 10 command and control that was displayed in as a Y instead of C2.
+
+- Some modifiers on Signals Intelligence symbols in 2525C was incorrect
 
 ### Security
 

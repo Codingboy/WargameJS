@@ -238,7 +238,7 @@ module.exports = function icon() {
       var mainIcon = icons[this.properties.functionid.substr(0, 6)]; //Main symbol
 
       if (typeof mainIcon === "undefined") {
-        //We have some sepcial entity subtype and will try to find original symbol.
+        //We have some special entity subtype and will try to find original symbol.
         mainIcon = icons[this.properties.functionid.substr(0, 4) + "00"];
       }
 
@@ -271,17 +271,19 @@ module.exports = function icon() {
       if (this.properties.functionid.substr(4, 2) == "98")
         drawArray2.push(iconParts["GR.IC.FF.THEATRE SUPPORT"]);
       //Modifier 1
-      drawArray2.push(
-        this.properties.functionid.substr(6, 2) != "00"
-          ? m1[this.properties.functionid.substr(6, 2)]
-          : []
-      );
+      var modifier1 = this.properties.functionid.substr(6, 2) != "00"
+        ? m1[this.properties.functionid.substr(6, 2)] || []
+        : [];
+      if (modifier1.length) {
+        drawArray2.push(modifier1);
+      }
       //Modifier 2
-      drawArray2.push(
-        this.properties.functionid.substr(8, 2) != "00"
-          ? m2[this.properties.functionid.substr(8, 2)]
-          : []
-      );
+      var modifier2 = this.properties.functionid.substr(8, 2) != "00"
+        ? m2[this.properties.functionid.substr(8, 2)] || []
+        : [];
+      if (modifier2.length) {
+        drawArray2.push(modifier2);
+      }
     } else {
       //Letter based SIDC
       var genericSIDC =
@@ -298,7 +300,7 @@ module.exports = function icon() {
         ) {
           drawArray2.push(undefinedIcon);
           this._validIcon = false;
-          //console.log('Invalid icon code in SIDC: ' + this.SIDC);
+          //console.log("Invalid icon code in SIDC: " + this.SIDC);
         }
       }
       if (specialbbox[genericSIDC]) {
