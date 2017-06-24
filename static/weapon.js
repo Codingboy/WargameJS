@@ -156,6 +156,7 @@ Weapon.prototype.use = function(myGroup, group, timeAvailable)
 		else
 		{
 			let timePerShot = 1000*this.dbWeapon.rpm/60;
+			timePerShot = (1000*60)/(this.dbWeapon.rpm);
 			let shots = Math.floor(timeAvailable/timePerShot);
 			if (shots == 0)
 			{
