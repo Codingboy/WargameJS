@@ -79,7 +79,7 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		{
 			movingModificator = 2.0;//TODO use stabilisator
 		}
-		console.log("suppression:"+str(myGroup.suppressed));
+		console.log("suppression:"+myGroup.suppressed);
 		console.log(this.dbWeapon.inaccuracy*(1+myGroup.suppressed)*movingModificator);
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed)*movingModificator);
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
