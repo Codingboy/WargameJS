@@ -79,6 +79,8 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		{
 			movingModificator = 2.0;//TODO use stabilisator
 		}
+		console.log("suppression:"+str(myGroup.suppressed));
+		console.log(this.dbWeapon.inaccuracy*(1+myGroup.suppressed)*movingModificator);
 		let rnd = Math.random()*(this.dbWeapon.inaccuracy*(1+myGroup.suppressed)*movingModificator);
 		let radius = (distance*Math.sin(rnd))/(Math.sin(90-rnd));
 		let area = radius*radius*Math.PI;
@@ -94,9 +96,6 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		}
 		if (area <= 5*targetSize)//TODO adjust targetsize for suppression
 		{
-			console.log("should be suppressed");
-			console.log((1-(area/(5*targetSize))));
-			console.log(((area/(5*targetSize))));
 			suppression += (1-(area/(5*targetSize)))*this.dbWeapon.damage*0.1;//TODO adjust
 		}
 	};
