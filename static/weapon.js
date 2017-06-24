@@ -94,6 +94,7 @@ Weapon.prototype.shoot = function(myGroup, group, shots)
 		}
 		if (area <= 5*targetSize)//TODO adjust targetsize for suppression
 		{
+			console.log("should be suppressed");
 			suppression += (1-(area/5*targetSize))*this.dbWeapon.damage*0.1;//TODO adjust
 		}
 	};
