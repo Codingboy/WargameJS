@@ -14,7 +14,7 @@ function Group(owner, pos, id)
 	this.altitude = 0;
 	this.dir = -1;
 	this.moved = false;
-	this.waypoints = [];
+	this.orders = [];
 	this.needsRedraw = false;
 	this.name = "";
 	this.opacity = 1;
@@ -379,7 +379,7 @@ Group.prototype.handleDetection = function(group)
 	let optics = this.representation.optics;
 	if (group.building)
 	{
-		optics = optics * 0.5;
+		optics = optics * 0.25;
 	}
 	optics = optics*(1-camouflage);
 	if (optics >= distance)

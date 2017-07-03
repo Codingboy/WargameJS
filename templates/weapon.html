@@ -211,6 +211,25 @@
 					setValues("criticalHitChance", "0.0", "0.01", "0.1", "0.01");
 					setValues("suppressed", "0.0", "0.0", "0.5", "0.01");
 				}
+				if (type == "SniperRifle")
+				{
+					hideAll();
+					show(["suppressedBlock","criticalHitChanceBlock","damageTypeAP","damageTypeFMJ","typeBlock","damageTypeBlock","rpmBlock","magazineSizeBlock","magazinesBlock","reloadTimeBlock","damageBlock","rangeBlock"]);
+					document.getElementById("guideType").value = "Unguided";
+					document.getElementById("lockChance").value = "0";
+					document.getElementById("damageRadius").value = "0";
+					document.getElementById("speed").value = "0";
+					document.getElementById("damageType").value = "FMJ";
+					
+					setValues("rpm", "1", "10", "20", "1");
+					setValues("magazineSize", "50", "100", "200", "1");
+					setValues("magazines", "1", "5", "10", "1");
+					setValues("reloadTime", "2", "5", "5", "0.1");
+					setValues("range", "600", "1000", "2000", "1");
+					setValues("damage", "0.1", "0.5", "1.0", "0.1");
+					setValues("criticalHitChance", "0.0", "0.01", "0.1", "0.01");
+					setValues("suppressed", "0.0", "0.0", "0.5", "0.01");
+				}
 				recalc();
 			}
 			function setGuideType()
@@ -254,10 +273,29 @@
 					let reloadTime = document.getElementById("reloadTime").value;
 					let criticalHitChance = document.getElementById("criticalHitChance").value;
 					let suppressed = document.getElementById("suppressed").value;
-					let inaccuracy = Math.pow(rpm/1200, 2)+0.1;
+					let inaccuracy = Math.pow(rpm/1200, 2)+0.04;
 					let sound = range*1.5*(1-suppressed);
-					let price = 4000.0*damage*(rpm/120.0)	 +	 magazines*(100.0*(magazineSize/100.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0  +  Math.pow(criticalHitChance*100,2)*250  +  suppressed*2000;
+					let price = 8000.0*damage*(rpm/120.0)	 +	 magazines*(100.0*(magazineSize/100.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/800)*1.0  +  Math.pow(criticalHitChance*100,2)*250  +  suppressed*2000;
 					let weight = 5 + magazines*(magazineSize*0.140/30)+magazineSize*magazines*damage*(range/800)*0.025;
+					document.getElementById("inaccuracy").value = inaccuracy;
+					document.getElementById("price").value = price;
+					document.getElementById("weight").value = weight;
+					document.getElementById("sound").value = sound;
+				}
+				if (type == "SniperRifle")
+				{
+					let rpm = document.getElementById("rpm").value;
+					let magazineSize = document.getElementById("magazineSize").value;
+					let magazines = document.getElementById("magazines").value;
+					let range = document.getElementById("range").value;
+					let damage = document.getElementById("damage").value;
+					let reloadTime = document.getElementById("reloadTime").value;
+					let criticalHitChance = document.getElementById("criticalHitChance").value;
+					let suppressed = document.getElementById("suppressed").value;
+					let inaccuracy = Math.pow(rpm/240, 2)+0.001;
+					let sound = range*1.5*(1-suppressed);
+					let price = 10000.0*damage*(rpm/10.0)	 +	 magazines*(10.0*(magazineSize/10.0))*(5.0/reloadTime)	 +	 magazineSize*magazines*damage*(range/1000)*1.0  +  Math.pow(criticalHitChance*100,2)*250  +  suppressed*2000;
+					let weight = 4 + magazines*(magazineSize*0.140/30)+magazineSize*magazines*damage*(range/1000)*0.025;
 					document.getElementById("inaccuracy").value = inaccuracy;
 					document.getElementById("price").value = price;
 					document.getElementById("weight").value = weight;

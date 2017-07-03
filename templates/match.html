@@ -329,19 +329,19 @@
 							weapon.magazinesLeft -= 1;
 						}
 					}
-					else if (messageType == "addWaypoint")
+					else if (messageType == "addOrder")
 					{
 						let id = messageData.id;
-						let waypoint = messageData.waypoint;
+						let order = messageData.order;
 						let group = allObjects[id];
-						group.waypoints.push(waypoint);
+						group.orders.push(order);
 					}
-					else if (messageType == "setWaypoint")
+					else if (messageType == "setOrder")
 					{
 						let id = messageData.id;
-						let waypoint = messageData.waypoint;
+						let order = messageData.order;
 						let group = allObjects[id];
-						group.waypoints = [waypoint];
+						group.orders = [order];
 					}
 					else if (messageType == "suppress")
 					{
@@ -673,10 +673,13 @@
 					if (shift)
 					{
 						let json = {
-							type: "addWaypoint",
+							type: "addOrder",
 							data: {
 								id: group.id,
-								waypoint: latlon
+								order: {
+									type: "move",
+									waypoint: latlon
+								}
 							}
 						};
 						console.log(json);
@@ -685,10 +688,13 @@
 					else
 					{
 						let json = {
-							type: "setWaypoint",
+							type: "setOrder",
 							data: {
 								id: group.id,
-								waypoint: latlon
+								order: {
+									type: "move",
+									waypoint: latlon
+								}
 							}
 						};
 						console.log(json);
@@ -1232,52 +1238,60 @@ let t0 = performance.now();
 						let group = allObjects[objectID];
 						if (group instanceof Group)
 						{
-							if (group.waypoints.length > 0)
+							if (group.orders.length > 0)
 							{
-								let src = group.pos;
-								let dst = group.waypoints[0];
-								let minMoveDistance = group.representation.speed/(3.6*fps);
-								let srcLatLon = new LatLon(src[0], src[1]);
-								let dstLatLon = new LatLon(dst[0], dst[1]);
-								let distance = srcLatLon.distanceTo(dstLatLon);
-								if (distance < minMoveDistance)
+								let order = group.orders[0];
+								if (order.type == "move")
 								{
-									group.waypoints.shift();
-									group.dir = -1;
-									group.setPos(dst);
-									group.needsRedraw = true;
-								}
-								else
-								{
-									let bearing = srcLatLon.finalBearingTo(dstLatLon);
-									let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
-									bearing = (360-bearing+90)%360;
-									if (Math.round(group.dir) != Math.round(bearing))
+									let src = group.pos;
+									let dst = order.waypoint;
+									let minMoveDistance = group.representation.speed/(3.6*fps);
+									let srcLatLon = new LatLon(src[0], src[1]);
+									let dstLatLon = new LatLon(dst[0], dst[1]);
+									let distance = srcLatLon.distanceTo(dstLatLon);
+									if (distance < minMoveDistance)
 									{
-										group.dir = bearing;
+										group.orders.shift();
+										group.dir = -1;
+										group.setPos(dst);
 										group.needsRedraw = true;
 									}
-									group.setPos([destination.lat, destination.lon]);
-								}
-								group.moved = true;
-								let factor = 100;
-								let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
-								if (pos[0] in buildings)
-								{
-									let buildingsX = buildings[pos[0]];
-									if (pos[1] in buildingsX)
+									else
 									{
-										let buildingsY = buildingsX[pos[1]];
-										let intersected = false;
-										for (let feature of buildingsY)
+										let bearing = srcLatLon.finalBearingTo(dstLatLon);
+										let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+										bearing = (360-bearing+90)%360;
+										if (Math.round(group.dir) != Math.round(bearing))
 										{
-											if (turf.inside(group.pos, feature.get("polygon")))
+											group.dir = bearing;
+											group.needsRedraw = true;
+										}
+										group.setPos([destination.lat, destination.lon]);
+									}
+									group.moved = true;
+									let factor = 100;
+									let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
+									if (pos[0] in buildings)
+									{
+										let buildingsX = buildings[pos[0]];
+										if (pos[1] in buildingsX)
+										{
+											let buildingsY = buildingsX[pos[1]];
+											let intersected = false;
+											for (let feature of buildingsY)
 											{
-												group.building = feature.get("polygon");
-												intersected = true;
+												if (turf.inside(group.pos, feature.get("polygon")))
+												{
+													group.building = feature.get("polygon");
+													intersected = true;
+												}
+											}
+											if (!intersected)
+											{
+												group.building = null;
 											}
 										}
-										if (!intersected)
+										else
 										{
 											group.building = null;
 										}
@@ -1289,6 +1303,7 @@ let t0 = performance.now();
 								}
 								else
 								{
+									group.moved = false;
 									group.building = null;
 								}
 							}
@@ -1393,7 +1408,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= 0.99;
+						group.suppressed *= (0.98+0.0199*(1-group.courage));
 					}
 				}
 				for (let objectID of Object.keys(allyGroups))
@@ -1410,7 +1425,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= 0.99;
+						group.suppressed *= (0.98+0.0199*(1-group.courage));
 					}
 				}
 				for (let objectID of Object.keys(hostileGroups))
@@ -1427,7 +1442,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= 0.99;
+						group.suppressed *= (0.98+0.0199*(1-group.courage));
 					}
 				}
 				if (messages.length > 0)
