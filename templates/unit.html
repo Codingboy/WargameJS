@@ -77,16 +77,16 @@
 					<input type="number" name="flares" id="flares" onchange="recalc()"/><br/>
 				</div>
 				<div class="form-group" id="flareChanceBlock">
-					<label for="flareChance">FlareChance</label>
-					<input type="number" name="flareChance" id="flareChance" onchange="recalc()"/><br/>
+					<label for="flaresChance">FlaresChance</label>
+					<input type="number" name="flaresChance" id="flaresChance" onchange="recalc()"/><br/>
 				</div>
 				<div class="form-group" id="chaffsBlock">
 					<label for="chaffs">Chaffs</label>
 					<input type="number" name="chaffs" id="chaffs" onchange="recalc()"/><br/>
 				</div>
-				<div class="form-group" id="chaffChanceBlock">
-					<label for="chaffChance">ChaffChance</label>
-					<input type="number" name="chaffChance" id="chaffChance" onchange="recalc()"/><br/>
+				<div class="form-group" id="chaffsChanceBlock">
+					<label for="chaffsChance">ChaffsChance</label>
+					<input type="number" name="chaffsChance" id="chaffsChance" onchange="recalc()"/><br/>
 				</div>
 				<div class="form-group" id="smokeBlock">
 					<label for="smoke">Smoke</label>
@@ -443,23 +443,23 @@
 					setValues("resupplyMedical", "0", "0", "10", "1");
 					setValues("plateCarrier", "0", "1", "1", "1");
 					setValues("courage", "0", "0", "0.75", "0.01");
-					setValues("opticsIR", "400", "2500", "5000", "1");
+					setValues("opticsIR", "0", "2500", "5000", "1");
 					setValues("opticsIRQuality", "0", "0", "0.75", "0.01");
 					setValues("camouflageIR", "0", "0", "0.5", "0.01");
 					setValues("camouflageRadar", "0", "0", "0.75", "0.01");
 					setValues("ecm", "0", "0", "2000", "1");
 					setValues("ecmChance", "0", "0", "0.5", "0.01");
 					setValues("ircmChance", "0", "0", "0.5", "0.01");
-					setValues("flare", "0", "50", "100", "1");
-					setValues("flareChance", "0.01", "0.1", "0.5", "0.01");
-					setValues("chaff", "0", "50", "100", "1");
-					setValues("chaffChance", "0.01", "0.1", "0.5", "0.01");
+					setValues("flares", "0", "50", "100", "1");
+					setValues("flaresChance", "0.01", "0.1", "0.5", "0.01");
+					setValues("chaffs", "0", "50", "100", "1");
+					setValues("chaffsChance", "0.01", "0.1", "0.5", "0.01");
 					setValues("fuel", "100", "1500", "2500", "1");
-					setValues("transportWeight", "400", "1000", "2000", "1");//TODO
+					setValues("transportWeight", "0", "1000", "2000", "1");//TODO
 					setValues("resupplyFuel", "0", "0", "2500", "1");
 					setValues("resupplyAmmo", "0", "0", "2500", "1");//TODO
 					setValues("resupplyRepair", "0", "0", "2500", "1");//TODO
-					setValues("fuelConsumption", "400", "1000", "2000", "1");//TODO
+					setValues("fuelConsumption", "1", "10", "50", "0.1");//TODO
 					
 					listWeapons(function(weapons)
 					{
@@ -563,10 +563,10 @@
 					let ecm = document.getElementById("ecm").value;
 					let ecmChance = document.getElementById("ecmChance").value;
 					let ircmChance = document.getElementById("ircmChance").value;
-					let flare = document.getElementById("flare").value;
-					let flareChance = document.getElementById("flareChance").value;
-					let chaff = document.getElementById("chaff").value;
-					let chaffChance = document.getElementById("chaffChance").value;
+					let flares = document.getElementById("flares").value;
+					let flaresChance = document.getElementById("flaresChance").value;
+					let chaffs = document.getElementById("chaff").value;
+					let chaffsChance = document.getElementById("chaffChance").value;
 					let fuel = document.getElementById("fuel").value;
 					let transportWeight = document.getElementById("transportWeight").value;
 					let prices = {};
@@ -646,7 +646,6 @@
 								document.getElementById("weight").value = weight;
 								document.getElementById("size").value = weight/1000;
 								document.getElementById("health").value = 1;
-								document.getElementById("fuelConsumption").value = 1;
 							}
 						};
 					}
@@ -665,7 +664,6 @@
 						document.getElementById("weight").value = weight;
 						document.getElementById("size").value = 1;
 						document.getElementById("health").value = 1;
-						document.getElementById("fuelConsumption").value = 1;
 					}
 				}
 			}
