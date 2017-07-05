@@ -208,7 +208,7 @@
 				</div>
 				<div class="form-group" id="fuelConsumptionBlock">
 					<label for="fuelConsumption">FuelConsumption</label>
-					<input type="number" name="fuelConsumption" id="fuelConsumption"/><br/>
+					<input type="number" name="fuelConsumption" id="fuelConsumption"  onchange="recalc()/><br/>
 				</div>
 				<div class="form-group" id="weapon1Block">
 					<label for="weapon1">weapon1</label>
@@ -459,7 +459,7 @@
 					setValues("resupplyFuel", "0", "0", "2500", "1");
 					setValues("resupplyAmmo", "0", "0", "2500", "1");//TODO
 					setValues("resupplyRepair", "0", "0", "2500", "1");//TODO
-					setValues("fuelConsumption", "1", "10", "50", "0.1");//TODO
+					setValues("fuelConsumption", "1", "10", "30", "0.1");
 					
 					listWeapons(function(weapons)
 					{
@@ -584,7 +584,10 @@
 					prices["c2"] = c2*500000;
 					prices["camouflageRadar"] = camouflageRadar*500000;
 					prices["ecm"] = ecm*100;
-					prices["ecmChance"] = ecmChance*500000;
+					if (ecm > 0)
+					{
+						prices["ecmChance"] = ecmChance*500000;
+					}
 					prices["ircmChance"] = ircmChance*500000;
 					prices["flares"] = flares*25;
 					if (flares > 0)
@@ -601,19 +604,19 @@
 					prices["weapons"] = 0;
 					prices["offset"] = 0;
 					let weights = {};
-					weights["optics"] = optics*0.001;
-					weights["camouflage"] = camouflage*10;
-					weights["opticsIR"] = opticsIR*0.01;
-					weights["camouflageIR"] = camouflageIR*100;
-					weights["radio"] = radio*0;
+					weights["optics"] = optics*0.1;
+					weights["camouflage"] = camouflage*100;
+					weights["opticsIR"] = opticsIR*1;
+					weights["camouflageIR"] = camouflageIR*1000;
+					weights["radio"] = radio*0.005;
 					weights["resupplyMedical"] = resupplyMedical*1;
 					weights["resupplyAmmo"] = resupplyAmmo*1;
 					weights["resupplyRepair"] = resupplyRepair*1;
 					weights["resupplyFuel"] = resupplyFuel*1;
 					weights["courage"] = courage*0;
 					weights["c2"] = c2*20;
-					weights["camouflageRadar"] = camouflageRadar*100;
-					weights["ecm"] = ecm*1;
+					weights["camouflageRadar"] = camouflageRadar*1000;
+					weights["ecm"] = ecm*0.1;
 					weights["ecmChance"] = ecmChance*0;
 					weights["ircmChance"] = ircmChance*0;
 					weights["flares"] = flares*0.1;
@@ -650,11 +653,15 @@
 									weight += weights[key];
 								}
 								let speed = (fuelConsumption*35000)/weight;
+								if (speed > 300)
+								{
+									speed = 300;
+								}
 								document.getElementById("speed").value = speed;
 								document.getElementById("price").value = price;
 								document.getElementById("weight").value = weight;
-								document.getElementById("size").value = weight/1000;
-								document.getElementById("health").value = 1;
+								document.getElementById("size").value = weight/250;
+								document.getElementById("health").value = 5;
 							}
 						};
 					}
