@@ -80,7 +80,7 @@ def match():
 	return render_template('match.html', loggedin=(getUserID()!=-1))
 
 @app.route('/list')
-def match():
+def list():
 	return render_template('list.html', loggedin=(getUserID()!=-1))
 
 @app.route("/favicon.ico")
