@@ -290,7 +290,7 @@ def register():
 			else:
 				logging.getLogger(PROJECTNAME).info(user+" tried to register")
 				return redirect(request.url_root+"register", code=302)
-	return render_template('match.html', loggedin=(getUserID()!=-1))
+	return render_template('register.html', loggedin=(getUserID()!=-1))
 
 if __name__ == "__main__":
 	conn = sqlite3.connect(DBNAME)
