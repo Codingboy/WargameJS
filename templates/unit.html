@@ -76,7 +76,7 @@
 					<label for="flares">Flares</label>
 					<input type="number" name="flares" id="flares" onchange="recalc()"/><br/>
 				</div>
-				<div class="form-group" id="flareChanceBlock">
+				<div class="form-group" id="flaresChanceBlock">
 					<label for="flaresChance">FlaresChance</label>
 					<input type="number" name="flaresChance" id="flaresChance" onchange="recalc()"/><br/>
 				</div>
@@ -405,7 +405,7 @@
 				if (type == "Heli")
 				{
 					hideAll();
-					show(["fuelConsumptionBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","fuelBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","camouflageIRBlock","opticsIRQualityBlock","opticsIRBlock","weapon1Block","courageBlock","resupplyMedicalBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
+					show(["fuelConsumptionBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","fuelBlock","chaffsChanceBlock","chaffsBlock","flaresChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","camouflageIRBlock","opticsIRQualityBlock","opticsIRBlock","weapon1Block","courageBlock","resupplyMedicalBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
 					document.getElementById("sound").value = "1000";
 					document.getElementById("radarAir").value = "0";
 					document.getElementById("radarAirQuality").value = "0";
