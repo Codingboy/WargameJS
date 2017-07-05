@@ -631,12 +631,12 @@
 								let weapon = req.result;
 								prices["weapons"] = prices["weapons"] + weapon.price;
 								let price = 0;
-								for (let key of prices)
+								for (let key of Object.keys(prices))
 								{
 									price += prices[key];
 								}
 								let weight = 0;
-								for (let key of weights)
+								for (let key of Object.keys(weights))
 								{
 									weight += weights[key];
 								}
