@@ -171,7 +171,7 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 	let symbolSet = "10";//TODO missiles, air
 	let status = "0";//TODO 3=damaged, 4=destroyed
 	let hqtfDummy = "0";
-	let amplifier = "11";
+	let amplifier = "00";
 	if (this.representation.type == "Infantry")
 	{
 		let count = this.units.length;
@@ -263,20 +263,65 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 		{
 			amplifier = "18";
 		}
+		else if (count == 9)
+		{
+			amplifier = "21";
+		}
+		else if (count == 10)
+		{
+			amplifier = "22";
+		}
+		else if (count == 11)
+		{
+			amplifier = "23";
+		}
+		else if (count == 12)
+		{
+			amplifier = "24";
+		}
+		else// if (count >= 13)
+		{
+			amplifier = "25";
+		}
 	}
 	let entity = "12";
 	let entityType = "11";
-	if (this.representation.type == "Infantry")
-	{
-		entityType = "11";
-	}
 	let entitySuptype = "00";
 	let modifier1 = "00";
+	let modifier2 = "00";
+	if (this.representation.type == "Heli")
+	{
+		symbolSet = "01";
+		entity = "11";
+		entityType = "02";
+		if (this.representation.weight <= 2500)
+		{
+			modifier2 = "03";
+		}
+		else if (this.representation.weight <= 7500)
+		{
+			modifier2 = "02";
+		}
+		else 
+		{
+			modifier2 = "01";
+		}
+		//modifier1 = "01";//attack
+		//modifier1 = "02";//bomber
+		modifier1 = "03";//cargo
+		//modifier1 = "04";//fighter
+		//modifier1 = "07";//utility
+		//modifier1 = "14";//medevac
+		//modifier1 = "16";//jammer
+		//modifier1 = "18";//recon
+		//modifier1 = "31";//sead
+		//modifier1 = "33";//fighter/bomber
+		//modifier1 = "35";//electronic attack
+	}
 	if (this.representation.c2 == 1)
 	{
 		modifier1 = "10";
 	}
-	let modifier2 = "00";
 	let altitude = "";
 	if (this.altitude != 0)
 	{

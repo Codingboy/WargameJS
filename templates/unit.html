@@ -405,7 +405,7 @@
 				if (type == "Heli")
 				{
 					hideAll();
-					show(["fuelConsumptionBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","fuelBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","camouflageIRBlock","opticsIRQualityBlock","opticsIRBlock","c2Block","weapon1Block","courageBlock","resupplyMedicalBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
+					show(["fuelConsumptionBlock","resupplyRepairBlock","resupplyAmmoBlock","resupplyFuelBlock","transportWeightBlock","fuelBlock","chaffChanceBlock","chaffsBlock","flareChanceBlock","flaresBlock","ircmChanceBlock","ecmChanceBlock","ecmBlock","camouflageRadarBlock","camouflageIRBlock","opticsIRQualityBlock","opticsIRBlock","weapon1Block","courageBlock","resupplyMedicalBlock","radioBlock","camouflageBlock","opticsQualityBlock","opticsBlock"]);
 					document.getElementById("sound").value = "1000";
 					document.getElementById("radarAir").value = "0";
 					document.getElementById("radarAirQuality").value = "0";
@@ -432,6 +432,7 @@
 					document.getElementById("plateCarrier").value = "0";
 					document.getElementById("mineDetectionChance").value = "0";
 					document.getElementById("mineDetection").value = "0";
+					document.getElementById("c2").value = "0";
 					
 					setValues("optics", "400", "2500", "5000", "1");
 					setValues("opticsQuality", "0", "0", "0.75", "0.01");
@@ -442,7 +443,6 @@
 					setValues("resupplyMedical", "0", "0", "10", "1");
 					setValues("plateCarrier", "0", "1", "1", "1");
 					setValues("courage", "0", "0", "0.75", "0.01");
-					setValues("c2", "0", "0", "1", "1");
 					setValues("opticsIR", "400", "2500", "5000", "1");
 					setValues("opticsIRQuality", "0", "0", "0.75", "0.01");
 					setValues("camouflageIR", "0", "0", "0.5", "0.01");
@@ -528,7 +528,7 @@
 					}
 					else
 					{
-						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
+						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*50000;
 						if (c2 == 1)
 						{
 							price *= 10;
@@ -546,7 +546,7 @@
 				if (type == "Heli")
 				{
 					let optics = document.getElementById("optics").value;
-					let opticsQuality = document.getElementById("opticsQuality").value;
+					let opticsQuality = document.getElementById("opticsQuality").value;//TODO remove opticsQuality everywhere
 					let camouflage = document.getElementById("camouflage").value;
 					let opticsIR = document.getElementById("opticsIR").value;
 					let opticsIRQuality = document.getElementById("opticsIRQuality").value;
@@ -569,6 +569,54 @@
 					let chaffChance = document.getElementById("chaffChance").value;
 					let fuel = document.getElementById("fuel").value;
 					let transportWeight = document.getElementById("transportWeight").value;
+					let prices = {};
+					prices["optics"] = optics*1;
+					prices["camouflage"] = camouflage*5000;
+					prices["opticsIR"] = opticsIR*10;
+					prices["camouflageIR"] = camouflageIR*500000;
+					prices["radio"] = radio*0.1;
+					prices["resupplyMedical"] = resupplyMedical*1000;
+					prices["resupplyAmmo"] = resupplyAmmo*1000;
+					prices["resupplyRepair"] = resupplyRepair*100000;
+					prices["resupplyFuel"] = resupplyFuel*2;
+					prices["courage"] = courage*50000;
+					prices["c2"] = c2*500000;
+					prices["camouflageRadar"] = camouflageRadar*500000;
+					prices["ecm"] = ecm*100;
+					prices["ecmChance"] = ecmChance*500000;
+					prices["ircmChance"] = ircmChance*500000;
+					prices["flare"] = flare*25;
+					prices["flareChance"] = flareChance*100000;
+					prices["chaff"] = chaff*25;
+					prices["chaffChance"] = chaffChance*100000;
+					prices["fuel"] = fuel*2;
+					prices["transportWeight"] = transportWeight*100;
+					prices["weapons"] = 0;
+					prices["offset"] = 0;
+					let weights = {};
+					weights["optics"] = optics*0.001;
+					weights["camouflage"] = camouflage*10;
+					weights["opticsIR"] = opticsIR*0.01;
+					weights["camouflageIR"] = camouflageIR*100;
+					weights["radio"] = radio*0;
+					weights["resupplyMedical"] = resupplyMedical*1;
+					weights["resupplyAmmo"] = resupplyAmmo*1;
+					weights["resupplyRepair"] = resupplyRepair*1;
+					weights["resupplyFuel"] = resupplyFuel*1;
+					weights["courage"] = courage*0;
+					weights["c2"] = c2*20;
+					weights["camouflageRadar"] = camouflageRadar*100;
+					weights["ecm"] = ecm*1;
+					weights["ecmChance"] = ecmChance*0;
+					weights["ircmChance"] = ircmChance*0;
+					weights["flare"] = flare*0.1;
+					weights["flareChance"] = flareChance*0;
+					weights["chaff"] = chaff*0.1;
+					weights["chaffChance"] = chaffChance*0;
+					weights["fuel"] = fuel*1;
+					weights["transportWeight"] = transportWeight*1;
+					weights["weapons"] = 0;
+					weights["offset"] = 1000;
 					if (weaponName && weaponName != "")
 					{
 						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
@@ -581,18 +629,22 @@
 							if (req.result)
 							{
 								let weapon = req.result;
-								let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  resupplyMedical*1000  +  courage*20000  +  weapon.price;
-								if (c2 == 1)
+								prices["weapons"] = prices["weapons"] + weapon.price;
+								let price = 0;
+								for (let key of prices)
 								{
-									price *= 10;
+									price += prices[key];
 								}
-								let bodyweight = 90;
-								let weight = bodyweight  +  optics/100  +  camouflage*10  +  radio/2000  +  resupplyMedical*1  +  weapon.weight;
-								let speed = 15*(bodyweight/weight);
+								let weight = 0;
+								for (let key of weights)
+								{
+									weight += weights[key];
+								}
+								let speed = 200*(weights["offset"]/(weight-weights["offset"]));
 								document.getElementById("speed").value = speed;
 								document.getElementById("price").value = price;
 								document.getElementById("weight").value = weight;
-								document.getElementById("size").value = 1;
+								document.getElementById("size").value = weight/1000;
 								document.getElementById("health").value = 1;
 								document.getElementById("fuelConsumption").value = 1;
 							}
