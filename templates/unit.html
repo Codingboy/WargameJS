@@ -451,9 +451,9 @@
 					setValues("ecmChance", "0", "0", "0.5", "0.01");
 					setValues("ircmChance", "0", "0", "0.5", "0.01");
 					setValues("flares", "0", "50", "100", "1");
-					setValues("flaresChance", "0.01", "0.1", "0.5", "0.01");
+					setValues("flaresChance", "0.1", "0.1", "0.1", "0.01");
 					setValues("chaffs", "0", "50", "100", "1");
-					setValues("chaffsChance", "0.01", "0.1", "0.5", "0.01");
+					setValues("chaffsChance", "0.1", "0.1", "0.1", "0.01");
 					setValues("fuel", "100", "1500", "2500", "1");
 					setValues("transportWeight", "0", "1000", "2000", "1");//TODO
 					setValues("resupplyFuel", "0", "0", "2500", "1");
@@ -586,9 +586,9 @@
 					prices["ecm"] = ecm*100;
 					if (ecm > 0)
 					{
-						prices["ecmChance"] = ecmChance*500000;
+						prices["ecmChance"] = ecmChance*1000000;
 					}
-					prices["ircmChance"] = ircmChance*500000;
+					prices["ircmChance"] = ircmChance*1000000;
 					prices["flares"] = flares*25;
 					if (flares > 0)
 					{
@@ -601,12 +601,13 @@
 					}
 					prices["fuel"] = fuel*2;
 					prices["transportWeight"] = transportWeight*100;
+					prices["fuelConsumption"] = fuelConsumption*100000;
 					prices["weapons"] = 0;
-					prices["offset"] = 0;
+					prices["offset"] = 1500000;
 					let weights = {};
 					weights["optics"] = optics*0.1;
 					weights["camouflage"] = camouflage*100;
-					weights["opticsIR"] = opticsIR*1;
+					weights["opticsIR"] = opticsIR*0.5;
 					weights["camouflageIR"] = camouflageIR*1000;
 					weights["radio"] = radio*0.005;
 					weights["resupplyMedical"] = resupplyMedical*1;
@@ -617,7 +618,7 @@
 					weights["c2"] = c2*20;
 					weights["camouflageRadar"] = camouflageRadar*1000;
 					weights["ecm"] = ecm*0.1;
-					weights["ecmChance"] = ecmChance*0;
+					weights["ecmChance"] = ecmChance*0;//TODO delete
 					weights["ircmChance"] = ircmChance*0;
 					weights["flares"] = flares*0.1;
 					weights["flaresChance"] = flaresChance*0;
@@ -625,6 +626,7 @@
 					weights["chaffsChance"] = chaffsChance*0;
 					weights["fuel"] = fuel*1;
 					weights["transportWeight"] = transportWeight*1;
+					weights["fuelConsumption"] = fuelConsumption*100;
 					weights["weapons"] = 0;
 					weights["offset"] = 1000;
 					//TODO balance weight & price
