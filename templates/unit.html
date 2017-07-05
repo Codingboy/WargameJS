@@ -569,6 +569,7 @@
 					let chaffsChance = document.getElementById("chaffsChance").value;
 					let fuel = document.getElementById("fuel").value;
 					let transportWeight = document.getElementById("transportWeight").value;
+					let fuelConsumption = document.getElementById("fuelConsumption").value;
 					let prices = {};
 					prices["optics"] = optics*1;
 					prices["camouflage"] = camouflage*5000;
@@ -586,9 +587,15 @@
 					prices["ecmChance"] = ecmChance*500000;
 					prices["ircmChance"] = ircmChance*500000;
 					prices["flares"] = flares*25;
-					prices["flaresChance"] = flaresChance*100000;
+					if (flares > 0)
+					{
+						prices["flaresChance"] = flaresChance*100000;
+					}
 					prices["chaffs"] = chaffs*25;
-					prices["chaffsChance"] = chaffsChance*100000;
+					if (chaffs > 0)
+					{
+						prices["chaffsChance"] = chaffsChance*100000;
+					}
 					prices["fuel"] = fuel*2;
 					prices["transportWeight"] = transportWeight*100;
 					prices["weapons"] = 0;
@@ -617,6 +624,7 @@
 					weights["transportWeight"] = transportWeight*1;
 					weights["weapons"] = 0;
 					weights["offset"] = 1000;
+					//TODO balance weight & price
 					if (weaponName && weaponName != "")
 					{
 						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
@@ -640,7 +648,7 @@
 								{
 									weight += weights[key];
 								}
-								let speed = 200*(weights["offset"]/(weight-weights["offset"]));
+								let speed = (fuelConsumption*35000)/weight;
 								document.getElementById("speed").value = speed;
 								document.getElementById("price").value = price;
 								document.getElementById("weight").value = weight;
@@ -649,7 +657,7 @@
 							}
 						};
 					}
-					else
+					else//TODO fit to above code
 					{
 						let price = 20000  +  optics*(1+opticsQuality*10)  +  camouflage*5000  +  radio*0.1  +  mineDetection*(1+mineDetectionChance*2)  +  resupplyMedical*1000  +  plateCarrier*1000  +  courage*20000;
 						if (c2 == 1)
