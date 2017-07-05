@@ -601,7 +601,7 @@
 					}
 					prices["fuel"] = fuel*2;
 					prices["transportWeight"] = transportWeight*100;
-					prices["fuelConsumption"] = fuelConsumption*100000;
+					prices["fuelConsumption"] = fuelConsumption*150000;
 					prices["weapons"] = 0;
 					prices["offset"] = 1500000;
 					let weights = {};
@@ -626,10 +626,9 @@
 					weights["chaffsChance"] = chaffsChance*0;
 					weights["fuel"] = fuel*1;
 					weights["transportWeight"] = transportWeight*1;
-					weights["fuelConsumption"] = fuelConsumption*10;
+					weights["fuelConsumption"] = fuelConsumption*100;
 					weights["weapons"] = 0;
 					weights["offset"] = 1000;
-					//TODO balance weight & price
 					if (weaponName && weaponName != "")
 					{
 						let req = db.transaction(["weapons"]).objectStore("weapons").get(weaponName);
