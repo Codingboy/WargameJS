@@ -10,6 +10,7 @@ function hide(elements)
 {
 	for (let element of elements)
 	{
+		console.log(element);
 		document.getElementById(element).style.display = "none";
 	}
 }
