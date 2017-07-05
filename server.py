@@ -79,6 +79,10 @@ def deck():
 def match():
 	return render_template('match.html', loggedin=(getUserID()!=-1))
 
+@app.route('/list')
+def match():
+	return render_template('list.html', loggedin=(getUserID()!=-1))
+
 @app.route("/favicon.ico")
 def favicon():
 	return redirect("/static/favicon.ico", code=302)

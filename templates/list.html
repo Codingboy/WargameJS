@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block bodycontent %}
+		<div class="container">
+			<form class="form-horizontal">
+				<h1>Units</h1>
+				<div class="form-group" id="units">
+				<h1>Weapons</h1>
+				<div class="form-group" id="weapons">
+				<h1>Groups</h1>
+				<div class="form-group" id="groups">
+				<h1>Decks</h1>
+				<div class="form-group" id="decks">
+				</div>
+			<form>
+		</div>
+{% endblock bodycontent %}
+{% block bodyscripts %}
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="static/js/bootstrap.min.js"></script>
+		<script src="static/core.js"></script>
+		<script src="static/ui.js"></script>
+		<script>
+			var db;
+			function init()
+			{
+				window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+				window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+				window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+				initDB(function(event)
+				{
+					db = event.target.result;
+					listUnits(function(units)
+					{
+						let unitsElement = document.getElementById("units");
+						for (let unit of units)
+						{
+							//TODO order units by type
+							let a = document.createElement("a");
+							a.setAttribute("href", "/unit?name="+unit);
+							a.innerHTML = unit;
+							unitsElement.appendChild(a);
+							let br = document.createElement("br");
+							unitsElement.appendChild(br);
+						}
+					});
+				});
+			}
+			init();
+		</script>
+{% endblock bodyscripts %}
