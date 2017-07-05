@@ -22,6 +22,7 @@
 					<span id="conquestPoints"></span>
 					<input type="button" onclick="showGroups()" value="Groups"/>
 					<input type="button" onclick="showInfantry()" value="Infantry"/>
+					<input type="button" onclick="showHeli()" value="Heli"/>
 					<input type="button" onclick="abortBuy()" value="Abort"/>
 				</div>
 				<div class="form-group" id="buttonsBlock">
@@ -1186,6 +1187,18 @@
 				{
 					let dbUnit = player.deck[i];
 					if (dbUnit.type == "Infantry")
+					{
+						addUnit(dbUnit, i);
+					}
+				}
+			}
+			function showInfantry()
+			{
+				reset();
+				for (let i=0; i<player.deck.length; i++)
+				{
+					let dbUnit = player.deck[i];
+					if (dbUnit.type == "Heli")
 					{
 						addUnit(dbUnit, i);
 					}
