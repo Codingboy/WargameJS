@@ -1256,50 +1256,59 @@ let t0 = performance.now();
 								let order = group.orders[0];
 								if (order.type == "move")
 								{
-									let src = group.pos;
-									let dst = order.waypoint;
-									let minMoveDistance = group.representation.speed/(3.6*fps);
-									let srcLatLon = new LatLon(src[0], src[1]);
-									let dstLatLon = new LatLon(dst[0], dst[1]);
-									let distance = srcLatLon.distanceTo(dstLatLon);
-									if (distance < minMoveDistance)
+									let consumedFuel = float(group.representation.fuelConsumption)/(600);
+									if (group.representation.fuel - consumedFuel >= 0)
 									{
-										group.orders.shift();
-										group.dir = -1;
-										group.setPos(dst);
-										group.needsRedraw = true;
-									}
-									else
-									{
-										let bearing = srcLatLon.finalBearingTo(dstLatLon);
-										let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
-										bearing = (360-bearing+90)%360;
-										if (Math.round(group.dir) != Math.round(bearing))
+										group.representation.fuel -= consumedFuel;
+										let src = group.pos;
+										let dst = order.waypoint;
+										let minMoveDistance = group.representation.speed/(3.6*fps);
+										let srcLatLon = new LatLon(src[0], src[1]);
+										let dstLatLon = new LatLon(dst[0], dst[1]);
+										let distance = srcLatLon.distanceTo(dstLatLon);
+										if (distance < minMoveDistance)
 										{
-											group.dir = bearing;
+											group.orders.shift();
+											group.dir = -1;
+											group.setPos(dst);
 											group.needsRedraw = true;
 										}
-										group.setPos([destination.lat, destination.lon]);
-									}
-									group.moved = true;
-									let factor = 100;
-									let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
-									if (pos[0] in buildings)
-									{
-										let buildingsX = buildings[pos[0]];
-										if (pos[1] in buildingsX)
+										else
 										{
-											let buildingsY = buildingsX[pos[1]];
-											let intersected = false;
-											for (let feature of buildingsY)
+											let bearing = srcLatLon.finalBearingTo(dstLatLon);
+											let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+											bearing = (360-bearing+90)%360;
+											if (Math.round(group.dir) != Math.round(bearing))
 											{
-												if (turf.inside(group.pos, feature.get("polygon")))
+												group.dir = bearing;
+												group.needsRedraw = true;
+											}
+											group.setPos([destination.lat, destination.lon]);
+										}
+										group.moved = true;
+										let factor = 100;
+										let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
+										if (pos[0] in buildings)
+										{
+											let buildingsX = buildings[pos[0]];
+											if (pos[1] in buildingsX)
+											{
+												let buildingsY = buildingsX[pos[1]];
+												let intersected = false;
+												for (let feature of buildingsY)
 												{
-													group.building = feature.get("polygon");
-													intersected = true;
+													if (turf.inside(group.pos, feature.get("polygon")))
+													{
+														group.building = feature.get("polygon");
+														intersected = true;
+													}
+												}
+												if (!intersected)
+												{
+													group.building = null;
 												}
 											}
-											if (!intersected)
+											else
 											{
 												group.building = null;
 											}
@@ -1311,7 +1320,9 @@ let t0 = performance.now();
 									}
 									else
 									{
+										group.moved = false;
 										group.building = null;
+										//TODO land helis
 									}
 								}
 								else
