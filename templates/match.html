@@ -1256,7 +1256,7 @@ let t0 = performance.now();
 								let order = group.orders[0];
 								if (order.type == "move")
 								{
-									let consumedFuel = float(group.representation.fuelConsumption)/(600);
+									let consumedFuel = parseFloat(group.representation.fuelConsumption)/(600);
 									if (group.representation.fuel - consumedFuel >= 0)
 									{
 										group.representation.fuel -= consumedFuel;
