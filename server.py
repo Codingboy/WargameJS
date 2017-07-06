@@ -177,7 +177,7 @@ def handleJoin(json):
 		json["requestUpdate"] = True
 	else:
 		json["requestUpdate"] = False
-	emit("join", json, room=matchID)
+	emit("join", json, room=None)
 	
 @socketio.on("joined")
 def handleJoined(json):
