@@ -1256,10 +1256,10 @@ let t0 = performance.now();
 								let order = group.orders[0];
 								if (order.type == "move")
 								{
-									let consumedFuel = parseFloat(group.representation.fuelConsumption)/(600);
-									if (group.representation.fuel - consumedFuel >= 0)
+									let consumedFuel = parseFloat(group.fuelConsumption)/(600);
+									if (group.fuel - consumedFuel >= 0)
 									{
-										group.representation.fuel -= consumedFuel;
+										group.fuel -= consumedFuel;
 										let src = group.pos;
 										let dst = order.waypoint;
 										let minMoveDistance = group.representation.speed/(3.6*fps);
@@ -1432,7 +1432,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= (0.98+0.0199*(1-group.courage));
+						group.suppressed = group.suppressed*(0.98+0.0199*(1-group.representation.courage));
 					}
 				}
 				for (let objectID of Object.keys(allyGroups))
@@ -1449,7 +1449,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= (0.98+0.0199*(1-group.courage));
+						group.suppressed = group.suppressed*(0.98+0.0199*(1-group.representation.courage));
 					}
 				}
 				for (let objectID of Object.keys(hostileGroups))
@@ -1466,7 +1466,7 @@ let t0 = performance.now();
 						{
 							group.redraw();
 						}
-						group.suppressed *= (0.98+0.0199*(1-group.courage));
+						group.suppressed = group.suppressed*(0.98+0.0199*(1-group.representation.courage));
 					}
 				}
 				if (messages.length > 0)

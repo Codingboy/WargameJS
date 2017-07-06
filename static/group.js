@@ -32,6 +32,8 @@ function Group(owner, pos, id)
 	this.olObject.set("group", this);
 	this.suppressed = 0;
 	this.building = null;
+	this.fuel = 0;
+	this.fuelConsumption = 0;
 	symbolSource.addFeature(this.olObject);
 	if (this.owner.isFriend())
 	{
@@ -99,15 +101,17 @@ Group.prototype.updateRepresentation = function()
 	this.representation.opticsQuality = 0;
 	this.representation.camouflage = 1;
 	this.representation.price = 0;
-	this.representation.fuel = 0;
-	this.representation.fuelConsumption = 0;
 	for (let unit of this.units)
 	{
 		let dbUnit = unit.dbUnit;
-		this.representation.fuel += dbUnit.fuel;
-		if (dbUnit.fuelConsumption > this.representation.fuelConsumption)
+		this.fuel += dbUnit.fuel;
+		if (dbUnit.fuelConsumption > this.fuelConsumption)
 		{
-			this.representation.fuelConsumption = dbUnit.fuelConsumption;
+			this.fuelConsumption = dbUnit.fuelConsumption;
+		}
+		if (dbUnit.courage < this.representation.courage)
+		{
+			this.representation.courage = dbUnit.courage;
 		}
 		if (this.representation.name == "")
 		{
