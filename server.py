@@ -160,7 +160,7 @@ def handleCommunicate(json):
 			replaceIDs(messageData, matchID)
 		if (messageType == "update"):
 			pass
-	emit("communicate", json, room=1)#//TODO room
+	emit("communicate", json, room=matchID)
 	
 @socketio.on("join")
 def handleJoin(json):
@@ -177,7 +177,7 @@ def handleJoin(json):
 		json["requestUpdate"] = True
 	else:
 		json["requestUpdate"] = False
-	emit("join", json, room=None)
+	emit("join", json, room=matchID)
 	
 @socketio.on("joined")
 def handleJoined(json):
