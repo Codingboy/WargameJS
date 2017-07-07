@@ -100,15 +100,14 @@ Group.prototype.updateRepresentation = function()
 	this.representation.optics = 0;
 	this.representation.opticsQuality = 0;
 	this.representation.camouflage = 1;
+	this.representation.fuelConsumption = 0;
 	this.representation.price = 0;
+	this.representation.courage = 1;
 	for (let unit of this.units)
 	{
 		let dbUnit = unit.dbUnit;
 		this.fuel += dbUnit.fuel;
-		if (dbUnit.fuelConsumption > this.fuelConsumption)
-		{
-			this.fuelConsumption = dbUnit.fuelConsumption;
-		}
+		this.representation.fuelConsumption += dbUnit.fuelConsumption;
 		if (dbUnit.courage < this.representation.courage)
 		{
 			this.representation.courage = dbUnit.courage;
