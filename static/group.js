@@ -301,32 +301,55 @@ Group.prototype.getSymbol = function()//http://explorer.milsymb.net/#/explore/
 	let modifier2 = "00";
 	if (this.representation.type == "Heli")
 	{
-		symbolSet = "01";
-		entity = "11";
-		entityType = "02";
-		if (this.representation.weight <= 2500)
+		if (this.altitude != 0)
 		{
-			modifier2 = "03";
+			symbolSet = "01";
+			entity = "11";
+			entityType = "02";
+			if (this.representation.weight <= 2500)
+			{
+				modifier2 = "03";
+			}
+			else if (this.representation.weight <= 7500)
+			{
+				modifier2 = "02";
+			}
+			else 
+			{
+				modifier2 = "01";
+			}
+			//modifier1 = "01";//attack
+			//modifier1 = "02";//bomber
+			//modifier1 = "03";//cargo
+			//modifier1 = "04";//fighter
+			modifier1 = "07";//utility
+			//modifier1 = "14";//medevac
+			//modifier1 = "16";//jammer
+			//modifier1 = "18";//recon
+			//modifier1 = "31";//sead
+			//modifier1 = "33";//fighter/bomber
+			//modifier1 = "35";//electronic attack
 		}
-		else if (this.representation.weight <= 7500)
+		else
 		{
-			modifier2 = "02";
+			entity = "12";
+			entityType = "06";
+			//entitySuptype = "01";//TODO recon
+			//modifier1 = "69";//utility
+			//modifier1 = "03";//attack
+			if (this.representation.weight <= 2500)
+			{
+				modifier2 = "19";
+			}
+			else if (this.representation.weight <= 7500)
+			{
+				modifier2 = "24";
+			}
+			else 
+			{
+				modifier2 = "15";
+			}
 		}
-		else 
-		{
-			modifier2 = "01";
-		}
-		//modifier1 = "01";//attack
-		//modifier1 = "02";//bomber
-		modifier1 = "03";//cargo
-		//modifier1 = "04";//fighter
-		//modifier1 = "07";//utility
-		//modifier1 = "14";//medevac
-		//modifier1 = "16";//jammer
-		//modifier1 = "18";//recon
-		//modifier1 = "31";//sead
-		//modifier1 = "33";//fighter/bomber
-		//modifier1 = "35";//electronic attack
 	}
 	if (this.representation.c2 == 1)
 	{

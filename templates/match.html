@@ -1236,12 +1236,16 @@
 			{
 				reset();
 			}
+			let flightHeight = 50;
+			let lastUpdate = Date.now();
 			function updateUI()
 			{
 let t0 = performance.now();
 				let now = Date.now();
+				let timeAvailable = now-lastUpdate;
+				lastUpdate = now;
 				let n = Math.floor((now-lastMoneyTick)/(1000*mapJSON.moneyTick));
-				lastMoneyTick = lastMoneyTick + 1000*mapJSON.moneyTick*n;
+				lastMoneyTick = lastMoneyTick + 1000*mapJSON.moneyTick*n;//TODO depend on timeAvailable
 				
 				//move groups
 				if (player.phase > 0)
@@ -1254,24 +1258,88 @@ let t0 = performance.now();
 							if (group.orders.length > 0)
 							{
 								let order = group.orders[0];
-								if (order.type == "move")
+								if (order.type == "start")
 								{
-									let consumedFuel = parseFloat(group.representation.fuelConsumption)/(600);
-									if (group.fuel - consumedFuel >= 0)
+									if (group.altitude < flightHeight)
+									{
+										let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
+										let altitudeDiff = flightHeight-group.altitude;
+										let timeNeeded = parseFloat(altitudeDiff)/climbRate;
+										if (timeNeeded > timeAvailable)
+										{
+											group.altitude += climbRate*timeAvailable;
+											timeAvailable = 0;
+										}
+										else
+										{
+											timeAvailable -= timeNeeded;
+											group.altitude = flightHeight;
+											group.orders.shift();
+											if (group.orders.length > 0)
+											{
+												group = group.orders[0];
+											}
+											else
+											{
+												continue;
+											}
+										}
+									}
+								}
+								if (order.type == "move" || order.type == "getin")
+								{
+									let consumedFuel = (parseFloat(group.representation.fuelConsumption)/(60))*(parseFloat(timeAvailable)/1000);
+									if (group.fuel - consumedFuel >= 0)//TODO scale timeAvailable if false to fit it and empty the tank
 									{
 										group.fuel -= consumedFuel;
+										if (group.representation.type == "Heli")//start heli
+										{
+											if (group.altitude < flightHeight)
+											{
+												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
+												let altitudeDiff = flightHeight-group.altitude;
+												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
+												if (timeNeeded > timeAvailable)
+												{
+													group.altitude += climbRate*timeAvailable;
+													timeAvailable = 0;
+												}
+												else
+												{
+													timeAvailable -= timeNeeded;
+													group.altitude = flightHeight;
+												}
+											}
+										}
 										let src = group.pos;
-										let dst = order.waypoint;
-										let minMoveDistance = group.representation.speed/(3.6*fps);
+										let dst;//TODO getin
+										if (order.type == "getin")
+										{
+											dst = order.target.pos;
+										}
+										else
+										{
+											dst = order.waypoint
+										}
+										let minMoveDistance = group.representation.speed/(36*(parseFloat(timeAvailable)/1000));
 										let srcLatLon = new LatLon(src[0], src[1]);
 										let dstLatLon = new LatLon(dst[0], dst[1]);
 										let distance = srcLatLon.distanceTo(dstLatLon);
 										if (distance < minMoveDistance)
 										{
 											group.orders.shift();
+											if (group.orders.length > 0)
+											{
+												group = group.orders[0];
+											}
+											else
+											{
+												continue;
+											}
 											group.dir = -1;
 											group.setPos(dst);
 											group.needsRedraw = true;
+											//TODO getin
 										}
 										else
 										{
@@ -1322,7 +1390,35 @@ let t0 = performance.now();
 									{
 										group.moved = false;
 										group.building = null;
-										//TODO land helis
+										if (group.representation.type == "Heli")//land heli
+										{
+											group.moved = true;
+											if (group.altitude > 0)
+											{
+												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
+												let altitudeDiff = group.altitude;
+												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
+												if (timeNeeded > timeAvailable)
+												{
+													group.altitude -= climbRate*timeAvailable;
+													timeAvailable = 0;
+												}
+												else
+												{
+													timeAvailable -= timeNeeded;
+													group.altitude = 0;
+													group.orders.shift();
+													if (group.orders.length > 0)
+													{
+														group = group.orders[0];
+													}
+													else
+													{
+														continue;
+													}
+												}
+											}
+										}
 									}
 								}
 								else
@@ -1330,13 +1426,51 @@ let t0 = performance.now();
 									group.moved = false;
 									group.building = null;
 								}
+								if (order.type == "land")
+								{
+									if (group.altitude > 0)
+									{
+										let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
+										let altitudeDiff = group.altitude;
+										let timeNeeded = parseFloat(altitudeDiff)/climbRate;
+										if (timeNeeded > timeAvailable)
+										{
+											group.altitude -= climbRate*timeAvailable;
+											timeAvailable = 0;
+										}
+										else
+										{
+											timeAvailable -= timeNeeded;
+											group.altitude = 0;
+											group.orders.shift();
+											if (group.orders.length > 0)
+											{
+												group = group.orders[0];
+											}
+											else
+											{
+												continue;
+											}
+										}
+									}
+								}
 							}
-							else
+							else//no orders
 							{
 								group.moved = false;
 								group.building = null;
+								let consumedFuel = (parseFloat(group.representation.fuelConsumption)/(60))*(parseFloat(timeAvailable)/1000);
+								if (group.fuel - consumedFuel >= 0)//TODO && not landed
+								{
+									group.fuel -= consumedFuel;//TODO exclude vehicles
+								}
+								else
+								{
+									//TODO remove order
+									//TODO land helis
+								}
 							}
-							if (n > 0)
+							if (n > 0)//TODO move to top to prevent being ignored by continue
 							{
 								let feature = map.forEachFeatureAtPixel(map.getPixelFromCoordinate(ol.proj.transform(group.pos, "EPSG:4326", "EPSG:3857")), function (feature, layer)
 								{
