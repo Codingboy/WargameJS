@@ -47,10 +47,6 @@ signal.signal(signal.SIGINT, signalHandler)
 def base():
 	return render_template('base.html', loggedin=(getUserID()!=-1))
 
-@app.route('/child')
-def child():
-	return render_template('child.html')
-
 @app.route('/impressum')
 def impressum():
 	return render_template('impressum.html', loggedin=(getUserID()!=-1))
@@ -99,7 +95,7 @@ def matches():
 def listMatches():
 	res = []
 	conn = sqlite3.connect(DBNAME, isolation_level="EXCLUSIVE")
-	reults = conn.execute("SELECT matchID FROM matches").fetchall()
+	results = conn.execute("SELECT matchID FROM matches").fetchall()
 	for result in results:
 		res.append(result[0])
 	conn.close()
