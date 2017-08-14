@@ -330,19 +330,19 @@
 							weapon.magazinesLeft -= 1;
 						}
 					}
-					else if (messageType == "addOrder")
+					else if (messageType == "order")
 					{
 						let id = messageData.id;
 						let order = messageData.order;
 						let group = allObjects[id];
-						group.orders.push(order);
-					}
-					else if (messageType == "setOrder")
-					{
-						let id = messageData.id;
-						let order = messageData.order;
-						let group = allObjects[id];
-						group.orders = [order];
+						if (messageData.add)
+						{
+							group.orders.push(order);
+						}
+						else
+						{
+							group.orders = [order];
+						}
 					}
 					else if (messageType == "suppress")
 					{
@@ -671,36 +671,19 @@
 				let lon = latlon[1];
 				for (group of selectedGroups)
 				{
-					if (shift)
-					{
-						let json = {
-							type: "addOrder",
-							data: {
-								id: group.id,
-								order: {
-									type: "move",
-									waypoint: latlon
-								}
+					let json = {
+						type: "order",
+						data: {
+							id: group.id,
+							add: shift,
+							order: {
+								type: "move",
+								waypoint: latlon
 							}
-						};
-						console.log(json);
-						messages.push(json);
-					}
-					else
-					{
-						let json = {
-							type: "setOrder",
-							data: {
-								id: group.id,
-								order: {
-									type: "move",
-									waypoint: latlon
-								}
-							}
-						};
-						console.log(json);
-						messages.push(json);
-					}
+						}
+					};
+					console.log(json);
+					messages.push(json);
 				}
 			});
 			map.on("singleclick", function(evt){
@@ -739,7 +722,7 @@
 					}
 					else
 					{
-						//TODO spawn in SPAWNzone and move
+						//TODO spawn in nearest SPAWNzone and move
 						let moneySpend = 0;
 						for (let unitID of toBeSpawnedUnits)
 						{
@@ -765,6 +748,7 @@
 					if (feature)
 					{
 						let group = feature.get("group");
+						//TODO only if group of own team
 						if (shift)
 						{
 							selectedGroups.push(group);
@@ -1037,6 +1021,26 @@
 						group.shootIfPossible = !group.shootIfPossible;
 					}
 				}
+				if (e.keyCode == 76)//l
+				{
+					let json = {
+						type: "order",
+						data: {
+							id: group.id,
+							add: shift,
+							order: {
+								type: "altitude",
+								altitude: 0
+							}
+						}
+					};
+					console.log(json);
+					messages.push(json);
+				}
+				if (e.keyCode == 73)//i
+				{
+					//TODO show info
+				}
 				if (player.phase == 0)
 				{
 					if (e.keyCode == 46)
@@ -1258,7 +1262,7 @@ let t0 = performance.now();
 							if (group.orders.length > 0)
 							{
 								let order = group.orders[0];
-								if (order.type == "start")
+								if (order.type == "start")//TODO implement
 								{
 									if (group.altitude < flightHeight)
 									{
@@ -1277,11 +1281,47 @@ let t0 = performance.now();
 											group.orders.shift();
 											if (group.orders.length > 0)
 											{
-												group = group.orders[0];
+												order = group.orders[0];
 											}
 											else
 											{
 												continue;
+											}
+										}
+									}
+								}
+								if (order.type == "altitude")//TODO use order.altitude, TODO merge with start
+								{
+									let consumedFuel = (parseFloat(group.representation.fuelConsumption)/(60))*(parseFloat(timeAvailable)/1000);
+									if (group.fuel - consumedFuel >= 0)//TODO scale timeAvailable if false to fit it and empty the tank
+									{
+										if (group.representation.type == "Heli")//land heli
+										{
+											group.moved = true;
+											if (group.altitude > 0)
+											{
+												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
+												let altitudeDiff = group.altitude;
+												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
+												if (timeNeeded > timeAvailable)
+												{
+													group.altitude -= climbRate*timeAvailable;
+													timeAvailable = 0;
+												}
+												else
+												{
+													timeAvailable -= timeNeeded;
+													group.altitude = 0;
+													group.orders.shift();
+													if (group.orders.length > 0)
+													{
+														order = group.orders[0];
+													}
+													else
+													{
+														continue;
+													}
+												}
 											}
 										}
 									}
@@ -1330,7 +1370,7 @@ let t0 = performance.now();
 											group.orders.shift();
 											if (group.orders.length > 0)
 											{
-												group = group.orders[0];
+												order = group.orders[0];
 											}
 											else
 											{
@@ -1410,7 +1450,7 @@ let t0 = performance.now();
 													group.orders.shift();
 													if (group.orders.length > 0)
 													{
-														group = group.orders[0];
+														order = group.orders[0];
 													}
 													else
 													{
@@ -1445,7 +1485,7 @@ let t0 = performance.now();
 											group.orders.shift();
 											if (group.orders.length > 0)
 											{
-												group = group.orders[0];
+												order = group.orders[0];
 											}
 											else
 											{

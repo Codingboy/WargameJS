@@ -41,6 +41,20 @@
 							let br = document.createElement("br");
 							unitsElement.appendChild(br);
 						}
+						listWeapons(function(weapons)
+						{
+							let weaponsElement = document.getElementById("weapons");
+							for (let weapon of weapons)
+							{
+								//TODO order weapons by type
+								let a = document.createElement("a");
+								a.setAttribute("href", "/weapon?name="+weapon);
+								a.innerHTML = weapon;
+								weaponsElement.appendChild(a);
+								let br = document.createElement("br");
+								weaponsElement.appendChild(br);
+							}
+						});
 					});
 				});
 			}
