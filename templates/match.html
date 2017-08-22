@@ -1372,7 +1372,7 @@ let t0 = performance.now();
 											{
 												dst = order.waypoint
 											}
-											let minMoveDistance = group.representation.speed/(36*(parseFloat(timeAvailable)/1000));
+											let minMoveDistance = ((parseFloat(timeAvailable)/1000)*group.representation.speed)/36;
 											console.log("minMoveDistance: "+minMoveDistance);
 											let srcLatLon = new LatLon(src[0], src[1]);
 											let dstLatLon = new LatLon(dst[0], dst[1]);
