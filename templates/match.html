@@ -1397,6 +1397,7 @@ let t0 = performance.now();
 											{
 												let bearing = srcLatLon.finalBearingTo(dstLatLon);
 												let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+												console.log("distance traveled: "+srcLatLon.distanceTo(destination))
 												bearing = (360-bearing+90)%360;
 												if (Math.round(group.dir) != Math.round(bearing))
 												{
