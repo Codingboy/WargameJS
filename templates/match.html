@@ -1337,14 +1337,14 @@ let t0 = performance.now();
 											if (group.altitude < flightHeight)
 											{
 												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
-												console.log("speed: "+str(group.representation.speed));
-												console.log("climbRate: "+str(climbRate));
+												console.log("speed: "+group.representation.speed);
+												console.log("climbRate: "+climbRate));
 												let altitudeDiff = flightHeight-group.altitude;
-												console.log("flightHeight: "+str(flightHeight));
-												console.log("altitude: "+str(group.altitude));
+												console.log("flightHeight: "+flightHeight);
+												console.log("altitude: "+group.altitude);
 												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-												console.log("timeNeeded: "+str(timeNeeded));
-												console.log("timeAvailable: "+str(timeAvailable));
+												console.log("timeNeeded: "+timeNeeded);
+												console.log("timeAvailable: "+timeAvailable);
 												if (timeNeeded > timeAvailable)
 												{
 													group.altitude += climbRate*(parseFloat(timeAvailable)/1000);
