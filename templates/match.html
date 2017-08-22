@@ -1259,6 +1259,7 @@ let t0 = performance.now();
 						let group = allObjects[objectID];
 						if (group instanceof Group)
 						{
+							group.moved = false;
 							if (group.orders.length > 0)
 							{
 								let order = group.orders[0];
@@ -1276,7 +1277,7 @@ let t0 = performance.now();
 										}
 										else
 										{
-											timeAvailable -= parseFloat(timeNeeded)/1000;
+											timeAvailable -= timeNeeded*1000;
 											group.altitude = flightHeight;
 											group.orders.shift();
 											if (group.orders.length > 0)
@@ -1310,7 +1311,7 @@ let t0 = performance.now();
 												}
 												else
 												{
-													timeAvailable -= parseFloat(timeNeeded)/1000;
+													timeAvailable -= timeNeeded*1000;
 													group.altitude = 0;
 													group.orders.shift();
 													if (group.orders.length > 0)
@@ -1336,6 +1337,7 @@ let t0 = performance.now();
 										{
 											if (group.altitude < flightHeight)
 											{
+												group.moved = true;
 												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
 												console.log("speed: "+group.representation.speed);
 												console.log("climbRate: "+climbRate);
@@ -1352,72 +1354,81 @@ let t0 = performance.now();
 												}
 												else
 												{
-													timeAvailable -= parseFloat(timeNeeded)/1000;
+													timeAvailable -= timeNeeded*1000;
 													group.altitude = flightHeight;
 												}
+												console.log("timeAvailable: "+timeAvailable);
 											}
 										}
-										let src = group.pos;
-										let dst;//TODO getin
-										if (order.type == "getin")
+										if (timeAvailable > 0)
 										{
-											dst = order.target.pos;
-										}
-										else
-										{
-											dst = order.waypoint
-										}
-										let minMoveDistance = group.representation.speed/(36*(parseFloat(timeAvailable)/1000));
-										let srcLatLon = new LatLon(src[0], src[1]);
-										let dstLatLon = new LatLon(dst[0], dst[1]);
-										let distance = srcLatLon.distanceTo(dstLatLon);
-										if (distance < minMoveDistance)
-										{
-											group.orders.shift();
-											if (group.orders.length > 0)
+											let src = group.pos;
+											let dst;//TODO getin
+											if (order.type == "getin")
 											{
-												order = group.orders[0];
+												dst = order.target.pos;
 											}
 											else
 											{
-												continue;
+												dst = order.waypoint
 											}
-											group.dir = -1;
-											group.setPos(dst);
-											group.needsRedraw = true;
-											//TODO getin
-										}
-										else
-										{
-											let bearing = srcLatLon.finalBearingTo(dstLatLon);
-											let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
-											bearing = (360-bearing+90)%360;
-											if (Math.round(group.dir) != Math.round(bearing))
+											let minMoveDistance = group.representation.speed/(36*(parseFloat(timeAvailable)/1000));
+											console.log("minMoveDistance: "+minMoveDistance);
+											let srcLatLon = new LatLon(src[0], src[1]);
+											let dstLatLon = new LatLon(dst[0], dst[1]);
+											let distance = srcLatLon.distanceTo(dstLatLon);
+											if (distance < minMoveDistance)
 											{
-												group.dir = bearing;
+												group.orders.shift();
+												group.dir = -1;
+												group.setPos(dst);
 												group.needsRedraw = true;
-											}
-											group.setPos([destination.lat, destination.lon]);
-										}
-										group.moved = true;
-										let factor = 100;
-										let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
-										if (pos[0] in buildings)
-										{
-											let buildingsX = buildings[pos[0]];
-											if (pos[1] in buildingsX)
-											{
-												let buildingsY = buildingsX[pos[1]];
-												let intersected = false;
-												for (let feature of buildingsY)
+												if (group.orders.length > 0)
 												{
-													if (turf.inside(group.pos, feature.get("polygon")))
+													order = group.orders[0];
+												}
+												else
+												{
+													continue;
+												}
+												//TODO getin
+											}
+											else
+											{
+												let bearing = srcLatLon.finalBearingTo(dstLatLon);
+												let destination = srcLatLon.destinationPoint(minMoveDistance, bearing);
+												bearing = (360-bearing+90)%360;
+												if (Math.round(group.dir) != Math.round(bearing))
+												{
+													group.dir = bearing;
+													group.needsRedraw = true;
+												}
+												group.setPos([destination.lat, destination.lon]);
+											}
+											group.moved = true;
+											let factor = 100;
+											let pos = [Math.round(factor*group.pos[0])/factor, Math.round(factor*group.pos[1])/factor];
+											if (pos[0] in buildings)
+											{
+												let buildingsX = buildings[pos[0]];
+												if (pos[1] in buildingsX)
+												{
+													let buildingsY = buildingsX[pos[1]];
+													let intersected = false;
+													for (let feature of buildingsY)
 													{
-														group.building = feature.get("polygon");
-														intersected = true;
+														if (turf.inside(group.pos, feature.get("polygon")))
+														{
+															group.building = feature.get("polygon");
+															intersected = true;
+														}
+													}
+													if (!intersected)
+													{
+														group.building = null;
 													}
 												}
-												if (!intersected)
+												else
 												{
 													group.building = null;
 												}
@@ -1427,14 +1438,9 @@ let t0 = performance.now();
 												group.building = null;
 											}
 										}
-										else
-										{
-											group.building = null;
-										}
 									}
 									else
 									{
-										group.moved = false;
 										group.building = null;
 										if (group.representation.type == "Heli")//land heli
 										{
@@ -1451,7 +1457,7 @@ let t0 = performance.now();
 												}
 												else
 												{
-													timeAvailable -= parseFloat(timeNeeded)/1000;
+													timeAvailable -= timeNeeded*1000;
 													group.altitude = 0;
 													group.orders.shift();
 													if (group.orders.length > 0)
@@ -1469,37 +1475,9 @@ let t0 = performance.now();
 								}
 								else
 								{
-									group.moved = false;
 									group.building = null;
 								}
-								if (order.type == "land")
-								{
-									if (group.altitude > 0)
-									{
-										let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
-										let altitudeDiff = group.altitude;
-										let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-										if (timeNeeded > parseFloat(timeAvailable)/1000)
-										{
-											group.altitude -= climbRate*(parseFloat(timeAvailable)/1000);
-											timeAvailable = 0;
-										}
-										else
-										{
-											timeAvailable -= parseFloat(timeNeeded)/1000;
-											group.altitude = 0;
-											group.orders.shift();
-											if (group.orders.length > 0)
-											{
-												order = group.orders[0];
-											}
-											else
-											{
-												continue;
-											}
-										}
-									}
-								}
+								//TODO again altitude
 							}
 							else//no orders
 							{
