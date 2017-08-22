@@ -1269,14 +1269,14 @@ let t0 = performance.now();
 										let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
 										let altitudeDiff = flightHeight-group.altitude;
 										let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-										if (timeNeeded > timeAvailable)
+										if (timeNeeded > parseFloat(timeAvailable)/1000)
 										{
 											group.altitude += climbRate*(parseFloat(timeAvailable)/1000);
 											timeAvailable = 0;
 										}
 										else
 										{
-											timeAvailable -= timeNeeded;
+											timeAvailable -= parseFloat(timeNeeded)/1000;
 											group.altitude = flightHeight;
 											group.orders.shift();
 											if (group.orders.length > 0)
@@ -1303,14 +1303,14 @@ let t0 = performance.now();
 												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
 												let altitudeDiff = group.altitude;
 												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-												if (timeNeeded > timeAvailable)
+												if (timeNeeded > parseFloat(timeAvailable)/1000)
 												{
 													group.altitude -= climbRate*(parseFloat(timeAvailable)/1000);
 													timeAvailable = 0;
 												}
 												else
 												{
-													timeAvailable -= timeNeeded;
+													timeAvailable -= parseFloat(timeNeeded)/1000;
 													group.altitude = 0;
 													group.orders.shift();
 													if (group.orders.length > 0)
@@ -1345,14 +1345,14 @@ let t0 = performance.now();
 												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
 												console.log("timeNeeded: "+timeNeeded);
 												console.log("timeAvailable: "+timeAvailable);
-												if (timeNeeded > timeAvailable)
+												if (timeNeeded > parseFloat(timeAvailable)/1000)
 												{
 													group.altitude += climbRate*(parseFloat(timeAvailable)/1000);
 													timeAvailable = 0;
 												}
 												else
 												{
-													timeAvailable -= timeNeeded;
+													timeAvailable -= parseFloat(timeNeeded)/1000;
 													group.altitude = flightHeight;
 												}
 											}
@@ -1444,14 +1444,14 @@ let t0 = performance.now();
 												let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
 												let altitudeDiff = group.altitude;
 												let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-												if (timeNeeded > timeAvailable)
+												if (timeNeeded > parseFloat(timeAvailable)/1000)
 												{
 													group.altitude -= climbRate*(parseFloat(timeAvailable)/1000);
 													timeAvailable = 0;
 												}
 												else
 												{
-													timeAvailable -= timeNeeded;
+													timeAvailable -= parseFloat(timeNeeded)/1000;
 													group.altitude = 0;
 													group.orders.shift();
 													if (group.orders.length > 0)
@@ -1479,14 +1479,14 @@ let t0 = performance.now();
 										let climbRate = group.representation.speed/35;//TODO weight decreases climbrate
 										let altitudeDiff = group.altitude;
 										let timeNeeded = parseFloat(altitudeDiff)/climbRate;
-										if (timeNeeded > timeAvailable)
+										if (timeNeeded > parseFloat(timeAvailable)/1000)
 										{
 											group.altitude -= climbRate*(parseFloat(timeAvailable)/1000);
 											timeAvailable = 0;
 										}
 										else
 										{
-											timeAvailable -= timeNeeded;
+											timeAvailable -= parseFloat(timeNeeded)/1000;
 											group.altitude = 0;
 											group.orders.shift();
 											if (group.orders.length > 0)
